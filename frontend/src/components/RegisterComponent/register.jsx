@@ -7,13 +7,33 @@ import Image from "next/image";
 
 const Register = () => {
   const validationSchema = Yup.object({
-    fullName: Yup.string().required("Full name is required"),
+    fullName: Yup.string()
+      .matches(/^[A-Za-z\s]+$/, "Full name can only contain letters and spaces")
+      .matches(
+        /^[A-Z][a-zA-Z]*(\s[A-Z][a-zA-Z]*)*$/,
+        "Full name must start with a capital letter for each word"
+      )
+      .required("Full name is required"),
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),
-    username: Yup.string().required("Username is required"),
+    username: Yup.string()
+      .min(3, "Username must be at least 3 characters")
+      .max(20, "Username must be at most 20 characters")
+      .matches(
+        /^[a-zA-Z0-9_]+$/,
+        "Username can only contain letters, numbers, and underscores"
+      )
+      .required("Username is required"),
     password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
+      .min(8, "Password must be at least 8 characters")
+      .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .matches(/[0-9]/, "Password must contain at least one number")
+      .matches(
+        /[@$!%*?&]/,
+        "Password must contain at least one special character"
+      )
       .required("Password is required"),
   });
 
