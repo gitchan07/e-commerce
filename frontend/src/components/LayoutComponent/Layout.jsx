@@ -12,7 +12,6 @@ const Layout = ({ children,className }) => {
         </section>
         <Footer />
       </main>
-      
   );
 };
 
