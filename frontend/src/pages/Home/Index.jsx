@@ -1,8 +1,8 @@
 import React from 'react';
-import Layout from '@/Component/LayoutComponent/Layout';
+import Layout from '@/components/LayoutComponent/Layout';
 const Index = () => {
   return (
-    <Layout className="h-screen bg-blue-50">
+    <Layout className="h-screen bg-blue-700">
       
         This is main page
       

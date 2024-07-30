@@ -2,8 +2,10 @@ import React from 'react';
 
 const Header = () => {
   return (
-    <header className='bg-gray-800 text-white p-4'>
-      this is a header
+    <header className="text-black">
+      <h1>hi</h1>
+      <h1>hi</h1>
+      <h1>hi</h1>
     </header>
   );
 }

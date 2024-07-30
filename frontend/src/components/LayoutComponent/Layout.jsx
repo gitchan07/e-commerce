@@ -5,7 +5,7 @@ import Footer from './Footer/Footer';
 const Layout = ({ children,className }) => {
   return (
       
-      <main className='flex-grow'>
+      <main>
         <Header />
         <section className={` ${className}`}>
         {children}
