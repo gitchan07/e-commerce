@@ -1,14 +1,9 @@
 ```py
-pipenv install Flask Flask-SQLAlchemy python-dotenv
-```
-```
-pipenv install flask-login flask-jwt-extended bcrypt
+pipenv install Flask Flask-SQLAlchemy python-dotenv flask-login flask-jwt-extended bcrypt  mysql-connector-python
 ```
 
-```
-pipenv install mysql-connector-python
 
-```
+# To run the app
 ```py
 flask --app index run --debug
 ```
