@@ -6,7 +6,6 @@ const Index = () => {
   return (
     <Layout className=" bg-white">
       
-        This is main page
         <Register/>
 
       
