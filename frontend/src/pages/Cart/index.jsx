@@ -1,18 +1,21 @@
-import Layout from '@/components/LayoutComponent/Layout'
-import React from 'react'
-import CartCardComponent from '@/components/CartComponent/CartCardComponent'
+import React, { useState } from 'react';
+import Layout from '@/components/LayoutComponent/Layout';
+import Cart from '@/components/CartComponent/Cart';
+import CartSummary from '@/components/CartComponent/CartSummary';
 
 const Index = () => {
+  const [cartTotal, setCartTotal] = useState(0);
+  const api = "http://localhost:5000/cart"; 
   return (
-    <Layout className="h-screen bg-blue-700 grid grid-cols-2 grid-rows-2">
-      <CartCardComponent className="col-span-1 row-span-2 m-5">
-        testing
-      </CartCardComponent>
-      <CartCardComponent className="col-span-1 row-span-1 m-5">
-        Summary
-      </CartCardComponent>
+    <Layout className="h-screen bg-blue-700 grid grid-cols-3 gap-4 p-4">
+      <div className="col-span-2 bg-white rounded p-4">
+        <Cart setCartTotal={setCartTotal} api={api} />
+      </div>
+      <div className="bg-white rounded p-4">
+        <CartSummary total={cartTotal} />
+      </div>
     </Layout>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;
