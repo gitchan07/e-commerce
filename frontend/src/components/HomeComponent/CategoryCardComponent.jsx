@@ -1,12 +1,15 @@
 import React from 'react';
 
-const CategoryCardComponent = ({ category }) => {
+const CategoryCardComponent = ({ title, description, imageUrl }) => {
   return (
-    <div className="p-4 border rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <h2 className="text-xl font-bold mb-2">{category.name}</h2>
-      <p className="text-gray-700">{category.description}</p>
+    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
+      <img className="w-full h-48 object-cover" src={imageUrl} alt={title} />
+      <div className="px-6 py-4">
+        <div className="font-bold text-xl mb-2 text-gray-800">{title}</div>
+        <p className="text-gray-700 text-base">{description}</p>
+      </div>
     </div>
   );
 };
 
-export default CategoryCardComponent
+export default CategoryCardComponent;
