@@ -9,13 +9,18 @@ const Index = () => {
   const toggleForm = () => {
     setIsRegister(!isRegister);
   };
+
   return (
-    <Layout className=" bg-white">
+    <Layout className="login-home bg-white">
       {isRegister ? (
         <Register onToggleForm={toggleForm} />
       ) : (
         <Login onToggleForm={toggleForm} />
       )}
+      main
+      <div>
+        {/* tes */}
+      </div>
     </Layout>
   );
 };
