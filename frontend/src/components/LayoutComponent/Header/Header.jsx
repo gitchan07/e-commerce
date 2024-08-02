@@ -15,7 +15,7 @@ const Header = () => {
   const handleHome = ()=>Route.push('/');
   return (
     <header className="flex flex-row justify-around items-center space-x-8 text-black bg-white w-full py-4">
-        <button onClick={handleHome} className={`${Jakarta.className}`}>VapeMasaKini</button>
+        <button onClick={handleHome} className={`${Jakarta.className}`}>[Vapor Vault]</button>
         <SearchComponent />
         <CartComponents />
         <RegisterButton />

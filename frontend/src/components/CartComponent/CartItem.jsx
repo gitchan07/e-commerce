@@ -1,4 +1,5 @@
 import React from 'react';
+import AddReduceQuantityButton from './BehaviourComponent/AddReduceQuantityButton';
 
 const CartItem = ({ item }) => {
   return (
@@ -9,6 +10,7 @@ const CartItem = ({ item }) => {
         <p>{item.description}</p>
         <p>Rp. {item.price}</p>
       </div>
+      <AddReduceQuantityButton item={item} />
     </div>
   );
 };

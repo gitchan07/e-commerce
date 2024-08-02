@@ -12,12 +12,12 @@ const useFetch = (url, options) => {
     fetch(url, options)
       .then((response) => response.json())
       .then((result) => {
-        console.log('Fetched data:', result); // Debugging log
+        console.log('Fetched data:', result); 
         setData(result);
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Fetching error:', error); // Debugging log
+        console.error('Fetching error:', error); 
         setError(error);
         setLoading(false);
       });
