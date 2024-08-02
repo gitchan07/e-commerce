@@ -1,14 +1,24 @@
-import React from 'react'
-import Register from '@/components/RegisterComponent/register'
-import Layout from '@/components/LayoutComponent/Layout'
+import React, { useState } from 'react';
+import Layout from '@/components/LayoutComponent/Layout';
+import Register from '@/components/RegisterComponent/Register';
+import Login from '@/components/RegisterComponent/Login';
 
-const index = () => {
+const Index = () => {
+  const [isRegister, setIsRegister] = useState(true);
+
+  const toggleForm = () => {
+    setIsRegister(!isRegister);
+  };
+
   return (
-    <Layout>
-        <Register/>
+    <Layout className="login-home bg-white">
+      {isRegister ? (
+        <Register onToggleForm={toggleForm} />
+      ) : (
+        <Login onToggleForm={toggleForm} />
+      )}
+    </Layout>
+  );
+};
 
-        </Layout>
-  )
-}
-
-export default index
+export default Index;
