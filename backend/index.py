@@ -21,7 +21,7 @@ if __name__ == "__main__":
 # login manager here
 jwt = JWTManager(app)
 login_manager = LoginManager()
-login_manager.innit_app(app)
+login_manager.init_app(app)
 
 
 # Logic here
