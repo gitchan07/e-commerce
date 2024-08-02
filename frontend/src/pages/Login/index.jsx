@@ -4,10 +4,9 @@ import Layout from '@/components/LayoutComponent/Layout'
 
 const index = () => {
   return (
-    <Layout>
+      <Layout>
         <Register/>
-
-        </Layout>
+      </Layout>
   )
 }
 

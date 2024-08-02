@@ -6,7 +6,7 @@ const Index = () => {
   return (
     <Layout className=" bg-white">
       
-
+      <Page/>
       
     </Layout>
   );
