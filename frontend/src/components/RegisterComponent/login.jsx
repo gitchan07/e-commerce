@@ -5,18 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 
-const Register = ({ onToggleForm }) => {
+const Login = ({ onToggleForm }) => {
   const validationSchema = Yup.object({
-    fullName: Yup.string()
-      .matches(/^[A-Za-z\s]+$/, "Full name can only contain letters and spaces")
-      .matches(
-        /^[A-Z][a-zA-Z]*(\s[A-Z][a-zA-Z]*)*$/,
-        "Full name must start with a capital letter for each word"
-      )
-      .required("Full name is required"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
     username: Yup.string()
       .min(3, "Username must be at least 3 characters")
       .max(20, "Username must be at most 20 characters")
@@ -38,8 +28,6 @@ const Register = ({ onToggleForm }) => {
   });
 
   const initialValues = {
-    fullName: "",
-    email: "",
     username: "",
     password: "",
   };
@@ -62,14 +50,14 @@ const Register = ({ onToggleForm }) => {
       </div>
       <div className="w-full md:w-2/3 max-w-md mx-auto p-6 bg-white shadow shadow-slate-400 rounded-lg">
         <h1 className="text-3xl font-bold mb-4 text-gray-800 text-center">
-          Sign Up Now
+          Login to Your Account
         </h1>
         <h3 className="text-center text-gray-800 mb-6">
-          Already have a Vapor Vault account?&nbsp;
+          Don't have a Vapor Vault account?&nbsp;
           <a className="text-emerald-600 hover:underline underline-offset-2 cursor-pointer"
             onClick={onToggleForm}
           >
-            Login
+            Register
           </a>
         </h3>
         <Formik
@@ -79,46 +67,6 @@ const Register = ({ onToggleForm }) => {
         >
           {({ isSubmitting }) => (
             <Form>
-              <div className="mb-4">
-                <label
-                  htmlFor="fullName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Full Name
-                </label>
-                <Field
-                  type="text"
-                  id="fullName"
-                  name="fullName"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
-                />
-                <ErrorMessage
-                  name="fullName"
-                  component="div"
-                  className="text-red-600 text-sm"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Email
-                </label>
-                <Field
-                  type="email"
-                  id="email"
-                  name="email"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
-                />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="text-red-600 text-sm"
-                />
-              </div>
-
               <div className="mb-4">
                 <label
                   htmlFor="username"
@@ -168,7 +116,7 @@ const Register = ({ onToggleForm }) => {
                   {isSubmitting ? (
                     <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
                   ) : (
-                    "Register"
+                    "Login"
                   )}
                 </button>
               </div>
@@ -180,4 +128,4 @@ const Register = ({ onToggleForm }) => {
   );
 };
 
-export default Register;
+export default Login;
