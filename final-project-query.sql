@@ -46,20 +46,11 @@ CREATE TABLE Transactions (
     date DATE NOT NULL,
     transaction_number VARCHAR(50) NOT NULL,
     user_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(id)
-);
-
--- Creating TransactionDetails table
-CREATE TABLE TransactionDetails (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    transaction_id INT,
     product_id INT,
     quantity INT,
     price DECIMAL(10, 2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (transaction_id) REFERENCES Transactions(id),
+    FOREIGN KEY (user_id) REFERENCES Users(id),
     FOREIGN KEY (product_id) REFERENCES Products(id)
 );
