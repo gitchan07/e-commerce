@@ -1,0 +1,79 @@
+swagger: "2.0"
+info:
+  description: "API documentation for Transactions"
+  version: "1.0.0"
+  title: "Transactions API"
+host: "localhost:5000"
+basePath: "/"
+schemes:
+  - "http"
+paths:
+  /transactions:
+    post:
+      summary: "Create a new transaction"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Transaction object"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - "date"
+              - "transaction_number"
+              - "user_id"
+            properties:
+              date:
+                type: "string"
+                example: "2023-08-01"
+              transaction_number:
+                type: "string"
+                example: "T12345"
+              user_id:
+                type: "integer"
+                example: 1
+      responses:
+        200:
+          description: "Transaction Created"
+        400:
+          description: "Missing field"
+        500:
+          description: "Error creating transaction"
+    get:
+      summary: "Get a list of all transactions"
+      responses:
+        200:
+          description: "List of transactions"
+        500:
+          description: "Error fetching transactions"
+  /transactions/{id}:
+    get:
+      summary: "Get transaction by ID"
+      parameters:
+        - in: "path"
+          name: "id"
+          type: "integer"
+          required: true
+          description: "The transaction ID"
+      responses:
+        200:
+          description: "Transaction details"
+        404:
+          description: "Transaction not found"
+        500:
+          description: "Error fetching transaction"
+    delete:
+      summary: "Delete transaction by ID"
+      parameters:
+        - in: "path"
+          name: "id"
+          type: "integer"
+          required: true
+          description: "The transaction ID"
+      responses:
+        200:
+          description: "Transaction deleted"
+        404:
+          description: "Transaction not found"
+        500:
+          description: "Error deleting transaction"
