@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
+from controllers.Products import product_management_bp
 
 # flask --app index run --debug to run
 
@@ -13,10 +14,9 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-if __name__ == "__main__":
-    app.run(debug)
 
 # add blueprint here
+app.register_blueprint(product_management_bp, url_prefix='/products')
 
 # login manager here
 jwt = JWTManager(app)
@@ -28,3 +28,7 @@ login_manager.init_app(app)
 @app.route("/")
 def test():
     return "Hello there "
+
+#python index.py
+if __name__ == "__main__":
+    app.run(debug=True)
