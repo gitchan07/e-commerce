@@ -24,8 +24,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # Register blueprints
-app.register_blueprint(transaction_details_routes)
-app.register_blueprint(transaction_routes)
+app.register_blueprint(transaction_details_routes, url_prefix="/transactions")
+app.register_blueprint(transaction_routes, url_prefix="/transactions")
 
 # Initialize Swagger
 swagger = Swagger(app)

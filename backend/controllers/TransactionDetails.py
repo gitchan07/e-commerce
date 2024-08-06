@@ -7,9 +7,7 @@ transaction_details_routes = Blueprint("transaction_details_routes", __name__)
 
 
 # POST /transactions/{transaction_id}/details
-@transaction_details_routes.route(
-    "/transactions/<int:transaction_id>/details", methods=["POST"]
-)
+@transaction_details_routes.route("/<int:transaction_id>/details", methods=["POST"])
 def add_transaction_detail(transaction_id):
     data = request.get_json()
     required_fields = ["product_id", "quantity", "price"]
@@ -40,9 +38,7 @@ def add_transaction_detail(transaction_id):
 
 
 # GET /transactions/{transaction_id}/details
-@transaction_details_routes.route(
-    "/transactions/<int:transaction_id>/details", methods=["GET"]
-)
+@transaction_details_routes.route("/<int:transaction_id>/details", methods=["GET"])
 def get_transactions_details(transaction_id):
     Session = sessionmaker(bind=connection)
     s = Session()
