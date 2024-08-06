@@ -6,10 +6,8 @@ from models.TransactionDetails import TransactionDetails
 transaction_details_routes = Blueprint("transaction_details_routes", __name__)
 
 
-# POST /transactions/{transaction_id}/details
-@transaction_details_routes.route(
-    "/transactions/<int:transaction_id>/details", methods=["POST"]
-)
+# POST /{transaction_id}/details
+@transaction_details_routes.route("/<int:transaction_id>/details", methods=["POST"])
 def add_transaction_detail(transaction_id):
     data = request.get_json()
     required_fields = ["product_id", "quantity", "price"]
@@ -37,10 +35,8 @@ def add_transaction_detail(transaction_id):
         s.close()
 
 
-# GET /transactions/{transaction_id}/details
-@transaction_details_routes.route(
-    "/transactions/<int:transaction_id>/details", methods=["GET"]
-)
+# GET /{transaction_id}/details
+@transaction_details_routes.route("/<int:transaction_id>/details", methods=["GET"])
 def get_transactions_details(transaction_id):
     Session = sessionmaker(bind=connection)
     s = Session()
@@ -58,7 +54,7 @@ def get_transactions_details(transaction_id):
 
 
 @transaction_details_routes.route(
-    "/transactions/<int:transaction_id>/details/<int:detail_id>", methods=["PUT"]
+    "/<int:transaction_id>/details/<int:detail_id>", methods=["PUT"]
 )
 def update_transaction_detail(transaction_id, detail_id):
     data = request.get_json()
@@ -90,9 +86,9 @@ def update_transaction_detail(transaction_id, detail_id):
         s.close()
 
 
-# DELETE /transactions/<int:transaction_id>/details/<int:detail_id>
+# DELETE /<int:transaction_id>/details/<int:detail_id>
 @transaction_details_routes.route(
-    "/transactions/<int:transaction_id>/details/<int:detail_id>", methods=["DELETE"]
+    "/<int:transaction_id>/details/<int:detail_id>", methods=["DELETE"]
 )
 def delete_transaction_detail(transaction_id, detail_id):
     Session = sessionmaker(bind=connection)

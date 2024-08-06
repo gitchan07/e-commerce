@@ -8,7 +8,7 @@ transaction_routes = Blueprint("transaction_routes", __name__)
 
 
 # POST/Transaction
-@transaction_routes.route("/transactions", methods=["POST"])
+@transaction_routes.route("/", methods=["POST"])
 def transaction():
     data = request.get_json()
     required_fields = ["date", "transaction_number", "user_id"]
@@ -34,8 +34,8 @@ def transaction():
         s.close()
 
 
-# GET/transactions
-@transaction_routes.route("/transactions", methods=["GET"])
+# GET
+@transaction_routes.route("/", methods=["GET"])
 def get_transactions():
     Session = sessionmaker(bind=connection)
     s = Session()
@@ -48,8 +48,8 @@ def get_transactions():
         s.close()
 
 
-# GET/transactions/<int:id>
-@transaction_routes.route("/transactions/<int:id>", methods=["GET"])
+# GET/<int:id>
+@transaction_routes.route("/<int:id>", methods=["GET"])
 def get_transaction_by_id(id):
     Session = sessionmaker(bind=connection)
     s = Session()
@@ -65,8 +65,8 @@ def get_transaction_by_id(id):
         s.close()
 
 
-# DELETE/transactions/<int:id>
-@transaction_routes.route("/transactions/<int:id>", methods=["DELETE"])
+# DELETE/<int:id>
+@transaction_routes.route("/<int:id>", methods=["DELETE"])
 def delete_transaction_by_id(id):
     Session = sessionmaker(bind=connection)
     s = Session()
