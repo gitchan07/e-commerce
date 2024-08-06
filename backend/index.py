@@ -34,7 +34,6 @@ app.register_blueprint(product_management_bp, url_prefix="/products")
 
 
 # Initialize Swagger
-swagger = Swagger(app)
 
 
 # Logic here
