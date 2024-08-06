@@ -1,0 +1,115 @@
+swagger: "2.0"
+info:
+  description: "API documentation for TransactionDetails"
+  version: "1.0.0"
+  title: "TransactionDetails API"
+host: "localhost:5000"
+basePath: "/"
+schemes:
+  - "http"
+paths:
+  /transactions/{transaction_id}/details:
+    post:
+      summary: "Add a detail to a transaction"
+      parameters:
+        - in: "path"
+          name: "transaction_id"
+          type: "integer"
+          required: true
+          description: "The transaction ID"
+        - in: "body"
+          name: "body"
+          description: "TransactionDetail object"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - "product_id"
+              - "quantity"
+              - "price"
+            properties:
+              product_id:
+                type: "integer"
+                example: 1
+              quantity:
+                type: "integer"
+                example: 2
+              price:
+                type: "number"
+                format: "float"
+                example: 19.99
+      responses:
+        200:
+          description: "Detail Added"
+        400:
+          description: "Missing field"
+        500:
+          description: "Error adding detail"
+    get:
+      summary: "Get details of a transaction"
+      parameters:
+        - in: "path"
+          name: "transaction_id"
+          type: "integer"
+          required: true
+          description: "The transaction ID"
+      responses:
+        200:
+          description: "List of transaction details"
+        500:
+          description: "Error fetching details"
+  /transactions/{transaction_id}/details/{detail_id}:
+    put:
+      summary: "Update a detail of a transaction"
+      parameters:
+        - in: "path"
+          name: "transaction_id"
+          type: "integer"
+          required: true
+          description: "The transaction ID"
+        - in: "path"
+          name: "detail_id"
+          type: "integer"
+          required: true
+          description: "The detail ID"
+        - in: "body"
+          name: "body"
+          description: "TransactionDetail object"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              quantity:
+                type: "integer"
+                example: 3
+              price:
+                type: "number"
+                format: "float"
+                example: 24.99
+      responses:
+        200:
+          description: "Detail Updated"
+        404:
+          description: "Detail not found"
+        500:
+          description: "Error updating detail"
+    delete:
+      summary: "Delete a detail of a transaction"
+      parameters:
+        - in: "path"
+          name: "transaction_id"
+          type: "integer"
+          required: true
+          description: "The transaction ID"
+        - in: "path"
+          name: "detail_id"
+          type: "integer"
+          required: true
+          description: "The detail ID"
+      responses:
+        200:
+          description: "Detail Deleted"
+        404:
+          description: "Detail not found"
+        500:
+          description: "Error deleting detail"
