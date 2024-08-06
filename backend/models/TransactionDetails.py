@@ -14,5 +14,5 @@ class TransactionDetails(Base):
     created_at = mapped_column(DateTime, default=func.now())
     updated_at = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
-    transaction = relationship("Transactions", back_populates="transaction_details")
-    product = relationship("Products", back_populates="transaction_details")
+    transaction = relationship("transactions", back_populates="transaction_details")
+    product = relationship("products", back_populates="transaction_details")

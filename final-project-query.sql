@@ -5,7 +5,7 @@ CREATE DATABASE vapestore;
 -- Use the newly created database
 USE vapestore;
 
-CREATE TABLE Users (
+CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(255) NOT NULL,
     role ENUM('customer', 'seller') NOT NULL,
@@ -17,14 +17,14 @@ CREATE TABLE Users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Category (
+CREATE TABLE category (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Products (
+CREATE TABLE products (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     category_id INT,
@@ -39,7 +39,7 @@ CREATE TABLE Products (
     FOREIGN KEY (category_id) REFERENCES Category(id)
 );
 
-CREATE TABLE Transactions (
+CREATE TABLE transactions (
     id INT PRIMARY KEY AUTO_INCREMENT,
     date DATE NOT NULL,
     transaction_number VARCHAR(50) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE Transactions (
     FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
-CREATE TABLE TransactionDetails (
+CREATE TABLE transactiondetails (
     id INT PRIMARY KEY AUTO_INCREMENT,
     transaction_id INT,
     product_id INT,
