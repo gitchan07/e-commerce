@@ -1,0 +1,114 @@
+swagger: "2.0"
+info:
+  description: "API documentation for Categories"
+  version: "1.0.0"
+  title: "Categories API"
+host: "localhost:5000"
+basePath: "/"
+schemes:
+  - "http"
+paths:
+  /categories:
+    post:
+      summary: "Create a new category"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Category object"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - "name"
+            properties:
+              name:
+                type: "string"
+                example: "Electronics"
+      responses:
+        200:
+          description: "Category created successfully"
+        500:
+          description: "Fail to create category"
+    get:
+      summary: "Get a list of categories"
+      responses:
+        200:
+          description: "List of categories"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Category"
+        500:
+          description: "Fail to retrieve categories"
+  /categories/{category_id}:
+    get:
+      summary: "Get a category by ID"
+      parameters:
+        - in: "path"
+          name: "category_id"
+          type: "integer"
+          required: true
+          description: "The category ID"
+      responses:
+        200:
+          description: "Category retrieved successfully"
+          schema:
+            $ref: "#/definitions/Category"
+        404:
+          description: "Category not found"
+        500:
+          description: "Fail to retrieve category"
+    put:
+      summary: "Update a category by ID"
+      parameters:
+        - in: "path"
+          name: "category_id"
+          type: "integer"
+          required: true
+          description: "The category ID"
+        - in: "body"
+          name: "body"
+          description: "Category object"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              name:
+                type: "string"
+                example: "Electronics"
+      responses:
+        200:
+          description: "Category updated successfully"
+        404:
+          description: "Category not found"
+        500:
+          description: "Fail to update category"
+    delete:
+      summary: "Delete a category by ID"
+      parameters:
+        - in: "path"
+          name: "category_id"
+          type: "integer"
+          required: true
+          description: "The category ID"
+      responses:
+        200:
+          description: "Category deleted successfully"
+        404:
+          description: "Category not found"
+        500:
+          description: "Fail to delete category"
+definitions:
+  Category:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "date-time"
+      updated_at:
+        type: "string"
+        format: "date-time"

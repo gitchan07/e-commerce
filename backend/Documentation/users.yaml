@@ -1,0 +1,114 @@
+swagger: "2.0"
+info:
+  description: "API documentation for Users"
+  version: "1.0.0"
+  title: "Users API"
+host: "localhost:5000"
+basePath: "/"
+schemes:
+  - "http"
+paths:
+  /register:
+    post:
+      summary: "Register a new user"
+      parameters:
+        - in: "formData"
+          name: "name"
+          type: "string"
+          required: true
+          description: "The name of the user"
+        - in: "formData"
+          name: "email"
+          type: "string"
+          required: true
+          description: "The email of the user"
+        - in: "formData"
+          name: "password"
+          type: "string"
+          required: true
+          description: "The password of the user"
+      responses:
+        200:
+          description: "Register Success"
+        500:
+          description: "Fail to Register"
+  /login:
+    post:
+      summary: "Login a user"
+      parameters:
+        - in: "formData"
+          name: "email"
+          type: "string"
+          required: true
+          description: "The email of the user"
+        - in: "formData"
+          name: "password"
+          type: "string"
+          required: true
+          description: "The password of the user"
+      responses:
+        200:
+          description: "Login Success"
+          schema:
+            type: "object"
+            properties:
+              session_id:
+                type: "string"
+              message:
+                type: "string"
+        403:
+          description: "User not found or Invalid password"
+        500:
+          description: "Gagal login"
+  /loginjwt:
+    post:
+      summary: "Login a user and return JWT"
+      parameters:
+        - in: "formData"
+          name: "email"
+          type: "string"
+          required: true
+          description: "The email of the user"
+        - in: "formData"
+          name: "password"
+          type: "string"
+          required: true
+          description: "The password of the user"
+      responses:
+        200:
+          description: "Login Success"
+          schema:
+            type: "object"
+            properties:
+              access_token:
+                type: "string"
+              message:
+                type: "string"
+        403:
+          description: "User not found or Invalid password"
+        500:
+          description: "Gagal login"
+  /logout:
+    get:
+      summary: "Logout a user"
+      responses:
+        200:
+          description: "Success logout"
+definitions:
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      password:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "date-time"
+      updated_at:
+        type: "string"
+        format: "date-time"
