@@ -35,13 +35,16 @@ def add_product():
 def get_products():
     category_id = request.args.get("category_id")
     user_id = request.args.get("user_id")
-
+    # tambah paginate
+    """
+    page=request.args.get("page", 1, type=int)
+    """
     query = session.query(Product)
     if category_id:
         query = query.filter_by(category_id=category_id)
     if user_id:
         query = query.filter_by(user_id=user_id)
-
+    # if page ... limit .... tambah per page
     products = query.all()
     return jsonify([product.to_dict() for product in products])
 
