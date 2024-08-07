@@ -41,7 +41,7 @@ def get_transactions():
     s = Session()
     try:
         transactions = s.query(Transactions).all()
-        return jsonify([t.__dict__ for t in transactions]), 200
+        return jsonify([t.to_dict() for t in transactions]), 200
     except Exception as e:
         return jsonify({"message": "Error fetching transactions", "error": str(e)}), 500
     finally:

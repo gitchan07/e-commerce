@@ -20,7 +20,6 @@ def add_product():
         description=data["description"],
         stock=data["stock"],
         price=data["price"],
-        promotion=data["promotion"],
     )
     try:
         session.add(new_product)
@@ -74,7 +73,6 @@ def update_product(id):
         product.description = data.get("description", product.description)
         product.stock = data.get("stock", product.stock)
         product.price = data.get("price", product.price)
-        product.promotion = data.get("promotion", product.promotion)
         try:
             session.commit()
             return jsonify({"message": "Product updated successfully"})

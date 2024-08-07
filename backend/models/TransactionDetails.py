@@ -11,8 +11,16 @@ class TransactionDetails(Base):
     product_id = mapped_column(Integer, ForeignKey("products.id"))
     quantity = mapped_column(Integer)
     price = mapped_column(DECIMAL(10, 2))
+    total_price_item = mapped_column(DECIMAL(10, 2))  # Updated column name
     created_at = mapped_column(DateTime, default=func.now())
     updated_at = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
-    transaction = relationship("transactions", back_populates="transaction_details")
-    product = relationship("products", back_populates="transaction_details")
+    transaction = relationship("Transactions", back_populates="transaction_details")
+    product = relationship("Products", back_populates="transaction_details")
+
+    def to_dict(self):
+        return {
+            key: value
+            for key, value in self.__dict__.items()
+            if not key.startswith("_sa_")
+        }
