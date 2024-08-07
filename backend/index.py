@@ -12,6 +12,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from controllers.TransactionDetails import transaction_details_routes
 from controllers.Transactions import transaction_routes
 from controllers.Products import product_management_bp
+from controllers.Users import user_routes
 
 load_dotenv()
 
@@ -29,22 +30,21 @@ login_manager.init_app(app)
 app.register_blueprint(transaction_details_routes, url_prefix="/transaction_details")
 app.register_blueprint(transaction_routes, url_prefix="/transactions")
 app.register_blueprint(product_management_bp, url_prefix="/products")
+app.register_blueprint(user_routes, url_prefix="/users")
 
 # Initialize Swagger
-SWAGGER_URL = '/apidocs'
-API_URL = '/Documentation/products.yaml'
+SWAGGER_URL = "/apidocs"
+API_URL = "/Documentation/products.yaml"
 swaggerui_blueprint = get_swaggerui_blueprint(
-    SWAGGER_URL,
-    API_URL,
-    config={
-        'app_name': "Product Management API"
-    }
+    SWAGGER_URL, API_URL, config={"app_name": "Product Management API"}
 )
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
 
 @app.route("/")
 def test():
     return "Hello there"
+
 
 # Run the app
 if __name__ == "__main__":

@@ -19,6 +19,7 @@ class Product(Base):
 
     user = relationship("Users", back_populates="products")
     category = relationship("Category", back_populates="products")
+    transaction_details = relationship("TransactionDetails", back_populates="products")
 
     def to_dict(self):
         return {

@@ -16,7 +16,7 @@ class TransactionDetails(Base):
     updated_at = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
     transaction = relationship("Transactions", back_populates="transaction_details")
-    product = relationship("Products", back_populates="transaction_details")
+    product = relationship("Product", back_populates="transaction_details")
 
     def to_dict(self):
         return {
