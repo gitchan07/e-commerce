@@ -6,21 +6,19 @@ from sqlalchemy.orm import sessionmaker
 
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
+from flask_swagger_ui import get_swaggerui_blueprint
 
-# import controllers here
+# Import controllers here
 from controllers.TransactionDetails import transaction_details_routes
 from controllers.Transactions import transaction_routes
 from controllers.Products import product_management_bp
-
-# flask --app index run --debug to run
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
-
-# login manager here
+# Initialize JWT Manager
 jwt = JWTManager(app)
 
 # Initialize Login Manager
@@ -28,20 +26,26 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # Register blueprints
-app.register_blueprint(transaction_details_routes, url_prefix="/transactions")
+app.register_blueprint(transaction_details_routes, url_prefix="/transaction_details")
 app.register_blueprint(transaction_routes, url_prefix="/transactions")
 app.register_blueprint(product_management_bp, url_prefix="/products")
 
-
 # Initialize Swagger
+SWAGGER_URL = '/apidocs'
+API_URL = '/Documentation/products.yaml'
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "Product Management API"
+    }
+)
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
-
-# Logic here
 @app.route("/")
 def test():
     return "Hello there"
 
-
-# python index.py
+# Run the app
 if __name__ == "__main__":
     app.run(debug=True)

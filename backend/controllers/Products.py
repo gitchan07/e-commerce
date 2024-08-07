@@ -20,7 +20,6 @@ def add_product():
         description=data["description"],
         stock=data["stock"],
         price=data["price"],
-        promotion=data["promotion"],
     )
     try:
         session.add(new_product)
@@ -35,6 +34,8 @@ def add_product():
 def get_products():
     category_id = request.args.get("category_id")
     user_id = request.args.get("user_id")
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
 
     query = session.query(Product)
     if category_id:
@@ -42,8 +43,15 @@ def get_products():
     if user_id:
         query = query.filter_by(user_id=user_id)
 
-    products = query.all()
-    return jsonify([product.to_dict() for product in products])
+    total = query.count()
+    products = query.offset((page - 1) * per_page).limit(per_page).all()
+    
+    return jsonify({
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "products": [product.to_dict() for product in products]
+    })
 
 
 @product_management_bp.route("/<int:id>", methods=["GET"])
@@ -65,7 +73,6 @@ def update_product(id):
         product.description = data.get("description", product.description)
         product.stock = data.get("stock", product.stock)
         product.price = data.get("price", product.price)
-        product.promotion = data.get("promotion", product.promotion)
         try:
             session.commit()
             return jsonify({"message": "Product updated successfully"})

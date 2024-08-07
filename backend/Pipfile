@@ -13,6 +13,8 @@ bcrypt = "*"
 mysql-connector-python = "*"
 flasgger = "*"
 sqlalchemy = "*"
+flask-swagger-ui = "*"
+pyyaml = "*"
 
 [dev-packages]
 
