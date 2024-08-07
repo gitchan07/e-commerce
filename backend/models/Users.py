@@ -28,6 +28,4 @@ class Users(Base, UserMixin):
         )
 
     products = relationship("Product", back_populates="user")
-    transactions = relationship(
-        "Transactions", back_populates="user"
-    )  # Added relationship
+    transactions = relationship("Transactions", back_populates="user")
