@@ -13,7 +13,6 @@ bcrypt = "*"
 mysql-connector-python = "*"
 flasgger = "*"
 sqlalchemy = "*"
-sqlalchemy-serializer = "*"
 
 [dev-packages]
 
