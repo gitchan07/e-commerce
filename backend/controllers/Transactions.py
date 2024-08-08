@@ -6,6 +6,30 @@ from flasgger import swag_from
 
 transaction_routes = Blueprint("transaction_routes", __name__)
 
+Session = sessionmaker(bind=connection)
+session = Session()
+
+
+# UNTUK TESTING UDH BISA MASUK BLM
+@transaction_routes.route("/testing", methods=["GET"])
+def testing():
+    Session = sessionmaker(bind=connection)
+    s = Session()
+    try:
+        details = s.query(Transactions).first()
+        response = {
+            "message": "good connection",
+            "dict": (details.to_dict() if details else "No transaction  available"),
+        }
+        status_code = 200
+    except Exception as e:
+        response = {"message": "connection failed", "error": str(e)}
+        status_code = 500
+    finally:
+        s.close()
+
+    return jsonify(response), status_code
+
 
 # POST/Transaction
 @transaction_routes.route("/", methods=["POST"])

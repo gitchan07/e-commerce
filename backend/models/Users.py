@@ -3,15 +3,17 @@ from sqlalchemy.orm import relationship, mapped_column
 from flask_login import UserMixin
 import bcrypt
 from models.Base import Base
+import datetime
 
 
 class Users(Base, UserMixin):
     __tablename__ = "users"
+
     id = mapped_column(Integer, primary_key=True, autoincrement=True)
-    username = mapped_column(String(50), unique=True, nullable=False)
-    role = mapped_column(String(10), nullable=False)
+    username = mapped_column(String(50), nullable=False, unique=True)
+    role = mapped_column(String(50), nullable=False)
     email = mapped_column(String(100), nullable=False)
-    full_name = mapped_column(String(100))
+    full_name = mapped_column(String(100), nullable=False)
     address = mapped_column(String(100))
     password_hash = mapped_column(String(255), nullable=False)
     created_at = mapped_column(DateTime, default=func.now())
@@ -27,7 +29,7 @@ class Users(Base, UserMixin):
             password.encode("utf-8"), self.password_hash.encode("utf-8")
         )
 
-    products = relationship("Product", back_populates="users")
+    products = relationship("Products", back_populates="users")
     transactions = relationship("Transactions", back_populates="users")
 
     def to_dict(self):
@@ -38,6 +40,6 @@ class Users(Base, UserMixin):
             "email": self.email,
             "full_name": self.full_name,
             "address": self.address,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }

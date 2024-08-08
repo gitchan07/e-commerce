@@ -22,6 +22,5 @@ try:
     )
     connection = engine.connect()
     print(f"Successfully connected to {host}")
-    connection.close()
 except Exception as e:
     print(f"Failed to connect: {e}")

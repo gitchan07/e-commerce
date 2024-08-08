@@ -5,14 +5,15 @@ from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
 
 from flask_jwt_extended import JWTManager
-from flask_login import LoginManager
 from flask_swagger_ui import get_swaggerui_blueprint
 
 # Import controllers here
+from controllers.Users import users_routes
+from controllers.Categories import category_routes
 from controllers.TransactionDetails import transaction_details_routes
 from controllers.Transactions import transaction_routes
-from controllers.Products import product_management_bp
-from controllers.Users import user_bp
+from controllers.Products import product_routes
+from controllers.Promotions import promotion_routes
 
 load_dotenv()
 
@@ -22,16 +23,14 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 # Initialize JWT Manager
 jwt = JWTManager(app)
 
-# Initialize Login Manager
-login_manager = LoginManager()
-login_manager.init_app(app)
 
 # Register blueprints
-app.register_blueprint(transaction_details_routes, url_prefix="/transaction_details")
+app.register_blueprint(users_routes, url_prefix="/users")
+app.register_blueprint(category_routes, url_prefix="/categories")
+app.register_blueprint(product_routes, url_prefix="/products")
 app.register_blueprint(transaction_routes, url_prefix="/transactions")
-app.register_blueprint(product_management_bp, url_prefix="/products")
-app.register_blueprint(user_bp, url_prefix="/users")
-
+app.register_blueprint(transaction_details_routes, url_prefix="/TransactionDetails")
+app.register_blueprint(promotion_routes, url_prefix="/promotions")
 # Initialize Swagger
 SWAGGER_URL = "/apidocs"
 API_URL = "/Documentation/products.yaml"
