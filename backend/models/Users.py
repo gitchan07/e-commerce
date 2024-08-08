@@ -27,8 +27,8 @@ class Users(Base, UserMixin):
             password.encode("utf-8"), self.password_hash.encode("utf-8")
         )
 
-    products = relationship("Product", back_populates="user")
-    transactions = relationship("Transactions", back_populates="user")
+    products = relationship("Product", back_populates="users")
+    transactions = relationship("Transactions", back_populates="users")
 
     def to_dict(self):
         return {
