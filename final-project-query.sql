@@ -123,5 +123,4 @@ BEGIN
 END;
 //
 
--- Change the delimiter back to the default semicolon
 DELIMITER ;

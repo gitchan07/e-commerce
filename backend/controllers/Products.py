@@ -34,6 +34,7 @@ def add_product():
 def get_products():
     category_id = request.args.get("category_id")
     user_id = request.args.get("user_id")
+
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
 
@@ -45,13 +46,15 @@ def get_products():
 
     total = query.count()
     products = query.offset((page - 1) * per_page).limit(per_page).all()
-    
-    return jsonify({
-        "total": total,
-        "page": page,
-        "per_page": per_page,
-        "products": [product.to_dict() for product in products]
-    })
+
+    return jsonify(
+        {
+            "total": total,
+            "page": page,
+            "per_page": per_page,
+            "products": [product.to_dict() for product in products],
+        }
+    )
 
 
 @product_management_bp.route("/<int:id>", methods=["GET"])
