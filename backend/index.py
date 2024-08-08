@@ -12,7 +12,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from controllers.TransactionDetails import transaction_details_routes
 from controllers.Transactions import transaction_routes
 from controllers.Products import product_management_bp
-from controllers.Users import user_routes
+from controllers.Users import user_bp
 
 load_dotenv()
 
@@ -30,7 +30,7 @@ login_manager.init_app(app)
 app.register_blueprint(transaction_details_routes, url_prefix="/transaction_details")
 app.register_blueprint(transaction_routes, url_prefix="/transactions")
 app.register_blueprint(product_management_bp, url_prefix="/products")
-app.register_blueprint(user_routes, url_prefix="/users")
+app.register_blueprint(user_bp, url_prefix="/users")
 
 # Initialize Swagger
 SWAGGER_URL = "/apidocs"

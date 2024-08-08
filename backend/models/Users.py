@@ -29,3 +29,15 @@ class Users(Base, UserMixin):
 
     products = relationship("Product", back_populates="user")
     transactions = relationship("Transactions", back_populates="user")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "role": self.role,
+            "email": self.email,
+            "full_name": self.full_name,
+            "address": self.address,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }

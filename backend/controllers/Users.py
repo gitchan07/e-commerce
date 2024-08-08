@@ -1,94 +1,124 @@
-from flask import Blueprint, request
-
+from flask import Blueprint, request, jsonify
 from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
 from models.Users import Users
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from sqlalchemy.exc import SQLAlchemyError
 
-from flask_login import login_user, logout_user, login_required
-from flask_jwt_extended import create_access_token
+user_bp = Blueprint('user', __name__)
 
+Session = sessionmaker(bind=connection)
 
-user_routes = Blueprint("user_routes", __name__)
-
-
-@user_routes.route("/register", methods=["POST"])
-def register_user():
-    Session = sessionmaker(connection)
-    s = Session()
-
-    s.begin()
+def create_new_user(data):
+    session = None
     try:
-        NewUser = Users(name=request.form["name"], email=request.form["email"])
+        # Validate required fields
+        if not all(key in data for key in ("username", "email", "password", "role")):
+            return {"message": "Missing required fields"}, 400
 
-        NewUser.set_password(request.form["password"])
+        session = Session()
 
-        s.add(NewUser)
-        s.commit()
-    except Exception as e:
-        s.rollback()
-        return {"message": f"Fail to Register{e}"}, 500
+        # Check if username or email already exists
+        if session.query(Users).filter_by(username=data['username']).first() or \
+           session.query(Users).filter_by(email=data['email']).first():
+            return {"message": "Username or email already exists"}, 400
 
-    return {"message": "Register Success"}, 200
-
-
-@user_routes.route("/login", methods=["POST"])
-def check_login():
-    Session = sessionmaker(connection)
-    s = Session()
-
-    s.begin()
-    try:
-        email = request.form["email"]
-        user = s.query(Users).filter(Users.email == email).first()
-
-        if user == None:
-            return {"message": "User not found"}, 403
-
-        if not user.check_password(request.form["password"]):
-            return {"message": "Invalid password"}, 403
-
-        # Bisa diproses untuk login
-        login_user(user)
-
-        # Get Session ID
-        session_id = request.cookies.get("session")
-
-        return {"session_id": session_id, "message": "Login Success"}, 200
-
-    except Exception as e:
-        s.rollback()
-        return {"message": "Gagal login"}, 500
-
-
-@user_routes.route("/loginjwt", methods=["POST"])
-def check_login_jwt():
-    Session = sessionmaker(connection)
-    s = Session()
-
-    s.begin()
-    try:
-        email = request.form["email"]
-        user = s.query(Users).filter(Users.email == email).first()
-
-        if user == None:
-            return {"message": "User not found"}, 403
-
-        if not user.check_password(request.form["password"]):
-            return {"message": "Invalid password"}, 403
-
-        access_token = create_access_token(
-            identity=user.id, additional_claims={"name": user.name, "id": user.id}
+        # Create new user and hash the password
+        new_user = Users(
+            username=data['username'],
+            email=data['email'],
+            role=data['role'],
+            full_name=data.get('full_name'),
+            address=data.get('address')
         )
+        new_user.set_password(data['password'])
 
-        return {"access_token": access_token, "message": "Login Success"}, 200
+        session.add(new_user)
+        session.commit()
 
+        return {"message": "User created successfully"}, 201
+    except SQLAlchemyError as e:
+        session.rollback()
+        return {"message": "Database error occurred", "error": str(e)}, 500
+    finally:
+        if session:
+            session.close()
+
+@user_bp.route('/register', methods=['POST'])
+def register_user():
+    if not request.is_json:
+        return jsonify({"message": "Request must be JSON", "error": "Unsupported Media Type"}), 415
+
+    try:
+        data = request.get_json()
+        response, status = create_new_user(data)
+        return jsonify(response), status
     except Exception as e:
-        s.rollback()
-        return {"message": "Gagal login"}, 500
+        return jsonify({"message": "An error occurred", "error": str(e)}), 500
 
+def update_existing_user(user_id, data):
+    # Implement this function
+    pass
 
-@user_routes.route("/logout", methods=["GET"])
-@login_required
-def user_logout():
-    logout_user()
-    return {"message": "Success logout"}, 200
+def delete_existing_user(user_id):
+    # Implement this function
+    pass
+
+@user_bp.route('/users', methods=['GET'])
+@jwt_required()
+def get_all_users():
+    try:
+        with Session() as session:
+            users = session.query(Users).all()
+            return jsonify({
+                "message": "All users fetched successfully",
+                "count": len(users),
+                "data": [user.serialize() for user in users],
+            })
+    except SQLAlchemyError as e:
+        return jsonify({"message": "Database error occurred", "error": str(e)}), 500
+
+@user_bp.route('/users/<int:user_id>', methods=['GET'])
+@jwt_required()
+def get_user(user_id):
+    try:
+        with Session() as session:
+            user = session.query(Users).filter_by(id=user_id).first()
+            if user:
+                return jsonify({
+                    "message": "User fetched successfully",
+                    "data": user.serialize(),
+                })
+            else:
+                return jsonify({'message': 'User not found'}), 404
+    except SQLAlchemyError as e:
+        return jsonify({"message": "Database error occurred", "error": str(e)}), 500
+
+@user_bp.route('/users', methods=['POST'])
+@jwt_required()
+def create_user():
+    try:
+        data = request.get_json()
+        response, status = create_new_user(data)
+        return jsonify(response), status
+    except Exception as e:
+        return jsonify({"message": "An error occurred", "error": str(e)}), 500
+
+@user_bp.route('/users/<int:user_id>', methods=['PUT'])
+@jwt_required()
+def update_user(user_id):
+    try:
+        data = request.get_json()
+        response, status = update_existing_user(user_id, data)
+        return jsonify(response), status
+    except Exception as e:
+        return jsonify({"message": "An error occurred", "error": str(e)}), 500
+
+@user_bp.route('/users/<int:user_id>', methods=['DELETE'])
+@jwt_required()
+def delete_user(user_id):
+    try:
+        response, status = delete_existing_user(user_id)
+        return jsonify(response), status
+    except Exception as e:
+        return jsonify({"message": "An error occurred", "error": str(e)}), 500
