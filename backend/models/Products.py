@@ -1,9 +1,6 @@
 from sqlalchemy import Integer, String, Text, DateTime, func, ForeignKey, DECIMAL
 from sqlalchemy.orm import relationship, mapped_column
 from models.Base import Base
-from models.Users import Users
-from models.Categories import Category
-
 
 class Product(Base):
     __tablename__ = "products"
@@ -14,12 +11,14 @@ class Product(Base):
     description = mapped_column(Text)
     stock = mapped_column(Integer)
     price = mapped_column(DECIMAL(10, 2))
+    promotion_id = mapped_column(Integer, ForeignKey("promotions.id"))
     created_at = mapped_column(DateTime, default=func.now())
     updated_at = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
     user = relationship("Users", back_populates="products")
     category = relationship("Category", back_populates="products")
     transaction_details = relationship("TransactionDetails", back_populates="products")
+    promotion = relationship("Promotion", back_populates="products")
 
     def to_dict(self):
         return {
