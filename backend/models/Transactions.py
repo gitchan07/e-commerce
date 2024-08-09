@@ -25,6 +25,18 @@ class Transactions(Base):
         "TransactionDetails", back_populates="transactions"
     )
 
+    def apply_promotions(self):
+
+        if self.promotion and self.promotion.value_discount:
+            discount_amount = self.total_price_all_before * (
+                self.promotion.value_discount / 100
+            )
+            self.total_price_all_after = self.total_price_all_before - discount_amount
+        else:
+            self.total_price_all_after = self.total_price_all_before
+
+        return self.total_price_all_after
+
     @staticmethod
     def generate_transactions_number():
         return str(uuid.uuid4()).replace("-", "").upper()[:12]
