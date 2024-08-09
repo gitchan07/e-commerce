@@ -30,8 +30,12 @@ def test_connection():
 @category_routes.route("/", methods=["POST"])
 @jwt_required()
 def create_category():
+    current_user_id = get_jwt_identity()
+    role = get_user_role(current_user_id)
     if not request.is_json:
         return jsonify({"message": "Request must be JSON"}), 415
+    if role != "seller":
+        return jsonify({"message": "Unauthorized"}), 403
 
     try:
         data = request.get_json()
@@ -64,8 +68,12 @@ def get_category(category_id):
 @category_routes.route("/<int:category_id>", methods=["PUT"])
 @jwt_required()
 def update_category(category_id):
+    current_user_id = get_jwt_identity()
+    role = get_user_role(current_user_id)
     if not request.is_json:
         return jsonify({"message": "Request must be JSON"}), 415
+    if role != "seller":
+        return jsonify({"message": "Unauthorized"}), 403
 
     try:
         data = request.get_json()
@@ -78,6 +86,10 @@ def update_category(category_id):
 @category_routes.route("/<int:category_id>", methods=["DELETE"])
 @jwt_required()
 def delete_category(category_id):
+    current_user_id = get_jwt_identity()
+    role = get_user_role(current_user_id)
+    if role != "seller":
+        return jsonify({"message": "Unauthorized"}), 403
     try:
         response, status = delete_existing_category(category_id)
         return jsonify(response), status
@@ -86,6 +98,15 @@ def delete_category(category_id):
 
 
 # Utility Functions
+def get_user_role(user_id):
+    session = Session()
+    try:
+        user = session.query(Users).filter_by(id=user_id).first()
+        return user.role if user else None
+    except Exception as e:
+        return {"message": "Database error occurred", "error": str(e)}
+    finally:
+        session.close()
 
 
 def create_new_category(data):
