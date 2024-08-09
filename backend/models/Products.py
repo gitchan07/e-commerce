@@ -15,6 +15,7 @@ class Products(Base):
     description = mapped_column(String(100))
     stock = mapped_column(Integer, nullable=False)
     price = mapped_column(DECIMAL(10, 2), nullable=False)
+    # img_path = mapped_column(String(100))
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at = mapped_column(DateTime(timezone=True), onupdate=func.now())
 

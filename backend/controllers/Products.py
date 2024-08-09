@@ -1,3 +1,7 @@
+# tambah upload image
+#  http://127.0.0.1:5000/static/upload_image/bg.jpg, munculin ini sudah bisa
+
+
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -18,10 +22,13 @@ product_routes = Blueprint("product_routes", __name__)
 def test_connection():
     session = Session()
     try:
-        product = session.query(Products).first()
+        products = session.query(Products).all()
+
+        products_list = [product.to_dict() for product in products]
+
         response = {
             "message": "good connection",
-            "dict": product.to_dict() if product else "No products available",
+            "products": products_list if products_list else "No products available",
         }
         return jsonify(response), 200
     except Exception as e:
@@ -95,8 +102,6 @@ def delete_product(id):
 
 
 # Get Seller's Products by Name and Category
-
-
 @product_routes.route("/my-products", methods=["GET"])
 @jwt_required()
 def get_seller_products():
@@ -119,8 +124,6 @@ def get_seller_products():
 
 
 # Get a Specific Product for Seller by ID
-
-
 @product_routes.route("/my-products/<int:id>", methods=["GET"])
 @jwt_required()
 def get_seller_product_by_id(id):
@@ -138,12 +141,15 @@ def get_seller_product_by_id(id):
 
 
 # Utility Functions
-
-
 def get_user_role(user_id):
     session = Session()
-    user = session.query(Users).filter_by(id=user_id).first()
-    return user.role if user else None
+    try:
+        user = session.query(Users).filter_by(id=user_id).first()
+        return user.role if user else None
+    except Exception as e:
+        return {"message": "Database error occurred", "error": str(e)}
+    finally:
+        session.close()
 
 
 def create_new_product(data, user_id):
