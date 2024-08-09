@@ -7,7 +7,7 @@ transaction_details_routes = Blueprint("transaction_details_routes", __name__)
 
 
 # UNTUK TESTING UDH BISA MASUK BLM
-@transaction_details_routes.route("/testing", methods=["GET"])
+@transaction_details_routes.route("/ttd/testing", methods=["GET"])
 def testing():
     Session = sessionmaker(bind=connection)
     s = Session()

@@ -35,7 +35,8 @@ def testing():
 @transaction_routes.route("/", methods=["POST"])
 def transaction():
     data = request.get_json()
-    required_fields = ["date", "transaction_number", "user_id"]
+
+    required_fields = ["user_id", "total_price_all_before", "transaction_status"]
     for field in required_fields:
         if field not in data:
             return jsonify({"message": f"{field} is required"}), 400
@@ -44,16 +45,26 @@ def transaction():
     s = Session()
     try:
         new_transaction = Transactions(
-            date=data["date"],
-            transaction_number=data["transaction_number"],
             user_id=data["user_id"],
+            total_price_all_before=data["total_price_all_before"],
+            transaction_status=data["transaction_status"],
+            transaction_number=Transactions.generate_transactions_number(),
         )
         s.add(new_transaction)
         s.commit()
-        return jsonify({"message": "transaction Created"}), 200
+
+        return (
+            jsonify(
+                {
+                    "message": "Transaction Created",
+                    "transaction": new_transaction.to_dict(),
+                }
+            ),
+            200,
+        )
     except Exception as e:
         s.rollback()
-        return jsonify({"message": "error creating transaction", "error": str(e)}), 500
+        return jsonify({"message": "Error creating transaction", "error": str(e)}), 500
     finally:
         s.close()
 

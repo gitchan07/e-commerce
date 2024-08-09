@@ -96,7 +96,7 @@ def delete_existing_user(user_id):
     pass
 
 
-@users_routes.route("/users", methods=["GET"])
+@users_routes.route("/", methods=["GET"])
 @jwt_required()
 def get_all_users():
     try:
@@ -113,7 +113,7 @@ def get_all_users():
         return jsonify({"message": "Database error occurred", "error": str(e)}), 500
 
 
-@users_routes.route("/users/<int:user_id>", methods=["GET"])
+@users_routes.route("/<int:user_id>", methods=["GET"])
 @jwt_required()
 def get_user(user_id):
     try:
@@ -132,7 +132,7 @@ def get_user(user_id):
         return jsonify({"message": "Database error occurred", "error": str(e)}), 500
 
 
-@users_routes.route("/users", methods=["POST"])
+@users_routes.route("/", methods=["POST"])
 @jwt_required()
 def create_user():
     try:
@@ -143,7 +143,7 @@ def create_user():
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
 
 
-@users_routes.route("/users/<int:user_id>", methods=["PUT"])
+@users_routes.route("/<int:user_id>", methods=["PUT"])
 @jwt_required()
 def update_user(user_id):
     try:

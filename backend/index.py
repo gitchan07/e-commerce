@@ -29,7 +29,7 @@ app.register_blueprint(users_routes, url_prefix="/users")
 app.register_blueprint(category_routes, url_prefix="/categories")
 app.register_blueprint(product_routes, url_prefix="/products")
 app.register_blueprint(transaction_routes, url_prefix="/transactions")
-app.register_blueprint(transaction_details_routes, url_prefix="/TransactionDetails")
+app.register_blueprint(transaction_details_routes, url_prefix="/transactions")
 app.register_blueprint(promotion_routes, url_prefix="/promotions")
 # Initialize Swagger
 SWAGGER_URL = "/apidocs"
