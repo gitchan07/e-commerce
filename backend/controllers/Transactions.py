@@ -74,7 +74,10 @@ def transaction():
 def get_transactions():
     Session = sessionmaker(bind=connection)
     s = Session()
+    user_id = request.args.get("user_id")
     try:
+        if user_id:
+            transactions = s.query(Transactions).filter_by(user_id=user_id).all()
         transactions = s.query(Transactions).all()
         return jsonify([t.to_dict() for t in transactions]), 200
     except Exception as e:
