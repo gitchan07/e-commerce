@@ -3,8 +3,15 @@ from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
+from datetime import datetime, timedelta, timezone
 
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import (
+    JWTManager,
+    get_jwt,
+    get_jwt_identity,
+    create_access_token,
+    set_access_cookies,
+)
 from flask_swagger_ui import get_swaggerui_blueprint
 
 # Import controllers here
