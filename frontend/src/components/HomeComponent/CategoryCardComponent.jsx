@@ -1,15 +1,18 @@
 import React from 'react';
 
-const CategoryCardComponent = ({ title, description, imageUrl }) => {
+const CategoryCardComponent = ({ categories }) => {
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
-      <img className="w-full h-48 object-cover" src={imageUrl} alt={title} />
-      <div className="px-6 py-4">
-        <div className="font-bold text-xl mb-2 text-gray-800">{title}</div>
-        <p className="text-gray-700 text-base">{description}</p>
-      </div>
-    </div>
+    <>
+      {categories.map((category) => (
+        <div key={category.id} className="bg-white rounded-lg shadow-md p-6 text-center hover:transform hover:scale-105 transition-transform duration-300">
+          <img src={category.image} alt={category.title} className="w-full h-auto object-cover mb-4 rounded-t-lg" />
+          <h2 className="text-lg font-semibold text-gray-800 mb-2">{category.title}</h2>
+          <p className="text-gray-600 text-sm">{category.description}</p>
+        </div>
+      ))}
+    </>
   );
+  
 };
 
 export default CategoryCardComponent;

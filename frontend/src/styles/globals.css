@@ -31,3 +31,11 @@ body {
     text-wrap: balance;
   }
 }
+
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+
+.overflow-x-scroll {
+  overflow-x: scroll;
+}
