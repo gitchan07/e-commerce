@@ -147,7 +147,6 @@ def get_seller_product_by_id(id):
 # Utility function for saving the uploaded image
 def save_image(image):
     if image:
-        # Define the upload path
         upload_folder = os.path.join(current_app.root_path, "static", "upload_image")
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
