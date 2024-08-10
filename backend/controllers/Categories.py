@@ -84,7 +84,6 @@ def update_category(category_id):
 @jwt_required()
 @role_required("seller")
 def delete_category(category_id):
-
     try:
         response, status = delete_existing_category(category_id)
         return jsonify(response), status
@@ -93,21 +92,11 @@ def delete_category(category_id):
 
 
 # Utility Functions
-def get_user_role(user_id):
-    session = Session()
-    try:
-        user = session.query(Users).filter_by(id=user_id).first()
-        return user.role if user else None
-    except Exception as e:
-        return {"message": "Database error occurred", "error": str(e)}
-    finally:
-        session.close()
 
 
 def create_new_category(data):
-    session = None
+    session = Session()
     try:
-        session = Session()
         new_category = Categories(name=data["name"])
         session.add(new_category)
         session.commit()
@@ -119,51 +108,52 @@ def create_new_category(data):
         session.rollback()
         return {"message": "Fail to create category", "error": str(e)}, 500
     finally:
-        if session:
-            session.close()
+        session.close()
 
 
 def get_all_categories():
+    session = Session()
     try:
-        with Session() as session:
-            product_id = request.args.get("product_id")  # correct this implementtation
-            categories = session.query(Categories).all()
-            category_list = [
-                {
-                    "id": category.id,
-                    "name": category.name,
-                    "created_at": category.created_at,
-                    "updated_at": category.updated_at,
-                }
-                for category in categories
-            ]
-            return {"categories": category_list}, 200
+        categories = session.query(Categories).all()
+        category_list = [
+            {
+                "id": category.id,
+                "name": category.name,
+                "created_at": category.created_at,
+                "updated_at": category.updated_at,
+            }
+            for category in categories
+        ]
+        return {"categories": category_list}, 200
     except SQLAlchemyError as e:
         return {"message": "Fail to retrieve categories", "error": str(e)}, 500
+    finally:
+        session.close()
 
 
 def get_category_by_id(category_id):
+    session = Session()
     try:
-        with Session() as session:
-            category = session.query(Categories).filter_by(id=category_id).first()
-            if category is None:
-                return {"message": "Category not found"}, 404
-            return {
-                "category": {
-                    "id": category.id,
-                    "name": category.name,
-                    "created_at": category.created_at,
-                    "updated_at": category.updated_at,
-                }
-            }, 200
+        category = session.query(Categories).filter_by(id=category_id).first()
+        if category is None:
+            return {"message": "Category not found"}, 404
+        return {
+            "category": {
+                "id": category.id,
+                "name": category.name,
+                "created_at": category.created_at,
+                "updated_at": category.updated_at,
+            }
+        }, 200
     except SQLAlchemyError as e:
         return {"message": "Fail to retrieve category", "error": str(e)}, 500
+    finally:
+        session.close()
 
 
 def update_existing_category(category_id, data):
-    session = None
+    session = Session()
     try:
-        session = Session()
         category = session.query(Categories).filter_by(id=category_id).first()
         if category is None:
             return {"message": "Category not found"}, 404
@@ -177,28 +167,20 @@ def update_existing_category(category_id, data):
         session.rollback()
         return {"message": "Fail to update category", "error": str(e)}, 500
     finally:
-        if session:
-            session.close()
+        session.close()
 
 
 def delete_existing_category(category_id):
-    session = None
+    session = Session()
     try:
-        session = Session()
         category = session.query(Categories).filter_by(id=category_id).first()
-
         if category is None:
-            print(f"Category ID {category_id} not found")
-            return jsonify({"message": "Category not found"}), 404
-
+            return {"message": "Category not found"}, 404
         session.delete(category)
         session.commit()
-        print(f"Category ID {category_id} deleted successfully")
-        return jsonify({"message": "Category deleted successfully"}), 200
+        return {"message": "Category deleted successfully"}, 200
     except SQLAlchemyError as e:
         session.rollback()
-        print(f"Failed to delete category ID {category_id}: {str(e)}")
-        return jsonify({"message": "Fail to delete category", "error": str(e)}), 500
+        return {"message": "Fail to delete category", "error": str(e)}, 500
     finally:
-        if session:
-            session.close()
+        session.close()

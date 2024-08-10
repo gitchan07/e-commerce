@@ -92,12 +92,10 @@ def delete_user_route(user_id):
 
 
 def create_new_user(data):
-    session = None
+    session = Session()
     try:
         if not all(key in data for key in ("username", "email", "password", "role")):
             return {"message": "Missing required fields"}, 400
-
-        session = Session()
 
         if (
             session.query(Users).filter_by(username=data["username"]).first()
@@ -110,8 +108,8 @@ def create_new_user(data):
             username=data["username"],
             email=data["email"],
             role=data["role"],
-            full_name=data["full_name"],
-            address=data["address"],
+            full_name=data.get("full_name", ""),  # Handle optional fields
+            address=data.get("address", ""),  # Handle optional fields
         )
         new_user.set_password(data["password"])
 
@@ -123,14 +121,12 @@ def create_new_user(data):
         session.rollback()
         return {"message": "Database error occurred", "error": str(e)}, 500
     finally:
-        if session:
-            session.close()
+        session.close()
 
 
 def update_existing_user(user_id, data):
-    session = None
+    session = Session()
     try:
-        session = Session()
         user = session.query(Users).filter_by(id=user_id).first()
 
         if not user:
@@ -157,14 +153,12 @@ def update_existing_user(user_id, data):
         session.rollback()
         return {"message": "Database error occurred", "error": str(e)}, 500
     finally:
-        if session:
-            session.close()
+        session.close()
 
 
 def delete_existing_user(user_id):
-    session = None
+    session = Session()
     try:
-        session = Session()
         user = session.query(Users).filter_by(id=user_id).first()
 
         if not user:
@@ -176,38 +170,41 @@ def delete_existing_user(user_id):
         return {"message": "User deleted successfully"}, 200
     except SQLAlchemyError as e:
         session.rollback()
-        return ({"message": "Database error occurred", "error": str(e)}), 500
+        return {"message": "Database error occurred", "error": str(e)}, 500
     finally:
-        if session:
-            session.close()
+        session.close()
 
 
 def get_all_users():
+    session = Session()
     try:
-        with Session() as session:
-            users = session.query(Users).all()
-            return {
-                "message": "All users fetched successfully",
-                "count": len(users),
-                "data": [user.to_dict() for user in users],
-            }, 200
+        users = session.query(Users).all()
+        return {
+            "message": "All users fetched successfully",
+            "count": len(users),
+            "data": [user.to_dict() for user in users],
+        }, 200
     except SQLAlchemyError as e:
-        return ({"message": "Database error occurred", "error": str(e)}), 500
+        return {"message": "Database error occurred", "error": str(e)}, 500
+    finally:
+        session.close()
 
 
 def get_user(user_id):
+    session = Session()
     try:
-        with Session() as session:
-            user = session.query(Users).filter_by(id=user_id).first()
-            if user:
-                return {
-                    "message": "User fetched successfully",
-                    "data": user.to_dict(),
-                }, 200
-            else:
-                return {"message": "User not found"}, 404
+        user = session.query(Users).filter_by(id=user_id).first()
+        if user:
+            return {
+                "message": "User fetched successfully",
+                "data": user.to_dict(),
+            }, 200
+        else:
+            return {"message": "User not found"}, 404
     except SQLAlchemyError as e:
-        return ({"message": "Database error occurred", "error": str(e)}), 500
+        return {"message": "Database error occurred", "error": str(e)}, 500
+    finally:
+        session.close()
 
 
 def login_user(data):
@@ -224,6 +221,6 @@ def login_user(data):
         else:
             return {"message": "Invalid username or password"}, 401
     except SQLAlchemyError as e:
-        return ({"message": "Database error occurred", "error": str(e)}), 500
+        return {"message": "Database error occurred", "error": str(e)}, 500
     finally:
         session.close()

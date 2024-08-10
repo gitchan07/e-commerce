@@ -40,7 +40,6 @@ def test_connection():
 def add_product():
     current_user_id = get_jwt_identity()
 
-    # Determine whether the request is for testing (JSON input) or production (form data)
     if request.is_json:
         data = request.get_json()
         img_path = data.get("img_path")
@@ -176,37 +175,45 @@ def create_new_product(data, user_id):
         )
         session.add(new_product)
         session.commit()
-        return {"message": "Product added successfully"}, 201
+        return {
+            "message": "Product added successfully",
+            "items": new_product.to_dict(),
+        }, 201
     except IntegrityError:
         session.rollback()
-        return {"message": "Failed to add product"}, 400
+        return {"message": "Failed to add product because category doesnt exist"}, 400
     finally:
         session.close()
 
 
 def get_all_products(filters):
     session = Session()
-    query = session.query(Products)
-    if filters.get("category_id"):
-        query = query.filter_by(category_id=filters["category_id"])
-    if filters.get("title"):
-        query = query.filter(Products.title.ilike(f"%{filters['title']}%"))
-    if filters.get("user_id"):
-        query = query.filter_by(user_id=filters["user_id"])
-    if filters.get("id"):
-        query = query.filter_by(id=filters["id"])
+    try:
+        query = session.query(Products)
+        if filters.get("category_id"):
+            query = query.filter_by(category_id=filters["category_id"])
+        if filters.get("title"):
+            query = query.filter(Products.title.ilike(f"%{filters['title']}%"))
+        if filters.get("user_id"):
+            query = query.filter_by(user_id=filters["user_id"])
+        if filters.get("id"):
+            query = query.filter_by(id=filters["id"])
 
-    page = filters.get("page", 1)
-    per_page = filters.get("per_page", 10)
-    total = query.count()
-    products = query.offset((page - 1) * per_page).limit(per_page).all()
+        page = filters.get("page", 1)
+        per_page = filters.get("per_page", 10)
+        total = query.count()
+        products = query.offset((page - 1) * per_page).limit(per_page).all()
 
-    return {
-        "total": total,
-        "page": page,
-        "per_page": per_page,
-        "products": [product.to_dict() for product in products],
-    }, 200
+        return {
+            "total": total,
+            "page": page,
+            "per_page": per_page,
+            "products": [product.to_dict() for product in products],
+        }, 200
+    except SQLAlchemyError as e:
+        return {"message": "Failed to retrieve products", "error": str(e)}, 500
+    finally:
+        session.close()
 
 
 def get_product_by_id(product_id):
@@ -259,5 +266,8 @@ def delete_existing_product(product_id, user_id):
             return {"message": "Product deleted successfully"}, 200
         else:
             return {"message": "Product not found or unauthorized"}, 404
+    except SQLAlchemyError as e:
+        session.rollback()
+        return {"message": "Failed to delete product", "error": str(e)}, 500
     finally:
         session.close()
