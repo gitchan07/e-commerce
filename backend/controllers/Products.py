@@ -40,14 +40,15 @@ def test_connection():
 def add_product():
     current_user_id = get_jwt_identity()
 
-    # For testing purposes: Accept img_path directly from JSON input
-    data = request.get_json()
-    img_path = data.get("img_path")  # Get img_path from JSON input
+    # Determine whether the request is for testing (JSON input) or production (form data)
+    if request.is_json:
+        data = request.get_json()
+        img_path = data.get("img_path")
+    else:
 
-    # Production code (commented out for testing):
-    # data = request.form.to_dict()
-    # image = request.files.get("image")
-    # img_path = save_image(image)
+        data = request.form.to_dict()
+        image = request.files.get("image")
+        img_path = save_image(image) if image else None
 
     data["img_path"] = img_path
     response, status = create_new_product(data, current_user_id)
