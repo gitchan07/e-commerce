@@ -35,7 +35,7 @@ def testing():
 @transaction_routes.route("/", methods=["POST"])
 def transaction():
     data = request.get_json()
-
+    # quer all the data form transaction
     required_fields = ["user_id", "total_price_all_before", "transaction_status"]
     for field in required_fields:
         if field not in data:
