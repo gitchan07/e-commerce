@@ -63,6 +63,7 @@ CREATE TABLE transactions (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     total_price_all_before DECIMAL(10, 2) NOT NULL,
     total_price_all_after DECIMAL(10, 2),
+    total_price_all DECIMAL(10,2),
     transaction_status VARCHAR(20) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (promotion_id) REFERENCES promotion(id)

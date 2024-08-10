@@ -428,3 +428,187 @@
        "updated_at": "2024-08-10T10:00:00"
      }
      ```
+Here's the `.md` documentation for the Promotions API based on the code you provided:
+
+```markdown
+## Promotions API Endpoints
+
+1. Create Promotion
+- **Endpoint:** `POST /promotions`
+- **Description:** Create a new promotion.
+- **Inputs:**
+  ```json
+  {
+    "voucher_code": "string",       // The code for the promotion
+    "value_discount": "decimal",    // The discount value associated with the promotion
+    "description": "string"         // (Optional) A description of the promotion
+  }
+  ```
+- **Output:**
+  ```json
+  {
+    "message": "Promotion created successfully"
+  }
+  ```
+
+ 2. Get Promotions
+- **Endpoint:** `GET /promotions`
+- **Description:** Retrieve a list of promotions with optional filtering by voucher code.
+- **Inputs:**
+  - **Query Parameters:**
+    - `voucher_code` (optional): Filter promotions by the voucher code.
+- **Output:**
+  ```json
+  [
+    {
+      "id": "int",                    // Promotion ID
+      "voucher_code": "string",       // The code for the promotion
+      "value_discount": "decimal",    // The discount value associated with the promotion
+      "description": "string",        // A description of the promotion
+      "created_at": "datetime",       // Timestamp when the promotion was created
+      "updated_at": "datetime"        // Timestamp when the promotion was last updated
+    }
+  ]
+  ```
+
+3. Get Promotion by ID
+- **Endpoint:** `GET /promotions/{promotion_id}`
+- **Description:** Retrieve details of a specific promotion by its ID.
+- **Inputs:** None
+- **Output:**
+  ```json
+  {
+    "id": "int",                    // Promotion ID
+    "voucher_code": "string",       // The code for the promotion
+    "value_discount": "decimal",    // The discount value associated with the promotion
+    "description": "string",        // A description of the promotion
+    "created_at": "datetime",       // Timestamp when the promotion was created
+    "updated_at": "datetime"        // Timestamp when the promotion was last updated
+  }
+  ```
+
+ 4. Update Promotion by ID
+- **Endpoint:** `PUT /promotions/{promotion_id}`
+- **Description:** Update details of an existing promotion by its ID.
+- **Inputs:**
+  ```json
+  {
+    "voucher_code": "string",       // (Optional) The new voucher code
+    "value_discount": "decimal",    // (Optional) The new discount value
+    "description": "string"         // (Optional) The new description
+  }
+  ```
+- **Output:**
+  ```json
+  {
+    "message": "Promotion updated successfully"
+  }
+  ```
+
+ 5. Delete Promotion by ID
+- **Endpoint:** `DELETE /promotions/{promotion_id}`
+- **Description:** Delete a specific promotion by its ID.
+- **Inputs:** None
+- **Output:**
+  ```json
+  {
+    "message": "Promotion deleted successfully"
+  }
+  ```
+
+
+## TransactionDetails API Testing
+
+1. Test Connection
+- **Endpoint:** `GET /ttd/testing`
+- **Description:** Check if the API connection is working correctly.
+- **Inputs:** None
+- **Output:**
+  ```json
+  {
+    "message": "good connection",
+    "dict": {
+      "transaction_details_id": "int",
+      "transaction_id": "int",
+      "product_id": "int",
+      "price": "decimal",
+      "quantity": "int"
+    }
+  }
+  ```
+  If no transaction details are available:
+  ```json
+  {
+    "message": "good connection",
+    "dict": "No transaction details available"
+  }
+  ```
+
+2. Add Item to Transaction
+- **Endpoint:** `POST /transactions/{transaction_id}/details/add`
+- **Description:** Add an item to the buyer's transaction.
+- **Inputs:**
+  ```json
+  {
+    "product_id": "int",
+    "quantity": "int"
+  }
+  ```
+- **Output:**
+  ```json
+  {
+    "message": "Item added to transaction",
+    "transaction_details_id": "int"
+  }
+  ```
+  If the `transaction_id` or `product_id` doesn't exist:
+  ```json
+  {
+    "message": "Transaction not found"
+  }
+  ```
+  or
+  ```json
+  {
+    "message": "Product not found"
+  }
+  ```
+
+3. Update Transaction Detail
+- **Endpoint:** `PUT /transactions/{transaction_id}/details/{transaction_details_id}`
+- **Description:** Update the quantity of an item in the transaction.
+- **Inputs:**
+  ```json
+  {
+    "quantity": "int"
+  }
+  ```
+- **Output:**
+  ```json
+  {
+    "message": "Transaction detail updated successfully"
+  }
+  ```
+  If the `transaction_details_id` doesn't exist:
+  ```json
+  {
+    "message": "Transaction detail not found"
+  }
+  ```
+
+ 4. Remove Item from Transaction
+- **Endpoint:** `DELETE /transactions/{transaction_id}/details/{transaction_details_id}`
+- **Description:** Remove an item from the buyer's transaction.
+- **Inputs:** None
+- **Output:**
+  ```json
+  {
+    "message": "Transaction detail removed successfully"
+  }
+  ```
+  If the `transaction_details_id` doesn't exist:
+  ```json
+  {
+    "message": "Transaction detail not found"
+  }
+  ```

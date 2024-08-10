@@ -2,137 +2,169 @@ from flask import Blueprint, request, jsonify
 from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
 from models.TransactionDetails import TransactionDetails
+from models.Transactions import Transactions
+from models.Products import Products
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from decorator import role_required
+from sqlalchemy.exc import SQLAlchemyError
 
 transaction_details_routes = Blueprint("transaction_details_routes", __name__)
+Session = sessionmaker(bind=connection)
+
+# Utility Functions
 
 
-# UNTUK TESTING UDH BISA MASUK BLM
-@transaction_details_routes.route("/ttd/testing", methods=["GET"])
-def testing():
-    Session = sessionmaker(bind=connection)
-    s = Session()
+def add_or_update_transaction_detail(transaction_id, product_id, quantity):
+    session = Session()
     try:
-        details = s.query(TransactionDetails).first()
-        response = {
-            "message": "good connection",
-            "dict": (
-                details.to_dict() if details else "No transaction details available"
-            ),
-        }
-        status_code = 200
-    except Exception as e:
-        response = {"message": "connection failed", "error": str(e)}
-        status_code = 500
-    finally:
-        s.close()
+        # Check if the transaction and product exist
+        transaction = session.query(Transactions).filter_by(id=transaction_id).first()
+        product = session.query(Products).filter_by(id=product_id).first()
 
-    return jsonify(response), status_code
+        if not transaction or not product:
+            return {"message": "Transaction or Product not found"}, 404
 
-
-# POST /{transaction_id}/details
-@transaction_details_routes.route("/<int:transaction_id>/details", methods=["POST"])
-def add_transaction_detail(transaction_id):
-    data = request.get_json()
-    required_fields = ["product_id", "quantity", "price"]
-
-    for field in required_fields:
-        if field not in data:
-            return jsonify({"message": f"{field} is required"}), 400
-
-    Session = sessionmaker(bind=connection)
-    s = Session()
-    try:
-        new_details = TransactionDetails(
-            transaction_id=transaction_id,
-            product_id=data["product_id"],
-            quantity=data["quantity"],
-            price=data["price"],
+        # Check if this product is already in the transaction
+        transaction_detail = (
+            session.query(TransactionDetails)
+            .filter_by(transaction_id=transaction_id, product_id=product_id)
+            .first()
         )
-        s.add(new_details)
-        s.commit()
-        return jsonify({"message": "detail added", "detail": new_details.__dict__}), 200
-    except Exception as e:
-        s.rollback()
-        return jsonify({"message": "Error adding detail", "error": str(e)}), 500
+
+        if transaction_detail:
+            # Update the quantity
+            transaction_detail.quantity += quantity
+            transaction_detail.total_price_item = (
+                transaction_detail.quantity * transaction_detail.price
+            )
+        else:
+            # Add a new transaction detail
+            transaction_detail = TransactionDetails(
+                transaction_id=transaction_id,
+                product_id=product_id,
+                quantity=quantity,
+                price=product.price,
+                total_price_item=quantity * product.price,
+            )
+            session.add(transaction_detail)
+
+        # Update the total price in the transaction
+        transaction.total_price_all_before += transaction_detail.total_price_item
+        session.commit()
+
+        return transaction_detail.to_dict(), 200
+    except SQLAlchemyError as e:
+        session.rollback()
+        return {
+            "message": "Failed to add or update item in transaction",
+            "error": str(e),
+        }, 500
     finally:
-        s.close()
+        session.close()
 
 
-# GET /{transaction_id}/details
-@transaction_details_routes.route("/<int:transaction_id>/details", methods=["GET"])
-def get_transactions_details(transaction_id):
-    Session = sessionmaker(bind=connection)
-    s = Session()
+def remove_transaction_detail(transaction_details_id):
+    session = Session()
     try:
-        details = (
-            s.query(TransactionDetails)
-            .filter(TransactionDetails.transaction_id == transaction_id)
+        # Fetch the existing transaction detail
+        transaction_detail = (
+            session.query(TransactionDetails)
+            .filter_by(id=transaction_details_id)
+            .first()
+        )
+
+        if not transaction_detail:
+            return {"message": "Transaction detail not found"}, 404
+
+        # Adjust the total price in the transaction
+        transaction = transaction_detail.transactions
+        transaction.total_price_all_before -= transaction_detail.total_price_item
+
+        # Remove the transaction detail
+        session.delete(transaction_detail)
+        session.commit()
+
+        return {"message": "Transaction detail removed successfully"}, 200
+    except SQLAlchemyError as e:
+        session.rollback()
+        return {"message": "Failed to remove transaction detail", "error": str(e)}, 500
+    finally:
+        session.close()
+
+
+def get_seller_transaction_details(seller_id):
+    session = Session()
+    try:
+        # Retrieve transaction details for the seller's products
+        transaction_details = (
+            session.query(TransactionDetails)
+            .join(Products)
+            .filter(Products.user_id == seller_id)
             .all()
         )
-        return jsonify([d.__dict__ for d in details]), 200
-    except Exception as e:
-        return jsonify({"message": "Error fetching details", "error": str(e)}), 500
+
+        if not transaction_details:
+            return {"message": "No transactions found for seller's products"}, 404
+
+        result = []
+        for detail in transaction_details:
+            result.append(
+                {
+                    "transaction_id": detail.transaction_id,
+                    "product_id": detail.product_id,
+                    "product_title": detail.products.title,
+                    "quantity": detail.quantity,
+                    "price_at_purchase": detail.price,
+                    "total_price_item": detail.total_price_item,
+                    "transaction_status": detail.transactions.transaction_status,
+                    "transaction_number": detail.transactions.transaction_number,
+                    "datetime": detail.transactions.datetime.isoformat(),
+                }
+            )
+
+        return result, 200
+    except SQLAlchemyError as e:
+        return {"message": "Failed to retrieve transactions", "error": str(e)}, 500
     finally:
-        s.close()
+        session.close()
 
 
-@transaction_details_routes.route(
-    "/<int:transaction_id>/details/<int:detail_id>", methods=["PUT"]
-)
-def update_transaction_detail(transaction_id, detail_id):
+# Routes
+
+
+# Add or Update Item in Transaction
+@transaction_details_routes.route("/<int:transaction_id>/details/add", methods=["POST"])
+@jwt_required()
+@role_required("buyer")
+def add_or_update_item_in_transaction(transaction_id):
     data = request.get_json()
-    Session = sessionmaker(bind=connection)
-    s = Session()
-    try:
-        detail = (
-            s.query(TransactionDetails)
-            .filter(
-                TransactionDetails.transaction_id == transaction_id,
-                TransactionDetails.id == detail_id,
-            )
-            .first()
-        )
-        if detail:
-            detail.quantity = data.get("quantity", detail.quantity)
-            detail.price = data.get("price", detail.price)
-            s.commit()
-            return (
-                jsonify({"message": "Detail updated", "detail": detail.__dict__}),
-                200,
-            )
-        else:
-            return jsonify({"message": "Detail not found"}), 404
-    except Exception as e:
-        s.rollback()
-        return jsonify({"message": "Error updating detail", "error": str(e)}), 500
-    finally:
-        s.close()
+    if not data or "product_id" not in data or "quantity" not in data:
+        return jsonify({"message": "Invalid input"}), 400
+
+    product_id = data["product_id"]
+    quantity = data["quantity"]
+    response, status = add_or_update_transaction_detail(
+        transaction_id, product_id, quantity
+    )
+    return jsonify(response), status
 
 
-# DELETE /<int:transaction_id>/details/<int:detail_id>
 @transaction_details_routes.route(
-    "/<int:transaction_id>/details/<int:detail_id>", methods=["DELETE"]
+    "/<int:transaction_id}/details/<int:transaction_details_id>",
+    methods=["DELETE"],
 )
-def delete_transaction_detail(transaction_id, detail_id):
-    Session = sessionmaker(bind=connection)
-    s = Session()
-    try:
-        detail = (
-            s.query(TransactionDetails)
-            .filter(
-                TransactionDetails.transaction_id == transaction_id,
-                TransactionDetails.id == detail_id,
-            )
-            .first()
-        )
-        if detail:
-            s.delete(detail)
-            s.commit()
-            return jsonify({"message": f"Detail {detail.id} deleted"}), 200
-        else:
-            return jsonify({"message": "Detail not found"}), 404
-    except Exception as e:
-        s.rollback()
-        return jsonify({"message": "Error deleting detail", "error": str(e)}), 500
-    finally:
-        s.close()
+@jwt_required()
+@role_required("buyer")
+def remove_item_from_transaction(transaction_id, transaction_details_id):
+    response, status = remove_transaction_detail(transaction_details_id)
+    return jsonify(response), status
+
+
+# Get Seller's Transaction Details
+@transaction_details_routes.route("/seller", methods=["GET"])
+@jwt_required()
+@role_required("seller")
+def get_seller_transactions():
+    current_user_id = get_jwt_identity()
+    response, status = get_seller_transaction_details(current_user_id)
+    return jsonify(response), status
