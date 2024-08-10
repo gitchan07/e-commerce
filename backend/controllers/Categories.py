@@ -2,8 +2,9 @@ from flask import Blueprint, request, jsonify
 from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
 from models.Categories import Categories
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.exc import SQLAlchemyError
+from decorator import role_required
 
 category_routes = Blueprint("category_routes", __name__)
 
@@ -29,13 +30,11 @@ def test_connection():
 
 @category_routes.route("/", methods=["POST"])
 @jwt_required()
+@role_required("seller")
 def create_category():
-    current_user_id = get_jwt_identity()
-    role = get_user_role(current_user_id)
+
     if not request.is_json:
         return jsonify({"message": "Request must be JSON"}), 415
-    if role != "seller":
-        return jsonify({"message": "Unauthorized"}), 403
 
     try:
         data = request.get_json()
@@ -67,13 +66,11 @@ def get_category(category_id):
 
 @category_routes.route("/<int:category_id>", methods=["PUT"])
 @jwt_required()
+@role_required("seller")
 def update_category(category_id):
-    current_user_id = get_jwt_identity()
-    role = get_user_role(current_user_id)
+
     if not request.is_json:
         return jsonify({"message": "Request must be JSON"}), 415
-    if role != "seller":
-        return jsonify({"message": "Unauthorized"}), 403
 
     try:
         data = request.get_json()
@@ -85,11 +82,9 @@ def update_category(category_id):
 
 @category_routes.route("/<int:category_id>", methods=["DELETE"])
 @jwt_required()
+@role_required("seller")
 def delete_category(category_id):
-    current_user_id = get_jwt_identity()
-    role = get_user_role(current_user_id)
-    if role != "seller":
-        return jsonify({"message": "Unauthorized"}), 403
+
     try:
         response, status = delete_existing_category(category_id)
         return jsonify(response), status

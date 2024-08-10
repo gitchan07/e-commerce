@@ -1,19 +1,16 @@
-# tambah upload image
-#  http://127.0.0.1:5000/static/upload_image/bg.jpg, munculin ini sudah bisa
-
-
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.Products import Products
 from models.Users import Users
 from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
+from decorator import role_required
+import os
 
 Session = sessionmaker(bind=connection)
 
 product_routes = Blueprint("product_routes", __name__)
-
 
 # Routes
 
@@ -39,14 +36,20 @@ def test_connection():
 
 @product_routes.route("/", methods=["POST"])
 @jwt_required()
+@role_required("seller")
 def add_product():
     current_user_id = get_jwt_identity()
-    role = get_user_role(current_user_id)
 
-    if role != "seller":
-        return jsonify({"message": "Unauthorized"}), 403
-
+    # For testing purposes: Accept img_path directly from JSON input
     data = request.get_json()
+    img_path = data.get("img_path")  # Get img_path from JSON input
+
+    # Production code (commented out for testing):
+    # data = request.form.to_dict()
+    # image = request.files.get("image")
+    # img_path = save_image(image)
+
+    data["img_path"] = img_path
     response, status = create_new_product(data, current_user_id)
     return jsonify(response), status
 
@@ -76,27 +79,26 @@ def get_product(id):
 
 @product_routes.route("/<int:id>", methods=["PUT"])
 @jwt_required()
+@role_required("seller")
 def update_product(id):
     current_user_id = get_jwt_identity()
-    role = get_user_role(current_user_id)
+    data = request.form.to_dict()
+    image = request.files.get("image")  # Image file from form data
 
-    if role != "seller":
-        return jsonify({"message": "Unauthorized"}), 403
+    # Save the image and get the path if an image was uploaded
+    if image:
+        img_path = save_image(image)
+        data["img_path"] = img_path
 
-    data = request.get_json()
     response, status = update_existing_product(id, data, current_user_id)
     return jsonify(response), status
 
 
 @product_routes.route("/<int:id>", methods=["DELETE"])
 @jwt_required()
+@role_required("seller")
 def delete_product(id):
     current_user_id = get_jwt_identity()
-    role = get_user_role(current_user_id)
-
-    if role != "seller":
-        return jsonify({"message": "Unauthorized"}), 403
-
     response, status = delete_existing_product(id, current_user_id)
     return jsonify(response), status
 
@@ -104,13 +106,9 @@ def delete_product(id):
 # Get Seller's Products by Name and Category
 @product_routes.route("/my-products", methods=["GET"])
 @jwt_required()
+@role_required("seller")
 def get_seller_products():
     current_user_id = get_jwt_identity()
-    role = get_user_role(current_user_id)
-
-    if role != "seller":
-        return jsonify({"message": "Unauthorized"}), 403
-
     filters = {
         "user_id": current_user_id,
         "category_id": request.args.get("category_id"),
@@ -126,30 +124,41 @@ def get_seller_products():
 # Get a Specific Product for Seller by ID
 @product_routes.route("/my-products/<int:id>", methods=["GET"])
 @jwt_required()
+@role_required("seller")
 def get_seller_product_by_id(id):
     current_user_id = get_jwt_identity()
-    role = get_user_role(current_user_id)
-
-    if role != "seller":
-        return jsonify({"message": "Unauthorized"}), 403
-
-    product = session.query(Products).filter_by(id=id, user_id=current_user_id).first()
-    if product:
-        return jsonify(product.to_dict()), 200
-    else:
-        return jsonify({"message": "Product not found"}), 404
+    session = Session()
+    try:
+        product = (
+            session.query(Products).filter_by(id=id, user_id=current_user_id).first()
+        )
+        if product:
+            return jsonify(product.to_dict()), 200
+        else:
+            return jsonify({"message": "Product not found"}), 404
+    finally:
+        session.close()
 
 
 # Utility Functions
-def get_user_role(user_id):
-    session = Session()
-    try:
-        user = session.query(Users).filter_by(id=user_id).first()
-        return user.role if user else None
-    except Exception as e:
-        return {"message": "Database error occurred", "error": str(e)}
-    finally:
-        session.close()
+
+
+# Utility function for saving the uploaded image
+def save_image(image):
+    if image:
+        # Define the upload path
+        upload_folder = os.path.join(current_app.root_path, "static", "upload_image")
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder)
+
+        # Create a unique filename
+        image_filename = image.filename
+        image_path = os.path.join(upload_folder, image_filename)
+        image.save(image_path)
+
+        # Return the relative path to store in the database
+        return f"static/upload_image/{image_filename}"
+    return None
 
 
 def create_new_product(data, user_id):
@@ -162,6 +171,8 @@ def create_new_product(data, user_id):
             description=data.get("description", ""),
             stock=data["stock"],
             price=data["price"],
+            is_active=data.get("is_active", True),
+            img_path=data.get("img_path", ""),
         )
         session.add(new_product)
         session.commit()
@@ -200,11 +211,16 @@ def get_all_products(filters):
 
 def get_product_by_id(product_id):
     session = Session()
-    product = session.query(Products).get(product_id)
-    if product:
-        return product.to_dict(), 200
-    else:
-        return {"message": "Product not found"}, 404
+    try:
+        product = session.query(Products).get(product_id)
+        if product:
+            return product.to_dict(), 200
+        else:
+            return {"message": "Product not found"}, 404
+    except Exception as e:
+        return {"message": "An error occurred", "error": str(e)}, 500
+    finally:
+        session.close()
 
 
 def update_existing_product(product_id, data, user_id):
@@ -218,6 +234,8 @@ def update_existing_product(product_id, data, user_id):
             product.description = data.get("description", product.description)
             product.stock = data.get("stock", product.stock)
             product.price = data.get("price", product.price)
+            product.is_active = data.get("is_active", product.is_active)
+            product.img_path = data.get("img_path", product.img_path)
 
             session.commit()
             return {"message": "Product updated successfully"}, 200

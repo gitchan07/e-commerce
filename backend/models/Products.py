@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DECIMAL, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DECIMAL, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, mapped_column
 from sqlalchemy.sql import func
 from models.Base import Base
@@ -15,7 +15,10 @@ class Products(Base):
     description = mapped_column(String(100))
     stock = mapped_column(Integer, nullable=False)
     price = mapped_column(DECIMAL(10, 2), nullable=False)
-    # img_path = mapped_column(String(100))
+    # tambah baru
+    img_path = mapped_column(String(100))
+    is_active = mapped_column(Boolean)
+    # tambah baru
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
@@ -32,6 +35,8 @@ class Products(Base):
             "description": self.description,
             "stock": self.stock,
             "price": str(self.price),
+            "img_path": self.img_path,
+            "is_active": self.is_active,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }

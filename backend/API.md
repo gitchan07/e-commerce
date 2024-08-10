@@ -242,29 +242,32 @@
        "message": "Category deleted successfully"
      }
      ```
+
 ## Product API Endpoints
 
 ### General Endpoints
 
 1. **`{{base_url}}/products/testing`**
    - **Methods:** [GET]
-   - **Description:** Test the connection to the database and fetch the first product (if any).
+   - **Description:** Test the connection to the database and fetch all products (if any).
    - **Inputs:** None
    - **Output:** 
      ```json
      {
        "message": "good connection",
-       "dict": {
-         "id": "int",
-         "user_id": "int",
-         "category_id": "int",
-         "title": "string",
-         "description": "string",
-         "stock": "int",
-         "price": "decimal",
-         "created_at": "datetime",
-         "updated_at": "datetime"
-       }
+       "products": [
+         {
+           "id": 1,
+           "user_id": 10,
+           "category_id": 5,
+           "title": "Sample Product",
+           "description": "This is a sample product.",
+           "stock": 100,
+           "price": "19.99",
+           "created_at": "2024-08-10T10:00:00",
+           "updated_at": "2024-08-10T10:00:00"
+         }
+       ]
      }
      ```
 
@@ -276,11 +279,13 @@
    - **Inputs:**
      ```json
      {
-       "category_id": "int",    // The ID of the category the product belongs to
-       "title": "string",       // The title of the product
-       "description": "string", // The description of the product (optional)
-       "stock": "int",          // The available stock for the product
-       "price": "decimal"       // The price of the product
+       "category_id": 5,                // The ID of the category the product belongs to
+       "title": "New Product",          // The title of the product
+       "description": "A description",  // The description of the product (optional)
+       "stock": 50,                     // The available stock for the product
+       "price": "29.99",                // The price of the product
+       "is_active": true,               // Whether the product is active (optional, defaults to true)
+       "img_path": "static/upload_image/product_image.jpg"  // Path to the uploaded image
      }
      ```
    - **Output:**
@@ -296,11 +301,13 @@
    - **Inputs:**
      ```json
      {
-       "category_id": "int" (optional),    // The new category ID (if changing)
-       "title": "string" (optional),       // The new title (if changing)
-       "description": "string" (optional), // The new description (if changing)
-       "stock": "int" (optional),          // The new stock quantity (if changing)
-       "price": "decimal" (optional)       // The new price (if changing)
+       "category_id": 5,                // The new category ID (if changing)
+       "title": "Updated Product",      // The new title (if changing)
+       "description": "Updated description", // The new description (if changing)
+       "stock": 30,                     // The new stock quantity (if changing)
+       "price": "25.99",                // The new price (if changing)
+       "is_active": false,              // Whether the product is active (optional)
+       "img_path": "static/upload_image/updated_product_image.jpg"  // Path to the new image (if changing)
      }
      ```
    - **Output:**
@@ -332,20 +339,20 @@
    - **Output:**
      ```json
      {
-       "total": "int",                  // Total number of products
-       "page": "int",                   // Current page
-       "per_page": "int",               // Products per page
+       "total": 100,                   // Total number of products
+       "page": 1,                      // Current page
+       "per_page": 10,                 // Products per page
        "products": [
          {
-           "id": "int",
-           "user_id": "int",
-           "category_id": "int",
-           "title": "string",
-           "description": "string",
-           "stock": "int",
-           "price": "string",
-           "created_at": "datetime",
-           "updated_at": "datetime"
+           "id": 1,
+           "user_id": 10,
+           "category_id": 5,
+           "title": "Sample Product",
+           "description": "This is a sample product.",
+           "stock": 100,
+           "price": "19.99",
+           "created_at": "2024-08-10T10:00:00",
+           "updated_at": "2024-08-10T10:00:00"
          }
        ]
      }
@@ -358,15 +365,15 @@
    - **Output:**
      ```json
      {
-       "id": "int",
-       "user_id": "int",
-       "category_id": "int",
-       "title": "string",
-       "description": "string",
-       "stock": "int",
-       "price": "string",
-       "created_at": "datetime",
-       "updated_at": "datetime"
+       "id": 1,
+       "user_id": 10,
+       "category_id": 5,
+       "title": "Sample Product",
+       "description": "This is a sample product.",
+       "stock": 100,
+       "price": "19.99",
+       "created_at": "2024-08-10T10:00:00",
+       "updated_at": "2024-08-10T10:00:00"
      }
      ```
 
@@ -374,7 +381,7 @@
 
 1. **`{{base_url}}/products/`**
    - **Methods:** [GET]
-   - **Description:** Get all products or search by category, product name, or product ID (Buyer only).
+   - **Description:** Get all products or search by category, product name, or product ID.
    - **Inputs:**
      - **Query Parameters:**
        - `category_id` (optional): Filter by category ID.
@@ -385,20 +392,20 @@
    - **Output:**
      ```json
      {
-       "total": "int",                  // Total number of products
-       "page": "int",                   // Current page
-       "per_page": "int",               // Products per page
+       "total": 100,                   // Total number of products
+       "page": 1,                      // Current page
+       "per_page": 10,                 // Products per page
        "products": [
          {
-           "id": "int",
-           "user_id": "int",
-           "category_id": "int",
-           "title": "string",
-           "description": "string",
-           "stock": "int",
-           "price": "string",
-           "created_at": "datetime",
-           "updated_at": "datetime"
+           "id": 1,
+           "user_id": 10,
+           "category_id": 5,
+           "title": "Sample Product",
+           "description": "This is a sample product.",
+           "stock": 100,
+           "price": "19.99",
+           "created_at": "2024-08-10T10:00:00",
+           "updated_at": "2024-08-10T10:00:00"
          }
        ]
      }
@@ -406,19 +413,18 @@
 
 2. **`{{base_url}}/products/<int:id>`**
    - **Methods:** [GET]
-   - **Description:** Get details of a specific product by product ID (Buyer only).
+   - **Description:** Get details of a specific product by product ID.
    - **Output:**
      ```json
      {
-       "id": "int",
-       "user_id": "int",
-       "category_id": "int",
-       "title": "string",
-       "description": "string",
-       "stock": "int",
-       "price": "string",
-       "created_at": "datetime",
-       "updated_at": "datetime"
+       "id": 1,
+       "user_id": 10,
+       "category_id": 5,
+       "title": "Sample Product",
+       "description": "This is a sample product.",
+       "stock": 100,
+       "price": "19.99",
+       "created_at": "2024-08-10T10:00:00",
+       "updated_at": "2024-08-10T10:00:00"
      }
      ```
-

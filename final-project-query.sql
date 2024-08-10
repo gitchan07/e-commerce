@@ -32,6 +32,10 @@ CREATE TABLE products (
     description VARCHAR(100),
     stock INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
+    img_path varchar(100), 
+    is_active BOOLEAN,
+    -- tambah image path
+	-- tambah status
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
