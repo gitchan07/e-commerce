@@ -428,9 +428,8 @@
        "updated_at": "2024-08-10T10:00:00"
      }
      ```
-Here's the `.md` documentation for the Promotions API based on the code you provided:
 
-```markdown
+
 ## Promotions API Endpoints
 
 1. Create Promotion
@@ -647,7 +646,6 @@ Here's the `.md` documentation for the Promotions API based on the code you prov
      ```json
      {
        "quantity": 3,  // Updated quantity of the product
-       "price": "18.99"  // Updated price of the product
      }
      ```
    - **Output:**
@@ -674,28 +672,3 @@ Here's the `.md` documentation for the Promotions API based on the code you prov
      }
      ```
 
-### Seller Endpoints
-
-1. **`{{base_url}}/transactions/seller`**
-   - **Methods:** [GET]
-   - **Description:** Get all transaction details related to the seller's products.
-   - **Output:**
-     ```json
-     [
-       {
-         "transaction_id": 1,
-         "product_id": 5,
-         "product_title": "Sample Product",
-         "quantity": 2,
-         "price_at_purchase": "19.99",
-         "total_price_item": "39.98",
-         "transaction_status": "paid",
-         "transaction_number": "XG1234567890",
-         "datetime": "2024-08-10T10:00:00"
-       }
-     ]
-     ```
-
----
-
-This `.md` documentation outlines the structure and behavior of the Transactions and TransactionDetails APIs, making it clear how buyers and sellers can interact with the system. Let me know if any further adjustments are needed!

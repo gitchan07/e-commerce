@@ -67,7 +67,7 @@ def get_transaction_detail(transaction_id, detail_id, user_id):
         session.close()
 
 
-def update_transaction_detail(transaction_id, detail_id, quantity, price):
+def update_transaction_detail(transaction_id, detail_id, quantity):
     session = Session()
     try:
         detail = (
@@ -78,12 +78,15 @@ def update_transaction_detail(transaction_id, detail_id, quantity, price):
         if not detail:
             return {"message": "Transaction detail not found"}, 404
 
-        # Update the detail
-        detail.quantity = quantity
-        detail.price = price
-        detail.total_price_item = quantity * price
+        # Fetch the price from the associated product
+        product = session.query(Products).filter_by(id=detail.product_id).first()
+        if not product:
+            return {"message": "Product not found"}, 404
 
-        # Update the total price of the transaction
+        detail.quantity = quantity
+        detail.price = product.price
+        detail.total_price_item = quantity * product.price
+
         transaction = detail.transactions
         transaction.total_price_all_before = sum(
             [d.total_price_item for d in transaction.transaction_details]
@@ -164,11 +167,8 @@ def get_transaction_detail_route(transaction_id, detail_id):
 def update_transaction_detail_route(transaction_id, detail_id):
     data = request.get_json()
     quantity = data.get("quantity")
-    price = data.get("price")
 
-    response, status = update_transaction_detail(
-        transaction_id, detail_id, quantity, price
-    )
+    response, status = update_transaction_detail(transaction_id, detail_id, quantity)
     return jsonify(response), status
 
 

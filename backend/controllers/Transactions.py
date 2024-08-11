@@ -3,6 +3,8 @@ from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
 from models.Transactions import Transactions
 from models.Promotions import Promotions
+from models.Products import Products
+
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from decorator import role_required
 from sqlalchemy.exc import SQLAlchemyError
