@@ -13,17 +13,6 @@ Session = sessionmaker(bind=connection)
 # Routes
 
 
-@users_routes.route("/testing", methods=["GET"])
-def test_connection():
-    try:
-        response, status_code = get_all_users()
-        response["message"] = "good connection"
-    except Exception as e:
-        response = {"message": "connection failed", "error": str(e)}
-        status_code = 500
-    return jsonify(response), status_code
-
-
 @users_routes.route("/register", methods=["POST"])
 def register_user():
     if not request.is_json:

@@ -517,98 +517,185 @@ Here's the `.md` documentation for the Promotions API based on the code you prov
   ```
 
 
-## TransactionDetails API Testing
+## Transactions API Endpoints
 
-1. Test Connection
-- **Endpoint:** `GET /ttd/testing`
-- **Description:** Check if the API connection is working correctly.
-- **Inputs:** None
-- **Output:**
-  ```json
-  {
-    "message": "good connection",
-    "dict": {
-      "transaction_details_id": "int",
-      "transaction_id": "int",
-      "product_id": "int",
-      "price": "decimal",
-      "quantity": "int"
-    }
-  }
-  ```
-  If no transaction details are available:
-  ```json
-  {
-    "message": "good connection",
-    "dict": "No transaction details available"
-  }
-  ```
+### Buyer Endpoints
 
-2. Add Item to Transaction
-- **Endpoint:** `POST /transactions/{transaction_id}/details/add`
-- **Description:** Add an item to the buyer's transaction.
-- **Inputs:**
-  ```json
-  {
-    "product_id": "int",
-    "quantity": "int"
-  }
-  ```
-- **Output:**
-  ```json
-  {
-    "message": "Item added to transaction",
-    "transaction_details_id": "int"
-  }
-  ```
-  If the `transaction_id` or `product_id` doesn't exist:
-  ```json
-  {
-    "message": "Transaction not found"
-  }
-  ```
-  or
-  ```json
-  {
-    "message": "Product not found"
-  }
-  ```
+1. **`{{base_url}}/transactions`**
+   - **Methods:** [POST]
+   - **Description:** Create a new transaction for the buyer. The `transaction_number` is generated automatically.
+   - **Inputs:**
+     ```json
+     {
+       "user_id": 10   // The ID of the buyer creating the transaction
+     }
+     ```
+   - **Output:**
+     ```json
+     {
+       "id": 1,
+       "user_id": 10,
+       "transaction_number": "XG1234567890",
+       "total_price_all_before": 0,
+       "total_price_all_after": null,
+       "transaction_status": "pending",
+       "created_at": "2024-08-10T10:00:00",
+       "updated_at": "2024-08-10T10:00:00"
+     }
+     ```
 
-3. Update Transaction Detail
-- **Endpoint:** `PUT /transactions/{transaction_id}/details/{transaction_details_id}`
-- **Description:** Update the quantity of an item in the transaction.
-- **Inputs:**
-  ```json
-  {
-    "quantity": "int"
-  }
-  ```
-- **Output:**
-  ```json
-  {
-    "message": "Transaction detail updated successfully"
-  }
-  ```
-  If the `transaction_details_id` doesn't exist:
-  ```json
-  {
-    "message": "Transaction detail not found"
-  }
-  ```
+2. **`{{base_url}}/transactions/<int:id>`**
+   - **Methods:** [DELETE]
+   - **Description:** Delete a transaction by its ID. Only the owner of the transaction can delete it.
+   - **Output:**
+     ```json
+     {
+       "message": "Transaction deleted successfully"
+     }
+     ```
 
- 4. Remove Item from Transaction
-- **Endpoint:** `DELETE /transactions/{transaction_id}/details/{transaction_details_id}`
-- **Description:** Remove an item from the buyer's transaction.
-- **Inputs:** None
-- **Output:**
-  ```json
-  {
-    "message": "Transaction detail removed successfully"
-  }
-  ```
-  If the `transaction_details_id` doesn't exist:
-  ```json
-  {
-    "message": "Transaction detail not found"
-  }
-  ```
+### Seller Endpoints
+
+1. **`{{base_url}}/transactions`**
+   - **Methods:** [GET]
+   - **Description:** Get all transactions that involve the seller's products. Can be filtered by `product_id`.
+   - **Inputs:**
+     - **Query Parameters:**
+       - `product_id` (optional): Filter by a specific product ID.
+   - **Output:**
+     ```json
+     [
+       {
+         "id": 1,
+         "user_id": 10,
+         "transaction_number": "XG1234567890",
+         "total_price_all_before": 120.00,
+         "total_price_all_after": 100.00,
+         "transaction_status": "paid",
+         "created_at": "2024-08-10T10:00:00",
+         "updated_at": "2024-08-10T10:00:00"
+       }
+     ]
+     ```
+
+2. **`{{base_url}}/transactions/<int:id>`**
+   - **Methods:** [GET]
+   - **Description:** Get the details of a specific transaction that involves the seller’s products.
+   - **Output:**
+     ```json
+     {
+       "id": 1,
+       "user_id": 10,
+       "transaction_number": "XG1234567890",
+       "total_price_all_before": 120.00,
+       "total_price_all_after": 100.00,
+       "transaction_status": "paid",
+       "created_at": "2024-08-10T10:00:00",
+       "updated_at": "2024-08-10T10:00:00"
+     }
+     ```
+
+## TransactionDetails API Endpoints
+
+### Buyer Endpoints
+
+1. **`{{base_url}}/transactions/<int:transaction_id>/details`**
+   - **Methods:** [POST]
+   - **Description:** Add a detail to a transaction, specifying the `product_id` and `quantity`. The `price` is pulled automatically from the product.
+   - **Inputs:**
+     ```json
+     {
+       "product_id": 5,  // ID of the product to add to the transaction
+       "quantity": 2     // Quantity of the product (default is 1)
+     }
+     ```
+   - **Output:**
+     ```json
+     {
+       "id": 1,
+       "transaction_id": 1,
+       "product_id": 5,
+       "quantity": 2,
+       "price": "19.99",
+       "total_price_item": "39.98",
+       "created_at": "2024-08-10T10:00:00",
+       "updated_at": "2024-08-10T10:00:00"
+     }
+     ```
+
+2. **`{{base_url}}/transactions/<int:transaction_id>/details/<int:detail_id>`**
+   - **Methods:** [GET]
+   - **Description:** Get a specific transaction detail by its ID that belongs to the buyer.
+   - **Output:**
+     ```json
+     {
+       "id": 1,
+       "transaction_id": 1,
+       "product_id": 5,
+       "quantity": 2,
+       "price": "19.99",
+       "total_price_item": "39.98",
+       "created_at": "2024-08-10T10:00:00",
+       "updated_at": "2024-08-10T10:00:00"
+     }
+     ```
+
+3. **`{{base_url}}/transactions/<int:transaction_id>/details/<int:detail_id>`**
+   - **Methods:** [PUT]
+   - **Description:** Update a transaction detail, modifying the `quantity` and `price`.
+   - **Inputs:**
+     ```json
+     {
+       "quantity": 3,  // Updated quantity of the product
+       "price": "18.99"  // Updated price of the product
+     }
+     ```
+   - **Output:**
+     ```json
+     {
+       "id": 1,
+       "transaction_id": 1,
+       "product_id": 5,
+       "quantity": 3,
+       "price": "18.99",
+       "total_price_item": "56.97",
+       "created_at": "2024-08-10T10:00:00",
+       "updated_at": "2024-08-10T10:00:00"
+     }
+     ```
+
+4. **`{{base_url}}/transactions/<int:transaction_id>/details/<int:detail_id>`**
+   - **Methods:** [DELETE]
+   - **Description:** Delete a transaction detail by its ID.
+   - **Output:**
+     ```json
+     {
+       "message": "Transaction detail deleted successfully"
+     }
+     ```
+
+### Seller Endpoints
+
+1. **`{{base_url}}/transactions/seller`**
+   - **Methods:** [GET]
+   - **Description:** Get all transaction details related to the seller's products.
+   - **Output:**
+     ```json
+     [
+       {
+         "transaction_id": 1,
+         "product_id": 5,
+         "product_title": "Sample Product",
+         "quantity": 2,
+         "price_at_purchase": "19.99",
+         "total_price_item": "39.98",
+         "transaction_status": "paid",
+         "transaction_number": "XG1234567890",
+         "datetime": "2024-08-10T10:00:00"
+       }
+     ]
+     ```
+
+---
+
+This `.md` documentation outlines the structure and behavior of the Transactions and TransactionDetails APIs, making it clear how buyers and sellers can interact with the system. Let me know if any further adjustments are needed!

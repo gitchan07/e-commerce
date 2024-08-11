@@ -14,20 +14,6 @@ Session = sessionmaker(bind=connection)
 # Routes
 
 
-@category_routes.route("/testing", methods=["GET"])
-def test_connection():
-    try:
-        with Session() as session:
-            category = session.query(Categories).first()
-            response = {
-                "message": "good connection",
-                "dict": category.to_dict() if category else "No categories available",
-            }
-            return jsonify(response), 200
-    except Exception as e:
-        return jsonify({"message": "connection failed", "error": str(e)}), 500
-
-
 @category_routes.route("/", methods=["POST"])
 @jwt_required()
 @role_required("seller")
