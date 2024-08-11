@@ -189,7 +189,7 @@ def create_new_product(data, user_id):
 def get_all_products(filters):
     session = Session()
     try:
-        query = session.query(Products)
+        query = session.query(Products).filter_by(is_active=True)
         if filters.get("category_id"):
             query = query.filter_by(category_id=filters["category_id"])
         if filters.get("title"):
