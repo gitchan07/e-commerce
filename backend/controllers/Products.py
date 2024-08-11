@@ -15,25 +15,6 @@ product_routes = Blueprint("product_routes", __name__)
 # Routes
 
 
-@product_routes.route("/testing", methods=["GET"])
-def test_connection():
-    session = Session()
-    try:
-        products = session.query(Products).all()
-
-        products_list = [product.to_dict() for product in products]
-
-        response = {
-            "message": "good connection",
-            "products": products_list if products_list else "No products available",
-        }
-        return jsonify(response), 200
-    except Exception as e:
-        return jsonify({"message": "connection failed", "error": str(e)}), 500
-    finally:
-        session.close()
-
-
 @product_routes.route("/", methods=["POST"])
 @jwt_required()
 @role_required("seller")
@@ -189,7 +170,7 @@ def create_new_product(data, user_id):
 def get_all_products(filters):
     session = Session()
     try:
-        query = session.query(Products)
+        query = session.query(Products).filter_by(is_active=True)
         if filters.get("category_id"):
             query = query.filter_by(category_id=filters["category_id"])
         if filters.get("title"):

@@ -17,6 +17,7 @@ class Transactions(Base):
     updated_at = mapped_column(DateTime(timezone=True), onupdate=func.now())
     total_price_all_before = mapped_column(DECIMAL(10, 2), nullable=False)
     total_price_all_after = mapped_column(DECIMAL(10, 2))
+    total_price = mapped_column(DECIMAL(10, 2))
     transaction_status = mapped_column(String(20), nullable=False)
 
     users = relationship("Users", back_populates="transactions")
