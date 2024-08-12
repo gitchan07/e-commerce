@@ -36,7 +36,6 @@ def add_product():
 
 
 @product_routes.route("/", methods=["GET"])
-@jwt_required()
 def get_products():
     filters = {
         "category_id": request.args.get("category_id"),

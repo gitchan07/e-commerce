@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime, timedelta, timezone
-
+from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager,
     get_jwt,
@@ -29,7 +29,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 # Initialize JWT Manager
 jwt = JWTManager(app)
-
+cors = CORS(app)
 
 # Register blueprints
 app.register_blueprint(users_routes, url_prefix="/users")
@@ -58,15 +58,16 @@ if __name__ == "__main__":
 # set jwt time
 
 
-@app.after_request
-def refresh_expiring_jwts(response):
-    try:
-        exp_timestamp = get_jwt()["exp"]
-        now = datetime.now(timezone.utc)
-        target_timestamp = datetime.timestamp(now + timedelta(hours=40))  # ubah disini
-        if target_timestamp > exp_timestamp:
-            access_token = create_access_token(identity=get_jwt_identity())
-            set_access_cookies(response, access_token)
-        return response
-    except (RuntimeError, KeyError):
-        return response
+# acess micro_service  ->
+# @app.after_request
+# def refresh_expiring_jwts(response):
+#     try:
+#         exp_timestamp = get_jwt()["exp"]
+#         now = datetime.now(timezone.utc)
+#         target_timestamp = datetime.timestamp(now + timedelta(hours=40))  # ubah disini
+#         if target_timestamp > exp_timestamp:
+#             access_token = create_access_token(identity=get_jwt_identity())
+#             set_access_cookies(response, access_token)
+#         return response
+#     except (RuntimeError, KeyError):
+#         return response

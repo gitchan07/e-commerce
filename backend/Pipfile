@@ -15,6 +15,7 @@ sqlalchemy = "*"
 flask-swagger-ui = "*"
 pyyaml = "*"
 flask-login = "*"
+flask-cors = "*"
 
 [dev-packages]
 

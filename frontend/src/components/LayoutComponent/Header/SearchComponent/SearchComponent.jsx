@@ -4,8 +4,11 @@ import useFetch from '@/hooks/utils/useFetch';
 
 import SearchInput from './Input';
 import DropdownList from './DropdownList';
+
+
 // dummy API
-const api = "https://dummyjson.com/products/search?q=";
+const api = "http://127.0.0.1:5000/products?title=";
+// http://127.0.0.1:5000/products?title=
 
 const SearchComponent = () => {
   const [searchTerm, setSearchTerm] = useState('');

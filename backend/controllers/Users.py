@@ -196,11 +196,11 @@ def get_user(user_id):
         session.close()
 
 
+# set acess token expired , refresh token
 def login_user(data):
     session = Session()
     try:
         user = session.query(Users).filter_by(username=data["username"]).first()
-
         if user and user.check_password(data["password"]):
             access_token = create_access_token(identity=user.id)
             return {
@@ -213,3 +213,6 @@ def login_user(data):
         return {"message": "Database error occurred", "error": str(e)}, 500
     finally:
         session.close()
+
+
+# set acess token expired , refresh token
