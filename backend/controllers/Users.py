@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response, redirect, url_for
 from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
 from models.Users import Users
@@ -8,9 +8,6 @@ from sqlalchemy.exc import SQLAlchemyError
 users_routes = Blueprint("users_routes", __name__)
 
 Session = sessionmaker(bind=connection)
-
-
-# Routes
 
 
 @users_routes.route("/register", methods=["POST"])
@@ -34,6 +31,12 @@ def login_user_route():
     try:
         data = request.get_json()
         response, status = login_user(data)
+        if status == 200:
+            access_token = create_access_token(identity=response["user_id"])
+            resp = make_response(jsonify({"message": "Login successful"}), 200)
+            resp.set_cookie("access_token", access_token, httponly=True)
+            resp.set_cookie("user_id", str(response["user_id"]), httponly=True)
+            return resp
         return jsonify(response), status
     except Exception as e:
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
@@ -200,19 +203,24 @@ def get_user(user_id):
 def login_user(data):
     session = Session()
     try:
-        user = session.query(Users).filter_by(username=data["username"]).first()
+        user = session.query(Users).filter_by(email=data["email"]).first()
         if user and user.check_password(data["password"]):
-            access_token = create_access_token(identity=user.id)
-            return {
-                "message": "Login successful",
-                "access_token": access_token,
-            }, 200
-        else:
-            return {"message": "Invalid username or password"}, 401
+            return {"user_id": user.id}, 200
+        return {"message": "Invalid credentials"}, 401
     except SQLAlchemyError as e:
         return {"message": "Database error occurred", "error": str(e)}, 500
     finally:
         session.close()
 
+@users_routes.route("/protected", methods=["GET"])
+@jwt_required()
+def protected_route():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
 
-# set acess token expired , refresh token
+@users_routes.route("/home", methods=["GET"])
+def home_route():
+    token = request.cookies.get("access_token")
+    if not token:
+        return redirect(url_for("users_routes.login_user_route"))
+    return jsonify({"message": "Welcome to the home page!"}), 200
