@@ -44,9 +44,36 @@ const Register = ({ onToggleForm }) => {
     password: "",
   };
 
-  const handleSubmit = (values) => {
-    // call api here
-    console.log(values);
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const response = await fetch('http://localhost:5000/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          full_name: values.fullName,
+          email: values.email,
+          username: values.username,
+          password: values.password,
+          role: 'user',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 201) {
+        alert('User created successfully');
+        onToggleForm();
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert('An error occurred during registration.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -65,7 +92,7 @@ const Register = ({ onToggleForm }) => {
           Sign Up Now
         </h1>
         <h3 className="text-center text-gray-800 mb-6">
-          Already have a Vapor Vault account?&nbsp;
+          Already have a Vapor Vault account? 
           <a className="text-emerald-600 hover:underline underline-offset-2 cursor-pointer"
             onClick={onToggleForm}
           >
@@ -159,14 +186,14 @@ const Register = ({ onToggleForm }) => {
                 />
               </div>
 
-              <div className="mb-4">
+              <div className="flex items-center justify-between">
                 <button
                   type="submit"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
                   disabled={isSubmitting}
-                  className="w-full hover:bg-emerald-700 hover:text-white py-2 px-4 rounded-md shadow-sm bg-emerald-400 text-gray-700 font-semibold focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
                 >
                   {isSubmitting ? (
-                    <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
+                    <FontAwesomeIcon icon={faSpinner} spin />
                   ) : (
                     "Register"
                   )}
