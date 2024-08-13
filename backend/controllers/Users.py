@@ -2,7 +2,12 @@ from flask import Blueprint, request, jsonify, make_response, redirect, url_for
 from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
 from models.Users import Users
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import (
+    create_access_token,
+    get_jwt_identity,
+    jwt_required,
+    get_jwt,
+)
 from sqlalchemy.exc import SQLAlchemyError
 
 users_routes = Blueprint("users_routes", __name__)
@@ -81,6 +86,28 @@ def delete_user_route(user_id):
         return jsonify(response), status
     except Exception as e:
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
+
+
+@users_routes.route("/protected", methods=["GET"])
+@jwt_required()
+def protected_route():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
+
+
+@users_routes.route("/home", methods=["GET"])
+def home_route():
+    token = request.cookies.get("access_token")
+    if not token:
+        return redirect(url_for("users_routes.login_user_route"))
+    return jsonify({"message": "Welcome to the home page!"}), 200
+
+
+@users_routes.route("/logout", methods=["DELETE"])
+def logout_route():
+    jti = get_jwt()["jti"]
+    jwt_redis_blocklist.set(jti, "", ex=ACCESS_EXPIRES)
+    return jsonify(msg="Access token revoked")
 
 
 def create_new_user(data):
@@ -211,16 +238,3 @@ def login_user(data):
         return {"message": "Database error occurred", "error": str(e)}, 500
     finally:
         session.close()
-
-@users_routes.route("/protected", methods=["GET"])
-@jwt_required()
-def protected_route():
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
-
-@users_routes.route("/home", methods=["GET"])
-def home_route():
-    token = request.cookies.get("access_token")
-    if not token:
-        return redirect(url_for("users_routes.login_user_route"))
-    return jsonify({"message": "Welcome to the home page!"}), 200
