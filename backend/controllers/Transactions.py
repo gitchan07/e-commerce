@@ -101,6 +101,26 @@ def get_seller_transaction_by_id(transaction_id, seller_id):
         session.close()
 
 
+def get_buyer_transactions(buyer_id, id):
+    session = Session()
+    try:
+        query = (
+            session.query(Transactions)
+            .join(Transactions.transaction_details)
+            .filter(Transactions.transaction_details.any(Products.user_id == buyer_id))
+        )
+
+        if id:
+            query = query.filter(Transactions.id == id)
+
+        transactions = query.all()
+        return [transaction.to_dict() for transaction in transactions], 200
+    except SQLAlchemyError as e:
+        return {"message": "Failed to retrieve transactions", "error": str(e)}, 500
+    finally:
+        session.close()
+
+
 # Routes
 
 
@@ -142,4 +162,13 @@ def get_seller_transactions_route():
 def get_seller_transaction_route(id):
     current_user_id = get_jwt_identity()
     response, status = get_seller_transaction_by_id(id, current_user_id)
+    return jsonify(response), status
+
+
+@transaction_routes.route("/", methods=["GET"])
+@jwt_required()
+@role_required("buyer")
+def get_buyer_transactions_route():
+    current_user_id = get_jwt_identity()
+    response, status = get_buyer_transactions(current_user_id)
     return jsonify(response), status

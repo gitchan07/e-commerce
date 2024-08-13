@@ -7,9 +7,11 @@ import DropdownList from './DropdownList';
 
 
 // dummy API
-const api = "http://127.0.0.1:5000/products?title=";
-// http://127.0.0.1:5000/products?title=
-
+const host = process.env.NEXT_PUBLIC_HOST;  
+console.log('HOST:', host); 
+const api = `${host}/products?title=`;      
+console.log('API:', api);  
+console.log(api); 
 const SearchComponent = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);

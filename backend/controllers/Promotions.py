@@ -3,6 +3,8 @@ from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
 from models.Promotions import Promotions
 from sqlalchemy.exc import SQLAlchemyError
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from decorator import role_required
 
 promotion_routes = Blueprint("promotion_routes", __name__)
 
@@ -103,6 +105,8 @@ def delete_promotion_by_id(promotion_id):
 
 
 @promotion_routes.route("/promotions", methods=["POST"])
+@jwt_required()
+@role_required("seller")
 def create_promotion():
     data = request.get_json()
     response, status = create_new_promotion(data)
@@ -110,6 +114,7 @@ def create_promotion():
 
 
 @promotion_routes.route("/promotions", methods=["GET"])
+@jwt_required()
 def get_promotions():
     filters = {"voucher_code": request.args.get("voucher_code")}
     response, status = get_promotions_by_query(filters)
@@ -117,12 +122,14 @@ def get_promotions():
 
 
 @promotion_routes.route("/promotions/<int:promotion_id>", methods=["GET"])
+@jwt_required()
 def get_promotion(promotion_id):
     response, status = get_promotion_by_id(promotion_id)
     return jsonify(response), status
 
 
 @promotion_routes.route("/promotions/<int:promotion_id>", methods=["PUT"])
+@jwt_required()
 def update_promotion(promotion_id):
     data = request.get_json()
     response, status = update_promotion_by_id(promotion_id, data)
@@ -130,6 +137,7 @@ def update_promotion(promotion_id):
 
 
 @promotion_routes.route("/promotions/<int:promotion_id>", methods=["DELETE"])
+@jwt_required()
 def delete_promotion(promotion_id):
     response, status = delete_promotion_by_id(promotion_id)
     return jsonify(response), status
