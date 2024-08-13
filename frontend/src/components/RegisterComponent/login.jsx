@@ -56,7 +56,8 @@ const Login = ({ onToggleForm }) => {
 
       if (response.status === 200) {
         Cookies.set('access_token', data.access_token, { expires: 1 });
-        Cookies.set('user', JSON.stringify(data.user), { expires: 1 });
+        Cookies.set('user_id', data.user_id, { expires: 1 });
+        Cookies.set('role', data.role, { expires: 1 });
         router.push('/home');
       } else {
         alert(data.message);

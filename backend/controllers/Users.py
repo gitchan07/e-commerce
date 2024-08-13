@@ -37,14 +37,13 @@ def login_user_route():
         data = request.get_json()
         response, status = login_user(data)
         if status == 200:
-            access_token = create_access_token(identity=response["user_id"])
-
             resp = make_response(
                 jsonify(
                     {
                         "message": "Login successful",
-                        "access_token": access_token,
+                        "access_token": response["access_token"],
                         "user_id": response["user_id"],
+                        "role": response["role"],
                     }
                 ),
                 200,
@@ -244,6 +243,7 @@ def login_user(data):
             return {
                 "user_id": user.id,
                 "token": create_access_token(identity=user.id),
+                "role": user.role,
             }, 200
         return {"message": "Invalid credentials"}, 401
     except SQLAlchemyError as e:
