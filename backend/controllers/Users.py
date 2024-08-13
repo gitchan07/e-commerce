@@ -38,9 +38,18 @@ def login_user_route():
         response, status = login_user(data)
         if status == 200:
             access_token = create_access_token(identity=response["user_id"])
-            resp = make_response(jsonify({"message": "Login successful"}), 200)
-            resp.set_cookie("access_token", access_token, httponly=True)
-            resp.set_cookie("user_id", str(response["user_id"]), httponly=True)
+
+            resp = make_response(
+                jsonify(
+                    {
+                        "message": "Login successful",
+                        "access_token": access_token,
+                        "user_id": response["user_id"],
+                    }
+                ),
+                200,
+            )
+
             return resp
         return jsonify(response), status
     except Exception as e:
@@ -232,7 +241,10 @@ def login_user(data):
     try:
         user = session.query(Users).filter_by(email=data["email"]).first()
         if user and user.check_password(data["password"]):
-            return {"user_id": user.id}, 200
+            return {
+                "user_id": user.id,
+                "token": create_access_token(identity=user.id),
+            }, 200
         return {"message": "Invalid credentials"}, 401
     except SQLAlchemyError as e:
         return {"message": "Database error occurred", "error": str(e)}, 500
