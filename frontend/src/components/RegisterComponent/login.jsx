@@ -38,7 +38,10 @@ const Login = ({ onToggleForm }) => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await fetch('http://localhost:5000/login', {
+      const host = process.env.NEXT_PUBLIC_HOST;
+      const api = `${host}/users/login`; 
+      
+      const response = await fetch(api,  {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +56,7 @@ const Login = ({ onToggleForm }) => {
 
       if (response.status === 200) {
         Cookies.set('access_token', data.access_token, { expires: 1 });
-        Cookies.set('user_id', data.user_id, { expires: 1 });
+        Cookies.set('user', JSON.stringify(data.user), { expires: 1 });
         router.push('/home');
       } else {
         alert(data.message);
