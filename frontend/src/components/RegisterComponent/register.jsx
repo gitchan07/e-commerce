@@ -46,7 +46,10 @@ const Register = ({ onToggleForm }) => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await fetch('http://localhost:5000/register', {
+      const host = process.env.NEXT_PUBLIC_HOST;
+      const api = `${host}/users/register`; 
+      
+      const response = await fetch(api, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
