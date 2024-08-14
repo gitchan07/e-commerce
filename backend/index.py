@@ -20,15 +20,25 @@ from controllers.Categories import category_routes
 from controllers.TransactionTransactionDetail import transaction_routes
 from controllers.Products import product_routes
 from controllers.Promotions import promotion_routes
+from controllers.Users import get_blocklist
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
+app.config["JWT_BLACKLIST_ENABLED"] = True
+app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = ['access', 'refresh']
 
 # Initialize JWT Manager
 jwt = JWTManager(app)
 cors = CORS(app)
+
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blocklist(decrypted_token):
+    jti = decrypted_token['jti']
+    is_valid = get_blocklist(jti)
+    return is_valid
 
 # Register blueprints
 app.register_blueprint(users_routes, url_prefix="/users")
@@ -36,6 +46,8 @@ app.register_blueprint(category_routes, url_prefix="/categories")
 app.register_blueprint(product_routes, url_prefix="/products")
 app.register_blueprint(transaction_routes, url_prefix="/transactions")
 app.register_blueprint(promotion_routes, url_prefix="/promotions")
+
+
 # Initialize Swagger
 SWAGGER_URL = "/apidocs"
 API_URL = "/Documentation/products.yaml"
