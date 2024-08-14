@@ -17,8 +17,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 # Import controllers here
 from controllers.Users import users_routes
 from controllers.Categories import category_routes
-from controllers.TransactionDetails import transaction_details_routes
-from controllers.Transactions import transaction_routes
+from controllers.TransactionTransactionDetail import transaction_routes
 from controllers.Products import product_routes
 from controllers.Promotions import promotion_routes
 
@@ -36,7 +35,6 @@ app.register_blueprint(users_routes, url_prefix="/users")
 app.register_blueprint(category_routes, url_prefix="/categories")
 app.register_blueprint(product_routes, url_prefix="/products")
 app.register_blueprint(transaction_routes, url_prefix="/transactions")
-app.register_blueprint(transaction_details_routes, url_prefix="/transactions")
 app.register_blueprint(promotion_routes, url_prefix="/promotions")
 # Initialize Swagger
 SWAGGER_URL = "/apidocs"

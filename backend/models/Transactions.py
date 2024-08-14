@@ -28,7 +28,6 @@ class Transactions(Base):
     )
 
     def apply_promotions(self):
-
         if self.promotion and self.promotion.value_discount:
             discount_amount = self.total_price_all_before * (
                 self.promotion.value_discount / 100

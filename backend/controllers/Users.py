@@ -41,7 +41,7 @@ def login_user_route():
                 jsonify(
                     {
                         "message": "Login successful",
-                        "access_token": response["access_token"],
+                        "access_token": response["token"],
                         "user_id": response["user_id"],
                         "role": response["role"],
                     }
@@ -238,7 +238,7 @@ def get_user(user_id):
 def login_user(data):
     session = Session()
     try:
-        user = session.query(Users).filter_by(email=data["email"]).first()
+        user = session.query(Users).filter_by(username=data["username"]).first()
         if user and user.check_password(data["password"]):
             return {
                 "user_id": user.id,
