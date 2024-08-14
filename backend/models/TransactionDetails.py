@@ -26,8 +26,8 @@ class TransactionDetails(Base):
             "transaction_id": self.transaction_id,
             "product_id": self.product_id,
             "quantity": self.quantity,
-            "price": self.price,
+            "price": str(self.price),
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
-            "total_price_item": self.total_price_item,
+            "total_price_item": str(self.total_price_item),
         }

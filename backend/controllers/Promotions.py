@@ -104,7 +104,7 @@ def delete_promotion_by_id(promotion_id):
 # Routes
 
 
-@promotion_routes.route("/promotions", methods=["POST"])
+@promotion_routes.route("", methods=["POST"])
 @jwt_required()
 @role_required("seller")
 def create_promotion():
@@ -113,7 +113,7 @@ def create_promotion():
     return jsonify(response), status
 
 
-@promotion_routes.route("/promotions", methods=["GET"])
+@promotion_routes.route("", methods=["GET"])
 @jwt_required()
 def get_promotions():
     filters = {"voucher_code": request.args.get("voucher_code")}
@@ -121,14 +121,14 @@ def get_promotions():
     return jsonify(response), status
 
 
-@promotion_routes.route("/promotions/<int:promotion_id>", methods=["GET"])
+@promotion_routes.route("/<int:promotion_id>", methods=["GET"])
 @jwt_required()
 def get_promotion(promotion_id):
     response, status = get_promotion_by_id(promotion_id)
     return jsonify(response), status
 
 
-@promotion_routes.route("/promotions/<int:promotion_id>", methods=["PUT"])
+@promotion_routes.route("/<int:promotion_id>", methods=["PUT"])
 @jwt_required()
 def update_promotion(promotion_id):
     data = request.get_json()
@@ -136,7 +136,7 @@ def update_promotion(promotion_id):
     return jsonify(response), status
 
 
-@promotion_routes.route("/promotions/<int:promotion_id>", methods=["DELETE"])
+@promotion_routes.route("/<int:promotion_id>", methods=["DELETE"])
 @jwt_required()
 def delete_promotion(promotion_id):
     response, status = delete_promotion_by_id(promotion_id)

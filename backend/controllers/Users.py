@@ -113,10 +113,12 @@ def logout_route():
     session.commit()
     return jsonify(msg="Access token revoked")
 
+
 def get_blocklist(jti):
     session = Session()
     blocklist = session.query(RevokedToken).filter_by(jti=jti).first()
     return blocklist is not None
+
 
 def create_new_user(data):
     session = Session()
@@ -250,5 +252,3 @@ def login_user(data):
         return {"message": "Database error occurred", "error": str(e)}, 500
     finally:
         session.close()
-
-

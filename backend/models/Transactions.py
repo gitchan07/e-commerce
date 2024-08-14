@@ -27,16 +27,16 @@ class Transactions(Base):
         "TransactionDetails", back_populates="transactions"
     )
 
-    def apply_promotions(self):
-        if self.promotion and self.promotion.value_discount:
+    def apply_promotions(self, promotion):
+        if promotion and promotion.value_discount:
             discount_amount = self.total_price_all_before * (
-                self.promotion.value_discount / 100
+                promotion.value_discount / 100
             )
             self.total_price_all_after = self.total_price_all_before - discount_amount
+            self.total_price_all = self.total_price_all_after
         else:
             self.total_price_all_after = self.total_price_all_before
-
-        return self.total_price_all_after
+            self.total_price_all = self.total_price_all_before
 
     @staticmethod
     def generate_transactions_number():
@@ -51,6 +51,7 @@ class Transactions(Base):
             "transaction_number": self.transaction_number,
             "total_price_all_before": self.total_price_all_before,
             "total_price_all_after": self.total_price_all_after,
+            "total_price_all": self.total_price_all,
             "transaction_status": self.transaction_status,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,

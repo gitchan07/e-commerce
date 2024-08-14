@@ -82,3 +82,8 @@ CREATE TABLE transaction_details (
     FOREIGN KEY (transaction_id) REFERENCES transactions(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
+CREATE TABLE revoked_tokens (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  jti VARCHAR(120) NOT NULL,
+  revoked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
