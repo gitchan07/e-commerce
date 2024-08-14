@@ -87,3 +87,6 @@ CREATE TABLE revoked_tokens (
   jti VARCHAR(120) NOT NULL,
   revoked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+DESCRIBE transactions;
+
