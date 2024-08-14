@@ -7,16 +7,6 @@ import Image from "next/image";
 
 const Register = ({ onToggleForm }) => {
   const validationSchema = Yup.object({
-    fullName: Yup.string()
-      .matches(/^[A-Za-z\s]+$/, "Full name can only contain letters and spaces")
-      .matches(
-        /^[A-Z][a-zA-Z]*(\s[A-Z][a-zA-Z]*)*$/,
-        "Full name must start with a capital letter for each word"
-      )
-      .required("Full name is required"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
     username: Yup.string()
       .min(3, "Username must be at least 3 characters")
       .max(20, "Username must be at most 20 characters")
@@ -25,6 +15,20 @@ const Register = ({ onToggleForm }) => {
         "Username can only contain letters, numbers, and underscores"
       )
       .required("Username is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    fullName: Yup.string()
+      .matches(/^[A-Za-z\s]+$/, "Full name can only contain letters and spaces")
+      .matches(
+        /^[A-Z][a-zA-Z]*(\s[A-Z][a-zA-Z]*)*$/,
+        "Full name must start with a capital letter for each word"
+      )
+      .required("Full name is required"),
+    address: Yup.string()
+      .required("Address is required"),
+    role: Yup.string()
+      .required("Role is required"),
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")
       .matches(/[a-z]/, "Password must contain at least one lowercase letter")
@@ -38,9 +42,11 @@ const Register = ({ onToggleForm }) => {
   });
 
   const initialValues = {
-    fullName: "",
-    email: "",
     username: "",
+    email: "",
+    fullName: "",
+    address: "",
+    role: "seller",
     password: "",
   };
 
@@ -55,11 +61,12 @@ const Register = ({ onToggleForm }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          full_name: values.fullName,
-          email: values.email,
           username: values.username,
+          email: values.email,
+          full_name: values.fullName,
+          address: values.address,
+          role: values.role,
           password: values.password,
-          role: 'user',
         }),
       });
 
@@ -68,6 +75,7 @@ const Register = ({ onToggleForm }) => {
       if (response.status === 201) {
         alert('User created successfully');
         onToggleForm();
+        router.push('/login');
       } else {
         alert(data.message);
       }
@@ -111,24 +119,19 @@ const Register = ({ onToggleForm }) => {
             <Form>
               <div className="mb-4">
                 <label
-                  htmlFor="fullName"
+                  htmlFor="username"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Full Name
+                  Username
                 </label>
                 <Field
                   type="text"
-                  id="fullName"
-                  name="fullName"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                  id="username"
+                  name="username"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
-                <ErrorMessage
-                  name="fullName"
-                  component="div"
-                  className="text-red-600 text-sm"
-                />
+                <ErrorMessage name="username" component="div" className="text-red-500 text-sm" />
               </div>
-
               <div className="mb-4">
                 <label
                   htmlFor="email"
@@ -140,35 +143,55 @@ const Register = ({ onToggleForm }) => {
                   type="email"
                   id="email"
                   name="email"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="text-red-600 text-sm"
-                />
+                <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
               </div>
-
               <div className="mb-4">
                 <label
-                  htmlFor="username"
+                  htmlFor="fullName"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Username
+                  Full Name
                 </label>
                 <Field
                   type="text"
-                  id="username"
-                  name="username"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                  id="fullName"
+                  name="fullName"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
-                <ErrorMessage
-                  name="username"
-                  component="div"
-                  className="text-red-600 text-sm"
-                />
+                <ErrorMessage name="fullName" component="div" className="text-red-500 text-sm" />
               </div>
-
+              <div className="mb-4">
+                <label
+                  htmlFor="address"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Address
+                </label>
+                <Field
+                  type="text"
+                  id="address"
+                  name="address"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+                <ErrorMessage name="address" component="div" className="text-red-500 text-sm" />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="role"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Role
+                </label>
+                <Field
+                  type="text"
+                  id="role"
+                  name="role"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+                <ErrorMessage name="role" component="div" className="text-red-500 text-sm" />
+              </div>
               <div className="mb-4">
                 <label
                   htmlFor="password"
@@ -180,28 +203,21 @@ const Register = ({ onToggleForm }) => {
                   type="password"
                   id="password"
                   name="password"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="text-red-600 text-sm"
-                />
+                <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
               </div>
-
-              <div className="flex items-center justify-between">
-                <button
-                  type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <FontAwesomeIcon icon={faSpinner} spin />
-                  ) : (
-                    "Register"
-                  )}
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <FontAwesomeIcon icon={faSpinner} spin />
+                ) : (
+                  'Register'
+                )}
+              </button>
             </Form>
           )}
         </Formik>
