@@ -104,7 +104,8 @@ def protected_route():
     return jsonify(logged_in_as=current_user), 200
 
 
-@users_routes.route("/logout", methods=["DELETE"])
+@users_routes.route("/logout", methods=["POST"])
+@jwt_required()
 def logout_route():
     session = Session()
     jti = get_jwt()["jti"]

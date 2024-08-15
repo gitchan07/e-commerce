@@ -1,5 +1,5 @@
 // /pages/protected-page.js
-import withAuth from '../hoc/withAuth';
+import withAuth from '@/components/hoc/withAuth';
 
 const ProtectedPage = () => {
     return (
