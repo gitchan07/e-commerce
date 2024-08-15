@@ -35,40 +35,56 @@ const ProductsPage = () => {
     fetchProducts();
   }, [page]);
 
+  useEffect(() => {
+    const prefetchNextPage = async () => {
+      if (page < totalPages) {
+        await axios.get(api, {
+          params: { page: page + 1, per_page: perPage },
+        });
+      }
+    };
+    if (!loading && page < totalPages) {
+      prefetchNextPage();
+    }
+  }, [page, totalPages]);
+
   const handleNextPage = () => {
     if (page < totalPages) {
       setPage(page + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handlePreviousPage = () => {
     if (page > 1) {
       setPage(page - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handlePageClick = (pageNumber) => {
     setPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p className="text-center text-lg">Loading...</p>;
   }
 
   if (error) {
-    return <p>Error fetching products: {error.message}</p>;
+    return <p className="text-center text-red-500">Error fetching products: {error.message}</p>;
   }
 
   return (
-    <div>
-      <h1>Products</h1>
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold my-6 text-center">Products</h1>
       <ListCardItem products={products} />
 
       <div className="flex justify-center items-center mt-6 space-x-2">
         <button
           onClick={handlePreviousPage}
           disabled={page === 1}
-          className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-300"
+          className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-300 hover:bg-blue-600 transition duration-200"
         >
           Previous
         </button>
@@ -80,8 +96,8 @@ const ProductsPage = () => {
             className={`px-4 py-2 rounded ${
               page === index + 1
                 ? 'bg-blue-700 text-white'
-                : 'bg-blue-500 text-white'
-            }`}
+                : 'bg-blue-500 text-white hover:bg-blue-600'
+            } transition duration-200`}
           >
             {index + 1}
           </button>
@@ -90,7 +106,7 @@ const ProductsPage = () => {
         <button
           onClick={handleNextPage}
           disabled={page === totalPages}
-          className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-300"
+          className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-300 hover:bg-blue-600 transition duration-200"
         >
           Next
         </button>

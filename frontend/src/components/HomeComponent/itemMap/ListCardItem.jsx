@@ -3,7 +3,7 @@ import ItemCardComponent from './ItemCardComponent';
 
 const ListCardItem = ({ products }) => {
   return (
-    <div className="flex flex-wrap justify-center gap-6 p-6">
+    <div className="flex flex-wrap justify-center gap-8 p-6 lg:p-8">
       {products.map((product) => (
         <ItemCardComponent
           key={product.id}
@@ -17,6 +17,5 @@ const ListCardItem = ({ products }) => {
     </div>
   );
 };
-
 
 export default ListCardItem;
