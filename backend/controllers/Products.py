@@ -5,6 +5,7 @@ from models.Products import Products
 from models.Users import Users
 from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
 from decorator import role_required
 import os
 from sqlalchemy.exc import SQLAlchemyError

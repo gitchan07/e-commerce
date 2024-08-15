@@ -1,8 +1,8 @@
 // pages/index.jsx
-import Head from 'next/head';
-import Layout from '@/components/LayoutComponent/Layout';
-import ProductGrid from '@/components/ProductComponent/ProductGrid';
-import ProductsPage from '@/components/HomeComponent/itemMap/itemComponent';
+import Head from "next/head";
+import Layout from "@/components/LayoutComponent/Layout";
+import ProductGrid from "@/components/ProductComponent/ProductGrid";
+import ProductsPage from "@/components/HomeComponent/itemMap/itemComponent";
 export default function Home() {
   return (
     <Layout>
@@ -13,10 +13,11 @@ export default function Home() {
       </Head>
 
       <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
-        <h1 className="text-4xl font-bold mb-8 text-center">Welcome to Our Vape Shop</h1>
-        <ProductsPage/>
+        <h1 className="text-4xl font-bold mb-8 text-center">
+          Welcome to Our Vape Shop
+        </h1>
+        <ProductsPage />
         <ProductGrid />
-        
       </div>
     </Layout>
   );
