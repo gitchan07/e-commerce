@@ -5,16 +5,15 @@ from models.Promotions import Promotions
 from sqlalchemy.exc import SQLAlchemyError
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from decorator import role_required
+from connection.connector import session
 
 promotion_routes = Blueprint("promotion_routes", __name__)
 
-Session = sessionmaker(bind=connection)
 
 # Utility Functions
 
 
 def create_new_promotion(data):
-    session = Session()
     try:
         new_promotion = Promotions(
             voucher_code=data["voucher_code"],
@@ -32,7 +31,6 @@ def create_new_promotion(data):
 
 
 def get_promotions_by_query(filters):
-    session = Session()
     try:
         query = session.query(Promotions)
 
@@ -51,7 +49,6 @@ def get_promotions_by_query(filters):
 
 
 def get_promotion_by_id(promotion_id):
-    session = Session()
     try:
         promotion = session.query(Promotions).get(promotion_id)
         if promotion:
@@ -65,7 +62,6 @@ def get_promotion_by_id(promotion_id):
 
 
 def update_promotion_by_id(promotion_id, data):
-    session = Session()
     try:
         promotion = session.query(Promotions).get(promotion_id)
         if not promotion:
@@ -85,7 +81,6 @@ def update_promotion_by_id(promotion_id, data):
 
 
 def delete_promotion_by_id(promotion_id):
-    session = Session()
     try:
         promotion = session.query(Promotions).get(promotion_id)
         if not promotion:

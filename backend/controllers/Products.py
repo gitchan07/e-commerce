@@ -8,10 +8,12 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from decorator import role_required
 import os
-
-Session = sessionmaker(bind=connection)
+from sqlalchemy.exc import OperationalError, SQLAlchemyError
+from sqlalchemy.orm import Session
+from connection.connector import session
 
 product_routes = Blueprint("product_routes", __name__)
+
 
 # Routes
 
@@ -108,7 +110,6 @@ def get_seller_products():
 @role_required("seller")
 def get_seller_product_by_id(id):
     current_user_id = get_jwt_identity()
-    session = Session()
     try:
         product = (
             session.query(Products).filter_by(id=id, user_id=current_user_id).first()
@@ -142,7 +143,6 @@ def save_image(image):
 
 
 def create_new_product(data, user_id):
-    session = Session()
     try:
         new_product = Products(
             user_id=user_id,
@@ -168,7 +168,7 @@ def create_new_product(data, user_id):
 
 
 def get_all_products(filters):
-    session = Session()
+
     try:
         query = session.query(Products).filter_by(is_active=True)
         if filters.get("category_id"):
@@ -191,14 +191,14 @@ def get_all_products(filters):
             "per_page": per_page,
             "products": [product.to_dict() for product in products],
         }, 200
-    except SQLAlchemyError as e:
+    except Exception as e:
+        session.rollback()
         return {"message": "Failed to retrieve products", "error": str(e)}, 500
-    finally:
-        session.close()
+    # finally:
+    #     session.close()
 
 
 def get_product_by_id(product_id):
-    session = Session()
     try:
         product = session.query(Products).get(product_id)
         if product:
@@ -212,7 +212,6 @@ def get_product_by_id(product_id):
 
 
 def update_existing_product(product_id, data, user_id):
-    session = Session()
     try:
         product = session.query(Products).get(product_id)
 
@@ -237,7 +236,6 @@ def update_existing_product(product_id, data, user_id):
 
 
 def delete_existing_product(product_id, user_id):
-    session = Session()
     try:
         product = session.query(Products).get(product_id)
 

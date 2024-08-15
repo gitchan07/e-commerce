@@ -5,10 +5,9 @@ from models.Categories import Categories
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.exc import SQLAlchemyError
 from decorator import role_required
+from connection.connector import session
 
 category_routes = Blueprint("category_routes", __name__)
-
-Session = sessionmaker(bind=connection)
 
 
 # Routes
@@ -81,7 +80,6 @@ def delete_category(category_id):
 
 
 def create_new_category(data):
-    session = Session()
     try:
         new_category = Categories(name=data["name"])
         session.add(new_category)
@@ -98,7 +96,6 @@ def create_new_category(data):
 
 
 def get_all_categories():
-    session = Session()
     try:
         categories = session.query(Categories).all()
         category_list = [
@@ -118,7 +115,6 @@ def get_all_categories():
 
 
 def get_category_by_id(category_id):
-    session = Session()
     try:
         category = session.query(Categories).filter_by(id=category_id).first()
         if category is None:
@@ -138,7 +134,6 @@ def get_category_by_id(category_id):
 
 
 def update_existing_category(category_id, data):
-    session = Session()
     try:
         category = session.query(Categories).filter_by(id=category_id).first()
         if category is None:
@@ -157,7 +152,6 @@ def update_existing_category(category_id, data):
 
 
 def delete_existing_category(category_id):
-    session = Session()
     try:
         category = session.query(Categories).filter_by(id=category_id).first()
         if category is None:

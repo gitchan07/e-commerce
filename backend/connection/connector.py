@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
+from sqlalchemy.orm import sessionmaker
 
 load_dotenv()
 
@@ -18,9 +19,17 @@ print(f"Connecting to {database} database at {host}")
 
 try:
     engine = create_engine(
-        f"mysql+mysqlconnector://{username}:{password}@{host}/{database}"
+        f"mysql+mysqlconnector://{username}:{password}@{host}/{database}",
+        pool_size=10,
+        max_overflow=20,
+        pool_timeout=30,
+        pool_recycle=3600,
+        pool_pre_ping=True,
     )
     connection = engine.connect()
     print(f"Successfully connected to {host}")
 except Exception as e:
     print(f"Failed to connect: {e}")
+
+Session = sessionmaker(bind=connection)
+session = Session()

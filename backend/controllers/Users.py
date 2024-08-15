@@ -10,10 +10,9 @@ from flask_jwt_extended import (
     get_jwt,
 )
 from sqlalchemy.exc import SQLAlchemyError
+from connection.connector import session
 
 users_routes = Blueprint("users_routes", __name__)
-
-Session = sessionmaker(bind=connection)
 
 
 @users_routes.route("/register", methods=["POST"])
@@ -107,7 +106,6 @@ def protected_route():
 @users_routes.route("/logout", methods=["POST"])
 @jwt_required()
 def logout_route():
-    session = Session()
     jti = get_jwt()["jti"]
     revoked_token = RevokedToken(jti=jti)
     session.add(revoked_token)
@@ -116,13 +114,11 @@ def logout_route():
 
 
 def get_blocklist(jti):
-    session = Session()
     blocklist = session.query(RevokedToken).filter_by(jti=jti).first()
     return blocklist is not None
 
 
 def create_new_user(data):
-    session = Session()
     try:
         if not all(key in data for key in ("username", "email", "password", "role")):
             return {"message": "Missing required fields"}, 400
@@ -155,7 +151,6 @@ def create_new_user(data):
 
 
 def update_existing_user(user_id, data):
-    session = Session()
     try:
         user = session.query(Users).filter_by(id=user_id).first()
 
@@ -187,7 +182,6 @@ def update_existing_user(user_id, data):
 
 
 def delete_existing_user(user_id):
-    session = Session()
     try:
         user = session.query(Users).filter_by(id=user_id).first()
 
@@ -206,7 +200,6 @@ def delete_existing_user(user_id):
 
 
 def get_all_users():
-    session = Session()
     try:
         users = session.query(Users).all()
         return {
@@ -221,7 +214,6 @@ def get_all_users():
 
 
 def get_user(user_id):
-    session = Session()
     try:
         user = session.query(Users).filter_by(id=user_id).first()
         if user:
@@ -239,7 +231,6 @@ def get_user(user_id):
 
 # set acess token expired , refresh token
 def login_user(data):
-    session = Session()
     try:
         user = session.query(Users).filter_by(username=data["username"]).first()
         if user and user.check_password(data["password"]):
