@@ -88,5 +88,4 @@ CREATE TABLE revoked_tokens (
   revoked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-DESCRIBE transactions;
 
