@@ -7,6 +7,7 @@ from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
 from decorator import role_required
 import os
+from sqlalchemy.exc import SQLAlchemyError
 
 Session = sessionmaker(bind=connection)
 
