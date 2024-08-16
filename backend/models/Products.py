@@ -3,6 +3,11 @@ from sqlalchemy.orm import relationship, mapped_column
 from sqlalchemy.sql import func
 from models.Base import Base
 import datetime
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 class Products(Base):
@@ -35,7 +40,11 @@ class Products(Base):
             "description": self.description,
             "stock": self.stock,
             "price": str(self.price),
-            "img_path": self.img_path,
+            "img_path": os.getenv("STORAGE")
+            + "/"
+            + os.getenv("UPLOAD_FOLDER")
+            + "/"
+            + self.img_path,
             "is_active": self.is_active,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,

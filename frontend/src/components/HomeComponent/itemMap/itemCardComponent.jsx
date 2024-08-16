@@ -50,7 +50,7 @@ const ItemCardComponent = ({ id, title, img_path, description, price }) => {
         <p className="text-gray-700 text-base">{description}</p>
       </div>
       <div className="px-6 pt-4 pb-2">
-        <span className="text-gray-900 font-bold text-lg">${price}</span>
+        <span className="text-gray-900 font-bold text-lg">Rp.{price}</span>
       </div>
       <button
         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-300"

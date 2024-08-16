@@ -11,8 +11,13 @@ import os
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
 from sqlalchemy.orm import Session
 from connection.connector import session
+from flask import send_from_directory, current_app
+import os
+from dotenv import load_dotenv
+
 
 product_routes = Blueprint("product_routes", __name__)
+load_dotenv()
 
 
 # Routes
@@ -128,7 +133,10 @@ def get_seller_product_by_id(id):
 # Utility function for saving the uploaded image
 def save_image(image):
     if image:
-        upload_folder = os.path.join(current_app.root_path, "static", "upload_image")
+        storage_url = os.getenv("STORAGE")
+        upload_folder = os.getenv("UPLOAD_FOLDER", "static/upload_image")
+
+        # Ensure the upload folder exists
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
 
@@ -138,7 +146,7 @@ def save_image(image):
         image.save(image_path)
 
         # Return the relative path to store in the database
-        return f"static/upload_image/{image_filename}"
+        return f"{upload_folder}/{image_filename}"
     return None
 
 
@@ -194,8 +202,6 @@ def get_all_products(filters):
     except Exception as e:
         session.rollback()
         return {"message": "Failed to retrieve products", "error": str(e)}, 500
-    # finally:
-    #     session.close()
 
 
 def get_product_by_id(product_id):
@@ -250,3 +256,20 @@ def delete_existing_product(product_id, user_id):
         return {"message": "Failed to delete product", "error": str(e)}, 500
     finally:
         session.close()
+
+
+def get_image(file_name):
+    try:
+        # Split the file_name to get the directory and file separately
+        directory, image_name = os.path.split(file_name)
+        image_dir = os.path.join(current_app.root_path, directory)
+
+        # Check if the file exists
+        if not os.path.exists(os.path.join(image_dir, image_name)):
+            raise FileNotFoundError("Image not found")
+
+        # Serve the image file
+        return send_from_directory(image_dir, image_name)
+
+    except Exception as e:
+        return {"message": "Failed to retrieve image", "error": str(e)}, 404
