@@ -39,12 +39,12 @@ const Login = ({ onToggleForm }) => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const host = process.env.NEXT_PUBLIC_HOST;
-      const api = `${host}/users/login`; 
-      
-      const response = await fetch(api,  {
-        method: 'POST',
+      const api = `${host}/users/login`;
+
+      const response = await fetch(api, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           username: values.username,
@@ -55,16 +55,16 @@ const Login = ({ onToggleForm }) => {
       const data = await response.json();
 
       if (response.status === 200) {
-        Cookies.set('access_token', data.access_token, { expires: 1 });
-        Cookies.set('user_id', data.user_id, { expires: 1 });
-        Cookies.set('role', data.role, { expires: 1 });
-        router.push('/home');
+        Cookies.set("access_token", data.access_token, { expires: 1 });
+        Cookies.set("user_id", data.user_id, { expires: 1 });
+        Cookies.set("role", data.role, { expires: 1 });
+        router.push("/");
       } else {
         alert(data.message);
       }
     } catch (error) {
-      console.error('Login error:', error);
-      alert('An error occurred during login.');
+      console.error("Login error:", error);
+      alert("An error occurred during login.");
     } finally {
       setSubmitting(false);
     }
@@ -87,7 +87,8 @@ const Login = ({ onToggleForm }) => {
         </h1>
         <h3 className="text-center text-gray-800 mb-6">
           Don't have a Vapor Vault account? 
-          <a className="text-emerald-600 hover:underline underline-offset-2 cursor-pointer"
+          <a
+            className="text-emerald-600 hover:underline underline-offset-2 cursor-pointer"
             onClick={onToggleForm}
           >
             Register

@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "next/router";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,6 +7,8 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 
 const Register = ({ onToggleForm }) => {
+  const router = useRouter();
+
   const validationSchema = Yup.object({
     username: Yup.string()
       .min(3, "Username must be at least 3 characters")
@@ -25,10 +28,8 @@ const Register = ({ onToggleForm }) => {
         "Full name must start with a capital letter for each word"
       )
       .required("Full name is required"),
-    address: Yup.string()
-      .required("Address is required"),
-    role: Yup.string()
-      .required("Role is required"),
+    address: Yup.string().required("Address is required"),
+    role: Yup.string().required("Role is required"),
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")
       .matches(/[a-z]/, "Password must contain at least one lowercase letter")
@@ -53,12 +54,12 @@ const Register = ({ onToggleForm }) => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const host = process.env.NEXT_PUBLIC_HOST;
-      const api = `${host}/users/register`; 
-      
+      const api = `${host}/users/register`;
+
       const response = await fetch(api, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           username: values.username,
@@ -73,15 +74,15 @@ const Register = ({ onToggleForm }) => {
       const data = await response.json();
 
       if (response.status === 201) {
-        alert('User created successfully');
+        alert("User created successfully");
         onToggleForm();
-        router.push('/login');
+        router.push("/login");
       } else {
         alert(data.message);
       }
     } catch (error) {
-      console.error('Registration error:', error);
-      alert('An error occurred during registration.');
+      console.error("Registration error:", error);
+      alert("An error occurred during registration.");
     } finally {
       setSubmitting(false);
     }
@@ -104,7 +105,8 @@ const Register = ({ onToggleForm }) => {
         </h1>
         <h3 className="text-center text-gray-800 mb-6">
           Already have a Vapor Vault account? 
-          <a className="text-emerald-600 hover:underline underline-offset-2 cursor-pointer"
+          <a
+            className="text-emerald-600 hover:underline underline-offset-2 cursor-pointer"
             onClick={onToggleForm}
           >
             Login
@@ -116,7 +118,7 @@ const Register = ({ onToggleForm }) => {
           onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
-            <Form>
+            <Form className="text-black">
               <div className="mb-4">
                 <label
                   htmlFor="username"
@@ -130,7 +132,11 @@ const Register = ({ onToggleForm }) => {
                   name="username"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
-                <ErrorMessage name="username" component="div" className="text-red-500 text-sm" />
+                <ErrorMessage
+                  name="username"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
               </div>
               <div className="mb-4">
                 <label
@@ -145,7 +151,11 @@ const Register = ({ onToggleForm }) => {
                   name="email"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
-                <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
               </div>
               <div className="mb-4">
                 <label
@@ -160,7 +170,11 @@ const Register = ({ onToggleForm }) => {
                   name="fullName"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
-                <ErrorMessage name="fullName" component="div" className="text-red-500 text-sm" />
+                <ErrorMessage
+                  name="fullName"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
               </div>
               <div className="mb-4">
                 <label
@@ -175,7 +189,11 @@ const Register = ({ onToggleForm }) => {
                   name="address"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
-                <ErrorMessage name="address" component="div" className="text-red-500 text-sm" />
+                <ErrorMessage
+                  name="address"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
               </div>
               <div className="mb-4">
                 <label
@@ -190,7 +208,11 @@ const Register = ({ onToggleForm }) => {
                   name="role"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
-                <ErrorMessage name="role" component="div" className="text-red-500 text-sm" />
+                <ErrorMessage
+                  name="role"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
               </div>
               <div className="mb-4">
                 <label
@@ -205,7 +227,11 @@ const Register = ({ onToggleForm }) => {
                   name="password"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
-                <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
               </div>
               <button
                 type="submit"
@@ -215,7 +241,7 @@ const Register = ({ onToggleForm }) => {
                 {isSubmitting ? (
                   <FontAwesomeIcon icon={faSpinner} spin />
                 ) : (
-                  'Register'
+                  "Register"
                 )}
               </button>
             </Form>
