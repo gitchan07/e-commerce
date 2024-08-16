@@ -6,6 +6,8 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 
 const Register = ({ onToggleForm }) => {
+  const router = useRouter();
+
   const validationSchema = Yup.object({
     username: Yup.string()
       .min(3, "Username must be at least 3 characters")

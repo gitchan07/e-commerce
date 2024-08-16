@@ -58,7 +58,7 @@ const Login = ({ onToggleForm }) => {
         Cookies.set('access_token', data.access_token, { expires: 1 });
         Cookies.set('user_id', data.user_id, { expires: 1 });
         Cookies.set('role', data.role, { expires: 1 });
-        router.push('/home');
+        router.push('/');
       } else {
         alert(data.message);
       }

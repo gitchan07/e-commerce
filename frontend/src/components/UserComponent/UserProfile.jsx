@@ -1,66 +1,205 @@
-// UserComponent/UserProfile.jsx
-import { useState, useEffect } from 'react';
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { useRouter } from "next/router";
 
 const UserProfile = () => {
-  const [user, setUser] = useState({ name: '', email: '', address: '' });
+  const validationSchema = Yup.object({
+    username: Yup.string()
+      .min(3, "Username must be at least 3 characters")
+      .max(20, "Username must be at most 20 characters")
+      .matches(
+        /^[a-zA-Z0-9_]+$/,
+        "Username can only contain letters, numbers, and underscores"
+      )
+      .required("Username is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    full_name: Yup.string()
+      .min(3, "Full name must be at least 3 characters")
+      .max(50, "Full name must be at most 50 characters")
+      .required("Full name is required"),
+    address: Yup.string()
+      .min(10, "Address must be at least 10 characters")
+      .max(100, "Address must be at most 100 characters")
+      .required("Address is required"),
+    role: Yup.string()
+      .oneOf(["seller", "buyer"], "Invalid role")
+      .required("Role is required"),
+    password: Yup.string()
+      .min(8, "Password must be at least 8 characters")
+      .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .matches(/[0-9]/, "Password must contain at least one number")
+      .matches(
+        /[@$!%*?&]/,
+        "Password must contain at least one special character"
+      )
+      .required("Password is required"),
+  });
 
-  useEffect(() => {
-    // Fetch user profile from an API or database
-    const fetchUser = async () => {
-      const data = await fetch('/api/user').then((res) => res.json());
-      setUser(data);
-    };
-    fetchUser();
-  }, []);
+  const [initialValues, setinitialValues] = useState({
+    username: "",
+    email: "",
+    full_name: "",
+    address: "",
+    role: "",
+    password: "",
+  });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUser((prevUser) => ({ ...prevUser, [name]: value }));
-  };
+  const router = useRouter();
+  const { user_id } = router.query;
 
-  const handleSave = () => {
-    // Save user profile to an API or database
-    console.log('User profile saved:', user);
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const response = await fetch(`/api/users/${user_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        console.log('User profile saved:', data);
+        alert('Profile updated successfully');
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Save error:', error);
+      alert('An error occurred while saving the profile.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-bold mb-6">User Profile</h2>
-      <div className="mb-4">
-        <label className="block mb-2 font-semibold">Name</label>
-        <input
-          type="text"
-          name="name"
-          value={user.name}
-          onChange={handleInputChange}
-          className="border p-2 rounded w-full"
-        />
+    <div className="flex flex-col md:flex-row justify-center items-center md:space-x-14 space-y-6 md:space-y-0 p-4 min-h-screen">
+      <div className="w-full md:w-2/3 max-w-md mx-auto p-6 bg-white shadow shadow-slate-400 rounded-lg">
+        <h1 className="text-3xl font-bold mb-4 text-gray-800 text-center">
+          Edit Your Profile
+        </h1>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              <div className="mb-4">
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Username
+                </label>
+                <Field
+                  type="text"
+                  id="username"
+                  name="username"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                />
+                <ErrorMessage name="username" component="div" className="text-red-600 text-sm mt-1" />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Email
+                </label>
+                <Field
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                />
+                <ErrorMessage name="email" component="div" className="text-red-600 text-sm mt-1" />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="full_name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Full Name
+                </label>
+                <Field
+                  type="text"
+                  id="full_name"
+                  name="full_name"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                />
+                <ErrorMessage name="full_name" component="div" className="text-red-600 text-sm mt-1" />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="address"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Address
+                </label>
+                <Field
+                  as="textarea"
+                  id="address"
+                  name="address"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                />
+                <ErrorMessage name="address" component="div" className="text-red-600 text-sm mt-1" />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="role"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Role
+                </label>
+                <Field
+                  as="select"
+                  id="role"
+                  name="role"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                >
+                  <option value="seller">Seller</option>
+                  <option value="buyer">Buyer</option>
+                </Field>
+                <ErrorMessage name="role" component="div" className="text-red-600 text-sm mt-1" />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Password
+                </label>
+                <Field
+                  type="password"
+                  id="password"
+                  name="password"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                />
+                <ErrorMessage name="password" component="div" className="text-red-600 text-sm mt-1" />
+              </div>
+              <button
+                type="submit"
+                className="bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <FontAwesomeIcon icon={faSpinner} spin />
+                ) : (
+                  "Save Profile"
+                )}
+              </button>
+            </Form>
+          )}
+        </Formik>
       </div>
-      <div className="mb-4">
-        <label className="block mb-2 font-semibold">Email</label>
-        <input
-          type="email"
-          name="email"
-          value={user.email}
-          onChange={handleInputChange}
-          className="border p-2 rounded w-full"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block mb-2 font-semibold">Address</label>
-        <textarea
-          name="address"
-          value={user.address}
-          onChange={handleInputChange}
-          className="border p-2 rounded w-full"
-        />
-      </div>
-      <button
-        onClick={handleSave}
-        className="bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700"
-      >
-        Save Profile
-      </button>
     </div>
   );
 };
