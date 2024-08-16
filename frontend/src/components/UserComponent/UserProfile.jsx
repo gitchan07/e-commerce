@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/router";
+import Cookie from "js-cookie";
 
 const UserProfile = () => {
   const validationSchema = Yup.object({
@@ -51,7 +52,8 @@ const UserProfile = () => {
   });
 
   const router = useRouter();
-  const { user_id } = router.query;
+  const user_id = Cookie.get('user_id');
+  console.log(user_id);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
@@ -151,24 +153,6 @@ const UserProfile = () => {
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
                 />
                 <ErrorMessage name="address" component="div" className="text-red-600 text-sm mt-1" />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="role"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Role
-                </label>
-                <Field
-                  as="select"
-                  id="role"
-                  name="role"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
-                >
-                  <option value="seller">Seller</option>
-                  <option value="buyer">Buyer</option>
-                </Field>
-                <ErrorMessage name="role" component="div" className="text-red-600 text-sm mt-1" />
               </div>
               <div className="mb-4">
                 <label

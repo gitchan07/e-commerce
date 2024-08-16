@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 const Register = ({ onToggleForm }) => {
   const router = useRouter();
@@ -187,12 +188,15 @@ const Register = ({ onToggleForm }) => {
                   Role
                 </label>
                 <Field
-                  type="text"
+                  as="select"
                   id="role"
                   name="role"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                />
-                <ErrorMessage name="role" component="div" className="text-red-500 text-sm" />
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                >
+                  <option value="seller">Seller</option>
+                  <option value="buyer">Buyer</option>
+                </Field>
+                <ErrorMessage name="role" component="div" className="text-red-600 text-sm mt-1" />
               </div>
               <div className="mb-4">
                 <label
