@@ -1,9 +1,9 @@
-import React from 'react';
-import ItemCardComponent from './ItemCardComponent';
-
+import React from "react";
+import ItemCardComponent from "./ItemCardComponent";
+import axios from "axios";
 const ListCardItem = ({ products }) => {
   return (
-    <div className="flex flex-wrap justify-center gap-8 p-6 lg:p-8">
+    <div className="flex flex-wrap justify-center gap-10 p-6 lg:p-8">
       {products.map((product) => (
         <ItemCardComponent
           key={product.id}

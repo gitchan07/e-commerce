@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import ListCardItem from './ListCardItem';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import ListCardItem from "./ListCardItem";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -8,7 +8,6 @@ const ProductsPage = () => {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
   const host = process.env.NEXT_PUBLIC_HOST;
   const api = `${host}/products`;
   const perPage = 10;
@@ -17,6 +16,9 @@ const ProductsPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(api, {
+          headers: {
+            "Content-Type": "application/json",
+          },
           params: {
             page: page,
             per_page: perPage,
@@ -43,7 +45,7 @@ const ProductsPage = () => {
         });
       }
     };
-    if (!loading && page < totalPages) {
+    if (!loading && page < totalPages && page > 1) {
       prefetchNextPage();
     }
   }, [page, totalPages]);
@@ -51,20 +53,20 @@ const ProductsPage = () => {
   const handleNextPage = () => {
     if (page < totalPages) {
       setPage(page + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handlePreviousPage = () => {
     if (page > 1) {
       setPage(page - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handlePageClick = (pageNumber) => {
     setPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (loading) {
@@ -72,14 +74,19 @@ const ProductsPage = () => {
   }
 
   if (error) {
-    return <p className="text-center text-red-500">Error fetching products: {error.message}</p>;
+    console.log(error);
+    return (
+      <p className="text-center text-red-500">
+        Error fetching products: {error.message}
+      </p>
+    );
   }
 
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold my-6 text-center">Products</h1>
-      <ListCardItem products={products} />
 
+      <ListCardItem products={products} />
       <div className="flex justify-center items-center mt-6 space-x-2">
         <button
           onClick={handlePreviousPage}
@@ -95,8 +102,8 @@ const ProductsPage = () => {
             onClick={() => handlePageClick(index + 1)}
             className={`px-4 py-2 rounded ${
               page === index + 1
-                ? 'bg-blue-700 text-white'
-                : 'bg-blue-500 text-white hover:bg-blue-600'
+                ? "bg-blue-700 text-white"
+                : "bg-blue-500 text-white hover:bg-blue-600"
             } transition duration-200`}
           >
             {index + 1}

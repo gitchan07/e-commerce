@@ -11,9 +11,9 @@ from models.TransactionDetails import TransactionDetails
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from decorator import role_required
 from sqlalchemy.exc import SQLAlchemyError
+from connection.connector import session
 
 transaction_routes = Blueprint("transaction_routes", __name__)
-Session = sessionmaker(bind=connection)
 
 # Utility Functions
 
@@ -22,12 +22,11 @@ Session = sessionmaker(bind=connection)
 @jwt_required()
 @role_required("buyer")
 def create_transactions_and_transaction_details():
-    s = Session()
     current_user_id = get_jwt_identity()
 
     try:
         existing_transaction = (
-            s.query(Transactions)
+            session.query(Transactions)
             .filter_by(user_id=current_user_id, transaction_status="pending")
             .first()
         )
@@ -39,8 +38,8 @@ def create_transactions_and_transaction_details():
                 total_price_all=Decimal("0.00"),
                 transaction_status="pending",
             )
-            s.add(new_transaction)
-            s.commit()
+            session.add(new_transaction)
+            session.commit()
         else:
             new_transaction = existing_transaction
 
@@ -48,7 +47,7 @@ def create_transactions_and_transaction_details():
         quantity = request.json.get("quantity", 1)
 
         # Fetch the product and its price
-        product = s.query(Products).filter_by(id=product_id).first()
+        product = session.query(Products).filter_by(id=product_id).first()
         if not product:
             return jsonify({"message": "Product not found"}), 404
 
@@ -63,14 +62,14 @@ def create_transactions_and_transaction_details():
             price=product.price,
             total_price_item=total_price_item,
         )
-        s.add(new_transaction_detail)
+        session.add(new_transaction_detail)
 
         # Update the total price before any promotions
         new_transaction.total_price_all_before += total_price_item
 
         promotion_id = request.json.get("promotion_id")
         if promotion_id:
-            promotion = s.query(Promotions).filter_by(id=promotion_id).first()
+            promotion = session.query(Promotions).filter_by(id=promotion_id).first()
             if promotion:
                 new_transaction.apply_promotions(promotion)
             else:
@@ -78,7 +77,7 @@ def create_transactions_and_transaction_details():
         else:
             new_transaction.total_price_all = new_transaction.total_price_all_before
 
-        s.commit()
+        session.commit()
 
         return (
             jsonify(
@@ -90,10 +89,10 @@ def create_transactions_and_transaction_details():
             201,
         )
     except SQLAlchemyError as e:
-        s.rollback()
+        session.rollback()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
     finally:
-        s.close()
+        session.close()
 
 
 @transaction_routes.route(
@@ -102,10 +101,9 @@ def create_transactions_and_transaction_details():
 @jwt_required()
 @role_required("buyer")
 def edit_transaction_detail(transaction_id, detail_id):
-    s = Session()
     try:
         transaction_detail = (
-            s.query(TransactionDetails)
+            session.query(TransactionDetails)
             .filter_by(id=detail_id, transaction_id=transaction_id)
             .first()
         )
@@ -121,19 +119,19 @@ def edit_transaction_detail(transaction_id, detail_id):
         transaction_detail.quantity = new_quantity
 
         # Update the total price of the transaction
-        transaction = s.query(Transactions).filter_by(id=transaction_id).first()
+        transaction = session.query(Transactions).filter_by(id=transaction_id).first()
         transaction.total_price_all = sum(
             [detail.total_price_item for detail in transaction.transaction_details]
         )
 
-        s.commit()
+        session.commit()
         return jsonify({"message": "Transaction detail updated successfully"}), 200
 
     except SQLAlchemyError as e:
-        s.rollback()
+        session.rollback()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
     finally:
-        s.close()
+        session.close()
 
 
 # Delete transaction detail
@@ -143,32 +141,31 @@ def edit_transaction_detail(transaction_id, detail_id):
 @jwt_required()
 @role_required("buyer")
 def delete_transaction_detail(transaction_id, detail_id):
-    s = Session()
     try:
         transaction_detail = (
-            s.query(TransactionDetails)
+            session.query(TransactionDetails)
             .filter_by(id=detail_id, transaction_id=transaction_id)
             .first()
         )
         if not transaction_detail:
             return jsonify({"message": "Transaction detail not found"}), 404
 
-        s.delete(transaction_detail)
+        session.delete(transaction_detail)
 
         # Update the total price of the transaction
-        transaction = s.query(Transactions).filter_by(id=transaction_id).first()
+        transaction = session.query(Transactions).filter_by(id=transaction_id).first()
         transaction.total_price_all = sum(
             [detail.total_price_item for detail in transaction.transaction_details]
         )
 
-        s.commit()
+        session.commit()
         return jsonify({"message": "Transaction detail deleted successfully"}), 200
 
     except SQLAlchemyError as e:
-        s.rollback()
+        session.rollback()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
     finally:
-        s.close()
+        session.close()
 
 
 # Get all transaction details based on transaction_id
@@ -176,11 +173,10 @@ def delete_transaction_detail(transaction_id, detail_id):
 @jwt_required()
 @role_required("buyer")
 def get_transaction_details(transaction_id):
-    s = Session()
     try:
         # Query the transaction based on the transaction ID and status
         transaction = (
-            s.query(Transactions)
+            session.query(Transactions)
             .filter_by(id=transaction_id, user_id=get_jwt_identity())
             .first()
         )
@@ -196,7 +192,9 @@ def get_transaction_details(transaction_id):
 
         # If the transaction is pending, retrieve its details
         transaction_details = (
-            s.query(TransactionDetails).filter_by(transaction_id=transaction_id).all()
+            session.query(TransactionDetails)
+            .filter_by(transaction_id=transaction_id)
+            .all()
         )
 
         return (
@@ -210,10 +208,10 @@ def get_transaction_details(transaction_id):
         )
 
     except SQLAlchemyError as e:
-        s.rollback()
+        session.rollback()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
     finally:
-        s.close()
+        session.close()
 
 
 # Apply promotion to a transaction
@@ -221,10 +219,9 @@ def get_transaction_details(transaction_id):
 @jwt_required()
 @role_required("buyer")
 def apply_promotion(transaction_id):
-    s = Session()
     try:
         transaction = (
-            s.query(Transactions)
+            session.query(Transactions)
             .filter_by(id=transaction_id, transaction_status="pending")
             .first()
         )
@@ -232,7 +229,9 @@ def apply_promotion(transaction_id):
             return jsonify({"message": "Transaction not found or not pending"}), 404
 
         voucher_code = request.json.get("voucher_code")
-        promotion = s.query(Promotions).filter_by(voucher_code=voucher_code).first()
+        promotion = (
+            session.query(Promotions).filter_by(voucher_code=voucher_code).first()
+        )
 
         if not promotion:
             return jsonify({"message": "Promotion not found"}), 404
@@ -241,7 +240,7 @@ def apply_promotion(transaction_id):
         transaction.promotion_id = promotion.id
         transaction.apply_promotions(promotion)
 
-        s.commit()
+        session.commit()
         return (
             jsonify(
                 {
@@ -253,22 +252,21 @@ def apply_promotion(transaction_id):
         )
 
     except SQLAlchemyError as e:
-        s.rollback()
+        session.rollback()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
     finally:
-        s.close()
+        session.close()
 
 
 @transaction_routes.route("/<int:transaction_id>/checkout", methods=["PUT"])
 @jwt_required()
 @role_required("buyer")
 def checkout_transaction(transaction_id):
-    s = Session()
     current_user_id = get_jwt_identity()
 
     try:
         transaction = (
-            s.query(Transactions)
+            session.query(Transactions)
             .filter_by(
                 id=transaction_id, user_id=current_user_id, transaction_status="pending"
             )
@@ -279,7 +277,7 @@ def checkout_transaction(transaction_id):
 
         # Loop through each transaction detail to deduct stock
         for detail in transaction.transaction_details:
-            product = s.query(Products).filter_by(id=detail.product_id).first()
+            product = session.query(Products).filter_by(id=detail.product_id).first()
             if not product:
                 return (
                     jsonify(
@@ -303,7 +301,7 @@ def checkout_transaction(transaction_id):
 
         # Change transaction status to "paid"
         transaction.transaction_status = "paid"
-        s.commit()
+        session.commit()
 
         return (
             jsonify(
@@ -316,22 +314,21 @@ def checkout_transaction(transaction_id):
         )
 
     except SQLAlchemyError as e:
-        s.rollback()
+        session.rollback()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
     finally:
-        s.close()
+        session.close()
 
 
 @transaction_routes.route("/transactions/<int:transaction_id>", methods=["GET"])
 @jwt_required()
 @role_required("buyer")
 def get_transaction_and_details(transaction_id):
-    s = Session()
     current_user_id = get_jwt_identity()
 
     try:
         transaction = (
-            s.query(Transactions)
+            session.query(Transactions)
             .filter_by(id=transaction_id, user_id=current_user_id)
             .first()
         )
@@ -362,23 +359,21 @@ def get_transaction_and_details(transaction_id):
         )
 
     except SQLAlchemyError as e:
-        s.rollback()
+        session.rollback()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
     finally:
-        s.close()
+        session.close()
 
 
 @transaction_routes.route("/details", methods=["GET"])
 @jwt_required()
 @role_required("seller")
 def get_transaction_details_by_seller():
-    s = Session()
     current_user_id = get_jwt_identity()
-
     try:
         # Query all transaction details for products owned by the current seller
         transaction_details = (
-            s.query(TransactionDetails)
+            session.query(TransactionDetails)
             .join(Products, TransactionDetails.product_id == Products.id)
             .filter(Products.user_id == current_user_id)
             .all()
@@ -393,7 +388,7 @@ def get_transaction_details_by_seller():
         return jsonify([detail.to_dict() for detail in transaction_details]), 200
 
     except SQLAlchemyError as e:
-        s.rollback()
+        session.rollback()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
     finally:
-        s.close()
+        session.close()
