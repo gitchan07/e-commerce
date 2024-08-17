@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response, redirect, url_for
 from connection.connector import connection
-from sqlalchemy.orm import sessionmaker
 from models.Users import Users
 from models.revoked_token import RevokedToken
 from flask_jwt_extended import (
@@ -11,6 +10,9 @@ from flask_jwt_extended import (
 )
 from sqlalchemy.exc import SQLAlchemyError
 from connection.connector import session
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 users_routes = Blueprint("users_routes", __name__)
 
@@ -166,8 +168,6 @@ def update_existing_user(user_id, data):
             user.full_name = data["full_name"]
         if "address" in data:
             user.address = data["address"]
-        if "role" in data:
-            user.role = data["role"]
         if "password" in data:
             user.set_password(data["password"])
 

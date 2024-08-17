@@ -1,10 +1,13 @@
 import React from "react";
 import SearchComponent from "./SearchComponent/SearchComponent";
 import CartComponents from "./CartComponent/CartComponents";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Cookie, Plus_Jakarta_Sans } from "next/font/google";
 import RegisterButton from "./RegisterButton";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const Jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -12,7 +15,23 @@ const Jakarta = Plus_Jakarta_Sans({
 });
 
 const Header = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSeller, setIsSeller] = useState(false);
+  const [isUser, setIsUser] = useState(false);
   const Route = useRouter();
+
+  useEffect(() => {
+    const role = Cookies.get('role');
+    if (role) {
+      setIsLoggedIn(true);
+      if (role === 'seller') {
+        setIsSeller(true);
+      } else if (role === 'user') {
+        setIsUser(true);
+      }
+    }
+  }, []);
+
   const handleHome = () => Route.push("/");
   return (
     <header className="flex flex-row justify-around items-center space-x-8 text-black bg-white w-full py-4">
@@ -25,7 +44,19 @@ const Header = () => {
       </button>
       <SearchComponent />
       <CartComponents />
+      {isLoggedIn ? (
+        isSeller ? (
+          <Link href="/seller/profile" className="p-2 bg-indigo-600 text-white rounded">
+            Seller Dashboard
+          </Link>
+        ) : (
+          <Link href="/users/profile" className="p-2 bg-indigo-600 text-white rounded">
+            User Profile
+          </Link>
+        )
+      ) : (
       <RegisterButton />
+      )}
     </header>
   );
 };

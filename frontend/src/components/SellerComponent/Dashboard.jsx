@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ManageOrders from './ManageOrders';
 import ManageProduct from './ManageProduct';
-import SalesAnalytics from './SalesAnalytics';
+
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('products');
@@ -22,16 +22,9 @@ const Dashboard = () => {
         >
           Manage Orders
         </button>
-        <button
-          className={`p-2 ${activeTab === 'analytics' ? 'bg-indigo-600 text-white' : 'bg-gray-200'}`}
-          onClick={() => setActiveTab('analytics')}
-        >
-          Sales Analytics
-        </button>
       </div>
       {activeTab === 'products' && <ManageProduct />}
       {activeTab === 'orders' && <ManageOrders />}
-      {activeTab === 'analytics' && <SalesAnalytics />}
     </div>
   );
 };
