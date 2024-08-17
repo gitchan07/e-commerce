@@ -33,8 +33,6 @@ def create_new_promotion(data):
 def get_promotions_by_query(filters):
     try:
         query = session.query(Promotions)
-
-        # Apply filters
         if filters.get("voucher_code"):
             query = query.filter(
                 Promotions.voucher_code.ilike(f"%{filters['voucher_code']}%")

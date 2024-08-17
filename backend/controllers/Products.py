@@ -59,7 +59,6 @@ def get_products():
 
 
 @product_routes.route("/<int:id>", methods=["GET"])
-@jwt_required()
 def get_product(id):
     response, status = get_product_by_id(id)
     return jsonify(response), status

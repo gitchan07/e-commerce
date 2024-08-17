@@ -1,19 +1,18 @@
-// components/CheckoutComponent.js
-import { useState } from 'react';
+import { useState } from "react";
 
 const CheckoutComponent = () => {
   const [shippingInfo, setShippingInfo] = useState({
-    name: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    country: '',
+    name: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "",
   });
 
   const [paymentInfo, setPaymentInfo] = useState({
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
   });
 
   const handleShippingChange = (e) => {
@@ -29,8 +28,8 @@ const CheckoutComponent = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission
-    console.log('Shipping Info:', shippingInfo);
-    console.log('Payment Info:', paymentInfo);
+    console.log("Shipping Info:", shippingInfo);
+    console.log("Payment Info:", paymentInfo);
   };
 
   return (
