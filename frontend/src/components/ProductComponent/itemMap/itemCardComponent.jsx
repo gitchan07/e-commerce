@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { useRouter } from "next/router"; // Import Next.js useRouter hook
-
+import Cookies from "js-cookie";
 const ItemCardComponent = ({ id, title, img_path, description, price }) => {
   const router = useRouter(); // Initialize the router for navigation
 
@@ -9,9 +9,15 @@ const ItemCardComponent = ({ id, title, img_path, description, price }) => {
   const api = `${host}/transactions/`;
   const HandleBuy = async (product_id) => {
     try {
-      await axios.post(api, {
-        product_id: product_id,
-      });
+      await axios.post(
+        api,
+        {
+          product_id: product_id,
+        },
+        {
+          headers: { Authorization: `Bearer ${Cookies.get("access_token")}` },
+        }
+      );
       alert("Added to cart!");
     } catch (error) {
       console.error("Error making the purchase", error);

@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
-import useDebounce from '@/hooks/utils/useDebounce';
-import useFetch from '@/hooks/utils/useFetch';
+import React, { useState, useEffect, useRef } from "react";
+import useDebounce from "@/hooks/utils/useDebounce";
+import useFetch from "@/hooks/utils/useFetch";
 
-import SearchInput from './Input';
-import DropdownList from './DropdownList';
+import SearchInput from "./Input";
+import DropdownList from "./DropdownList";
 
 // api ditaruh disini
-const host = process.env.NEXT_PUBLIC_HOST;  
-const api = `${host}/products?title=`;      
+const host = process.env.NEXT_PUBLIC_HOST;
+const api = `${host}/products?title=`;
 
 const SearchComponent = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -20,7 +20,11 @@ const SearchComponent = () => {
   const searchRef = useRef(null);
 
   const handleKeyDown = (e) => {
-    if (e.key === "ArrowDown" && data && selectedIndex < data.products.length - 1) {
+    if (
+      e.key === "ArrowDown" &&
+      data &&
+      selectedIndex < data.products.length - 1
+    ) {
       setSelectedIndex(selectedIndex + 1);
     } else if (e.key === "ArrowUp" && selectedIndex > 0) {
       setSelectedIndex(selectedIndex - 1);
@@ -37,14 +41,14 @@ const SearchComponent = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [searchRef]);
 
   return (
-    <div className='w-full sm:w-3/4 md:w-2/4 relative' ref={searchRef}>
+    <div className="w-full sm:w-3/4 md:w-2/4 relative" ref={searchRef}>
       <SearchInput
         value={searchTerm}
         onChange={(e) => {

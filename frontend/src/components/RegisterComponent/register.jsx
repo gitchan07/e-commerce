@@ -5,11 +5,8 @@ import * as Yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
-import { useRouter } from "next/router";
 
 const Register = ({ onToggleForm }) => {
-  const router = useRouter();
-
   const router = useRouter();
 
   const validationSchema = Yup.object({

@@ -2,7 +2,7 @@
 import Head from "next/head";
 import Layout from "@/components/LayoutComponent/Layout";
 import ProductGrid from "@/components/ProductComponent/ProductGrid";
-import ProductsPage from "@/components/HomeComponent/itemMap/itemComponent";
+import ProductsPage from "@/components/ProductComponent/itemMap/ProductPage";
 export default function Home() {
   return (
     <Layout>

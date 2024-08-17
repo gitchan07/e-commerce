@@ -135,7 +135,6 @@ def save_image(image):
     if image:
         storage_url = os.getenv("STORAGE")
         upload_folder = os.getenv("UPLOAD_FOLDER", "static/upload_image")
-
         # Ensure the upload folder exists
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
