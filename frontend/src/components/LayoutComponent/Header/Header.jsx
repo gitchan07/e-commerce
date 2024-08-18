@@ -8,6 +8,7 @@ import Image from "next/image";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import LogoutButton from "./LogoutButton";
 
 const Jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -17,7 +18,6 @@ const Jakarta = Plus_Jakarta_Sans({
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSeller, setIsSeller] = useState(false);
-  const [isUser, setIsUser] = useState(false);
   const Route = useRouter();
 
   useEffect(() => {
@@ -26,8 +26,8 @@ const Header = () => {
       setIsLoggedIn(true);
       if (role === 'seller') {
         setIsSeller(true);
-      } else if (role === 'user') {
-        setIsUser(true);
+      } else {
+        setIsSeller(false);
       }
     }
   }, []);
@@ -45,17 +45,20 @@ const Header = () => {
       <SearchComponent />
       <CartComponents />
       {isLoggedIn ? (
-        isSeller ? (
-          <Link href="/seller/profile" className="p-2 bg-indigo-600 text-white rounded">
-            Seller Dashboard
-          </Link>
-        ) : (
-          <Link href="/users/profile" className="p-2 bg-indigo-600 text-white rounded">
-            User Profile
-          </Link>
-        )
+        <>
+          {isSeller ? (
+            <Link href="/Profile" className="p-2 bg-indigo-600 text-white rounded">
+              Seller Dashboard
+            </Link>
+          ) : (
+            <Link href="/Profile" className="p-2 bg-indigo-600 text-white rounded">
+              User Profile
+            </Link>
+          )}
+          <LogoutButton /> {/* Tambahkan LogoutButton */}
+        </>
       ) : (
-      <RegisterButton />
+        <RegisterButton />
       )}
     </header>
   );
