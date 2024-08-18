@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import Layout from '@/components/LayoutComponent/Layout';
-import Register from '@/components/RegisterComponent/Register';
-import Login from '@/components/RegisterComponent/Login';
+import React, { useState } from "react";
+import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
+import Register from "@/components/RegisterComponent/Register";
+import Login from "@/components/RegisterComponent/Login";
 
 const Index = () => {
   const [isRegister, setIsRegister] = useState(true);
@@ -11,13 +11,13 @@ const Index = () => {
   };
 
   return (
-    <Layout className="login-home bg-white">
+    <LayoutNoSearch className="login-home bg-white">
       {isRegister ? (
         <Register onToggleForm={toggleForm} />
       ) : (
         <Login onToggleForm={toggleForm} />
       )}
-    </Layout>
+    </LayoutNoSearch>
   );
 };
 

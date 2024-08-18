@@ -1,16 +1,28 @@
-import React from 'react';
-import AddReduceQuantityButton from './BehaviourComponent/AddReduceQuantityButton';
+import React from "react";
 
-const CartItem = ({ item }) => {
+const CartItem = ({ item, onUpdateQuantity, onDelete }) => {
+  const handleQuantityChange = (e) => {
+    const newQuantity = parseInt(e.target.value, 10);
+    if (newQuantity > 0) {
+      onUpdateQuantity(newQuantity);
+    }
+  };
+
   return (
-    <div className="flex items-center p-4 border-b border-gray-200">
-      <img src={item.image} alt={item.name} className="w-16 h-16 mr-4" />
-      <div className="flex-grow text-black">
-        <h4 className="font-semibold">{item.name}</h4>
-        <p>{item.description}</p>
-        <p>Rp. {item.price}</p>
+    <div className="flex items-center justify-between p-2 border-b">
+      <div>
+        <h4>{item.product_name}</h4>
+        <p>Price: Rp{item.price.toLocaleString("id-ID")},00</p>
+        <input
+          type="number"
+          value={item.quantity}
+          onChange={handleQuantityChange}
+          className="w-16 border rounded p-1"
+        />
       </div>
-      <AddReduceQuantityButton item={item} />
+      <button onClick={onDelete} className="text-red-500">
+        Remove
+      </button>
     </div>
   );
 };

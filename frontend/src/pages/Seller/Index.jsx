@@ -1,6 +1,6 @@
-import Head from 'next/head';
-import Dashboard from '../../components/SellerComponent/Dashboard';
-
+import Head from "next/head";
+import Dashboard from "../../components/SellerComponent/Dashboard";
+import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
 export default function Seller() {
   return (
     <div>
