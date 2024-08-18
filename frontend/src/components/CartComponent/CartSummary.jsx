@@ -1,17 +1,42 @@
 import React, { useState } from "react";
+import { applyPromotion, checkout } from "@/services/cartService";
 
-const CartSummary = ({ total, onApplyPromotion }) => {
+const CartSummary = ({ total, userId, onUpdate }) => {
   const [voucherCode, setVoucherCode] = useState("");
 
-  const handleApply = () => {
+  const handleApply = async () => {
     if (voucherCode) {
-      onApplyPromotion(voucherCode);
+      try {
+        await applyPromotion(userId, voucherCode);
+        alert("Promotion applied successfully!");
+        onUpdate(); // Refetch items to see the updated total
+      } catch (error) {
+        console.error("Error applying promotion", error);
+        alert("Failed to apply promotion. Please try again.");
+      }
     } else {
       alert("Please enter a voucher code.");
     }
   };
 
-  const formattedTotal = total.toLocaleString("id-ID") + ",00";
+  const handleCheckout = async () => {
+    try {
+      const result = await checkout(userId);
+
+      if (result && result.transaction) {
+        alert("Checkout successful!");
+        onUpdate();
+        window.location.reload();
+      } else {
+        alert("There are no items in your cart.");
+      }
+    } catch (error) {
+      console.error("Error during checkout", error);
+      alert("Failed to checkout. Please try again.");
+    }
+  };
+
+  const formattedTotal = total + ",00";
 
   return (
     <div className="p-4 bg-white text-black rounded shadow">
@@ -32,7 +57,12 @@ const CartSummary = ({ total, onApplyPromotion }) => {
       >
         Apply Promotion
       </button>
-      <button className="w-full py-2 bg-green-500 rounded">Beli</button>
+      <button
+        onClick={handleCheckout}
+        className="w-full py-2 bg-green-500 rounded"
+      >
+        Beli
+      </button>
     </div>
   );
 };

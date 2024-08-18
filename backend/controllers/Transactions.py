@@ -1,5 +1,4 @@
 from decimal import Decimal
-
 from flask import Blueprint, request, jsonify
 from connection.connector import connection
 from sqlalchemy.orm import sessionmaker
@@ -7,7 +6,6 @@ from models.Transactions import Transactions
 from models.Promotions import Promotions
 from models.Products import Products
 from models.TransactionDetails import TransactionDetails
-
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from decorator import role_required
 from sqlalchemy.exc import SQLAlchemyError
@@ -25,12 +23,20 @@ def create_transactions_and_transaction_details():
     current_user_id = get_jwt_identity()
 
     try:
+        # Check if there's an existing pending transaction for the user
         existing_transaction = (
             session.query(Transactions)
             .filter_by(user_id=current_user_id, transaction_status="pending")
             .first()
         )
+
         if not existing_transaction:
+            paid_transaction = (
+                session.query(Transactions)
+                .filter_by(user_id=current_user_id, transaction_status="paid")
+                .first()
+            )
+
             new_transaction = Transactions(
                 user_id=current_user_id,
                 transaction_number=Transactions.generate_transactions_number(),
@@ -40,6 +46,7 @@ def create_transactions_and_transaction_details():
             )
             session.add(new_transaction)
             session.commit()
+
         else:
             new_transaction = existing_transaction
 
@@ -54,28 +61,28 @@ def create_transactions_and_transaction_details():
         # Calculate the total price item
         total_price_item = quantity * product.price
 
-        # Add new transaction detail
-        new_transaction_detail = TransactionDetails(
-            transaction_id=new_transaction.id,
-            product_id=product_id,
-            quantity=quantity,
-            price=product.price,
-            total_price_item=total_price_item,
+        # Add new transaction detail or update existing one
+        existing_detail = (
+            session.query(TransactionDetails)
+            .filter_by(transaction_id=new_transaction.id, product_id=product_id)
+            .first()
         )
-        session.add(new_transaction_detail)
 
-        # Update the total price before any promotions
-        new_transaction.total_price_all_before += total_price_item
-
-        promotion_id = request.json.get("promotion_id")
-        if promotion_id:
-            promotion = session.query(Promotions).filter_by(id=promotion_id).first()
-            if promotion:
-                new_transaction.apply_promotions(promotion)
-            else:
-                new_transaction.total_price_all = new_transaction.total_price_all_before
+        if existing_detail:
+            existing_detail.quantity += quantity
+            existing_detail.total_price_item += total_price_item
         else:
-            new_transaction.total_price_all = new_transaction.total_price_all_before
+            new_transaction_detail = TransactionDetails(
+                transaction_id=new_transaction.id,
+                product_id=product_id,
+                quantity=quantity,
+                price=product.price,
+                total_price_item=total_price_item,
+            )
+            session.add(new_transaction_detail)
+
+        new_transaction.total_price_all_before += total_price_item
+        new_transaction.total_price_all = new_transaction.total_price_all_before
 
         session.commit()
 
@@ -83,7 +90,10 @@ def create_transactions_and_transaction_details():
             jsonify(
                 {
                     "transaction": new_transaction.to_dict(),
-                    "transaction_detail": new_transaction_detail.to_dict(),
+                    "transaction_detail": [
+                        detail.to_dict()
+                        for detail in new_transaction.transaction_details
+                    ],
                 }
             ),
             201,
@@ -95,16 +105,80 @@ def create_transactions_and_transaction_details():
         session.close()
 
 
+@transaction_routes.route("/user/<int:user_id>/details", methods=["GET"])
+@jwt_required()
+@role_required("buyer")
+def get_transaction_details_by_user(user_id):
+    current_user_id = get_jwt_identity()
+
+    try:
+        if current_user_id != user_id:
+            return jsonify({"message": "Unauthorized access"}), 403
+
+        # Find the pending transaction for the user
+        transaction = (
+            session.query(Transactions)
+            .filter_by(user_id=user_id, transaction_status="pending")
+            .first()
+        )
+
+        if not transaction or not transaction.transaction_details:
+            return (
+                jsonify({"message": "No items in cart", "transaction_details": []}),
+                200,
+            )
+
+        # Fetch transaction details and associated product data
+        transaction_details = []
+        for detail in transaction.transaction_details:
+            product = session.query(Products).filter_by(id=detail.product_id).first()
+            detail_dict = detail.to_dict()
+            if product:
+                detail_dict["product_name"] = product.title
+                detail_dict["product_description"] = product.description
+            transaction_details.append(detail_dict)
+
+        return (
+            jsonify(
+                {
+                    "transaction": transaction.to_dict(),
+                    "transaction_details": transaction_details,
+                }
+            ),
+            200,
+        )
+    except SQLAlchemyError as e:
+        session.rollback()
+        return jsonify({"message": "An error occurred", "error": str(e)}), 500
+    finally:
+        session.close()
+
+
 @transaction_routes.route(
-    "/<int:transaction_id>/details/<int:detail_id>", methods=["PUT"]
+    "/user/<int:user_id>/details/<int:product_id>", methods=["PUT"]
 )
 @jwt_required()
 @role_required("buyer")
-def edit_transaction_detail(transaction_id, detail_id):
+def edit_transaction_detail_by_user(user_id, product_id):
+    current_user_id = get_jwt_identity()
+
     try:
+        if current_user_id != user_id:
+            return jsonify({"message": "Unauthorized access"}), 403
+
+        # Find the pending transaction for the user
+        transaction = (
+            session.query(Transactions)
+            .filter_by(user_id=user_id, transaction_status="pending")
+            .first()
+        )
+        if not transaction:
+            return jsonify({"message": "Transaction not found"}), 404
+
+        # Find the specific transaction detail
         transaction_detail = (
             session.query(TransactionDetails)
-            .filter_by(id=detail_id, transaction_id=transaction_id)
+            .filter_by(transaction_id=transaction.id, product_id=product_id)
             .first()
         )
         if not transaction_detail:
@@ -119,7 +193,6 @@ def edit_transaction_detail(transaction_id, detail_id):
         transaction_detail.quantity = new_quantity
 
         # Update the total price of the transaction
-        transaction = session.query(Transactions).filter_by(id=transaction_id).first()
         transaction.total_price_all = sum(
             [detail.total_price_item for detail in transaction.transaction_details]
         )
@@ -134,32 +207,21 @@ def edit_transaction_detail(transaction_id, detail_id):
         session.close()
 
 
-# Delete transaction detail
-@transaction_routes.route(
-    "/<int:transaction_id>/details/<int:detail_id>", methods=["DELETE"]
-)
+@transaction_routes.route("/user/<int:user_id>/total", methods=["GET"])
 @jwt_required()
 @role_required("buyer")
-def delete_transaction_detail(transaction_id, detail_id):
+def get_total_transaction_amount(user_id):
+    current_user_id = get_jwt_identity()
+
     try:
-        transaction_detail = (
-            session.query(TransactionDetails)
-            .filter_by(id=detail_id, transaction_id=transaction_id)
-            .first()
-        )
-        if not transaction_detail:
-            return jsonify({"message": "Transaction detail not found"}), 404
+        if current_user_id != user_id:
+            return jsonify({"message": "Unauthorized access"}), 403
 
-        session.delete(transaction_detail)
+        # Calculate the total price of all transactions for the user
+        transactions = session.query(Transactions).filter_by(user_id=user_id).all()
+        total = sum([transaction.total_price_all for transaction in transactions])
 
-        # Update the total price of the transaction
-        transaction = session.query(Transactions).filter_by(id=transaction_id).first()
-        transaction.total_price_all = sum(
-            [detail.total_price_item for detail in transaction.transaction_details]
-        )
-
-        session.commit()
-        return jsonify({"message": "Transaction detail deleted successfully"}), 200
+        return jsonify({"total_price": str(total)}), 200
 
     except SQLAlchemyError as e:
         session.rollback()
@@ -168,61 +230,20 @@ def delete_transaction_detail(transaction_id, detail_id):
         session.close()
 
 
-# Get all transaction details based on transaction_id
-@transaction_routes.route("/<int:transaction_id>/details", methods=["GET"])
+@transaction_routes.route("/user/<int:user_id>/apply-promotion", methods=["PUT"])
 @jwt_required()
 @role_required("buyer")
-def get_transaction_details(transaction_id):
+def apply_promotion_to_transaction(user_id):
+    current_user_id = get_jwt_identity()
+
     try:
-        # Query the transaction based on the transaction ID and status
+        if current_user_id != user_id:
+            return jsonify({"message": "Unauthorized access"}), 403
+
+        # Find the pending transaction for the user
         transaction = (
             session.query(Transactions)
-            .filter_by(id=transaction_id, user_id=get_jwt_identity())
-            .first()
-        )
-
-        if not transaction:
-            return jsonify({"message": "Transaction not found"}), 404
-
-        if transaction.transaction_status == "paid":
-            return (
-                jsonify({"message": "No details available for paid transactions"}),
-                204,
-            )
-
-        # If the transaction is pending, retrieve its details
-        transaction_details = (
-            session.query(TransactionDetails)
-            .filter_by(transaction_id=transaction_id)
-            .all()
-        )
-
-        return (
-            jsonify(
-                {
-                    "transaction": transaction.to_dict(),
-                    "details": [detail.to_dict() for detail in transaction_details],
-                }
-            ),
-            200,
-        )
-
-    except SQLAlchemyError as e:
-        session.rollback()
-        return jsonify({"message": "An error occurred", "error": str(e)}), 500
-    finally:
-        session.close()
-
-
-# Apply promotion to a transaction
-@transaction_routes.route("`/<int:transaction_id>/apply-promotion`", methods=["PUT"])
-@jwt_required()
-@role_required("buyer")
-def apply_promotion(transaction_id):
-    try:
-        transaction = (
-            session.query(Transactions)
-            .filter_by(id=transaction_id, transaction_status="pending")
+            .filter_by(user_id=user_id, transaction_status="pending")
             .first()
         )
         if not transaction:
@@ -258,24 +279,24 @@ def apply_promotion(transaction_id):
         session.close()
 
 
-@transaction_routes.route("/<int:transaction_id>/checkout", methods=["PUT"])
+@transaction_routes.route("/user/<int:user_id>/checkout", methods=["PUT"])
 @jwt_required()
 @role_required("buyer")
-def checkout_transaction(transaction_id):
+def checkout_transaction_by_user(user_id):
     current_user_id = get_jwt_identity()
 
     try:
+        if current_user_id != user_id:
+            return jsonify({"message": "Unauthorized access"}), 403
+
         transaction = (
             session.query(Transactions)
-            .filter_by(
-                id=transaction_id, user_id=current_user_id, transaction_status="pending"
-            )
+            .filter_by(user_id=user_id, transaction_status="pending")
             .first()
         )
         if not transaction:
             return jsonify({"message": "Transaction not found or already paid"}), 404
 
-        # Loop through each transaction detail to deduct stock
         for detail in transaction.transaction_details:
             product = session.query(Products).filter_by(id=detail.product_id).first()
             if not product:
@@ -290,16 +311,17 @@ def checkout_transaction(transaction_id):
                 return (
                     jsonify(
                         {
-                            "message": f"Not enough stock for product {product.title}. Available: {product.stock}, Requested: {detail.quantity}"
+                            "message": f"Not enough stock for product {product.title}. "
+                            f"Available: {product.stock}, Requested: {detail.quantity}"
                         }
                     ),
                     400,
                 )
 
-            # Deduct the stock
+        for detail in transaction.transaction_details:
+            product = session.query(Products).filter_by(id=detail.product_id).first()
             product.stock -= detail.quantity
 
-        # Change transaction status to "paid"
         transaction.transaction_status = "paid"
         session.commit()
 
@@ -316,47 +338,47 @@ def checkout_transaction(transaction_id):
     except SQLAlchemyError as e:
         session.rollback()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
+
     finally:
         session.close()
 
 
-@transaction_routes.route("/transactions/<int:transaction_id>", methods=["GET"])
+@transaction_routes.route(
+    "/user/<int:user_id>/details/<int:product_id>", methods=["DELETE"]
+)
 @jwt_required()
 @role_required("buyer")
-def get_transaction_and_details(transaction_id):
+def delete_transaction_detail_by_user(user_id, product_id):
     current_user_id = get_jwt_identity()
 
     try:
+        if current_user_id != user_id:
+            return jsonify({"message": "Unauthorized access"}), 403
+
         transaction = (
             session.query(Transactions)
-            .filter_by(id=transaction_id, user_id=current_user_id)
+            .filter_by(user_id=user_id, transaction_status="pending")
             .first()
         )
         if not transaction:
             return jsonify({"message": "Transaction not found"}), 404
 
-        if transaction.transaction_status == "paid":
-            return (
-                jsonify(
-                    {"message": "Transaction is already paid. No details to display."}
-                ),
-                204,
-            )
-
-        # If the transaction is pending, return its details
-        transaction_details = [
-            detail.to_dict() for detail in transaction.transaction_details
-        ]
-
-        return (
-            jsonify(
-                {
-                    "transaction": transaction.to_dict(),
-                    "transaction_details": transaction_details,
-                }
-            ),
-            200,
+        transaction_detail = (
+            session.query(TransactionDetails)
+            .filter_by(transaction_id=transaction.id, product_id=product_id)
+            .first()
         )
+        if not transaction_detail:
+            return jsonify({"message": "Transaction detail not found"}), 404
+
+        session.delete(transaction_detail)
+
+        transaction.total_price_all = sum(
+            [detail.total_price_item for detail in transaction.transaction_details]
+        )
+
+        session.commit()
+        return jsonify({"message": "Transaction detail deleted successfully"}), 200
 
     except SQLAlchemyError as e:
         session.rollback()
@@ -365,27 +387,52 @@ def get_transaction_and_details(transaction_id):
         session.close()
 
 
-@transaction_routes.route("/details", methods=["GET"])
+@transaction_routes.route("/seller/<int:seller_id>/transactions", methods=["GET"])
 @jwt_required()
 @role_required("seller")
-def get_transaction_details_by_seller():
+def get_seller_transactions(seller_id):
     current_user_id = get_jwt_identity()
-    try:
-        # Query all transaction details for products owned by the current seller
-        transaction_details = (
-            session.query(TransactionDetails)
-            .join(Products, TransactionDetails.product_id == Products.id)
-            .filter(Products.user_id == current_user_id)
-            .all()
-        )
 
-        if not transaction_details:
-            return (
-                jsonify({"message": "No transaction details found for your products"}),
-                404,
+    try:
+        if current_user_id != seller_id:
+            return jsonify({"message": "Unauthorized access"}), 403
+
+        # Query all products owned by the seller
+        products = session.query(Products).filter_by(user_id=seller_id).all()
+
+        if not products:
+            return jsonify({"message": "No products found for this seller"}), 404
+
+        # Collect all related transaction details and transactions
+        transactions_data = []
+        for product in products:
+            transaction_details = (
+                session.query(TransactionDetails).filter_by(product_id=product.id).all()
             )
 
-        return jsonify([detail.to_dict() for detail in transaction_details]), 200
+            for detail in transaction_details:
+                transaction = (
+                    session.query(Transactions)
+                    .filter_by(id=detail.transaction_id, transaction_status="pending")
+                    .first()
+                )
+                if transaction:
+                    transactions_data.append(
+                        {
+                            "product": product.title,
+                            "transaction_id": transaction.id,
+                            "transaction_number": transaction.transaction_number,
+                            "buyer_id": transaction.user_id,
+                            "quantity": detail.quantity,
+                            "total_price_item": detail.total_price_item,
+                            "transaction_status": transaction.transaction_status,
+                        }
+                    )
+
+        if not transactions_data:
+            return jsonify({"message": "No pending transactions found"}), 404
+
+        return jsonify({"transactions": transactions_data}), 200
 
     except SQLAlchemyError as e:
         session.rollback()
