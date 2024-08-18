@@ -9,7 +9,7 @@ const CartSummary = ({ total, userId, onUpdate }) => {
       try {
         await applyPromotion(userId, voucherCode);
         alert("Promotion applied successfully!");
-        onUpdate(); // Refetch items to see the updated total
+        onUpdate();
       } catch (error) {
         console.error("Error applying promotion", error);
         alert("Failed to apply promotion. Please try again.");
@@ -36,13 +36,20 @@ const CartSummary = ({ total, userId, onUpdate }) => {
     }
   };
 
-  const formattedTotal = total + ",00";
+  const formattedTotal = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 2,
+  })
+    .format(total)
+    .replace("IDR", "Rp")
+    .trim();
 
   return (
     <div className="p-4 bg-white text-black rounded shadow">
       <h3 className="font-semibold text-lg mb-4">Ringkasan Belanja</h3>
       <p className="font-semibold text-gray-700 mb-2">
-        Total: Rp{formattedTotal}
+        Total: {formattedTotal}
       </p>
       <input
         type="text"

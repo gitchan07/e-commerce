@@ -3,7 +3,7 @@ import Head from "next/head";
 import Layout from "@/components/LayoutComponent/Layout";
 import ProductGrid from "@/components/CategoryComponent/ProductGrid";
 import ProductCard from "@/components/CategoryComponent/ProductCard";
-import ProductsPage from "@/components/ProductComponent/ProductComponent/ProductPage";
+import ProductsPage from "@/components/ProductComponent/ProductPage";
 export default function Home() {
   return (
     <Layout>
