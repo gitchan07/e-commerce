@@ -22,9 +22,9 @@ const ProductsPage = () => {
         };
 
         if (searchTerm) {
-          params.title = searchTerm; // Filter by title
+          params.title = searchTerm;
         } else if (selectedProductId) {
-          params.id = selectedProductId; // Filter by selected product ID
+          params.id = selectedProductId;
         }
 
         const response = await axios.get(api, {
@@ -44,7 +44,7 @@ const ProductsPage = () => {
     };
 
     fetchProducts();
-  }, [page, searchTerm, selectedProductId]); // Depend on searchTerm and selectedProductId
+  }, [page, searchTerm, selectedProductId]);
 
   useEffect(() => {
     const prefetchNextPage = async () => {
