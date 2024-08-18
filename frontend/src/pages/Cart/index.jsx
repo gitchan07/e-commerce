@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import Layout from "@/components/LayoutComponent/Layout";
+
+import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
 import Cart from "@/components/CartComponent/Cart";
 import CartSummary from "@/components/CartComponent/CartSummary";
 
@@ -25,7 +26,7 @@ const Index = () => {
   };
 
   return (
-    <div className="h-screen bg-blue-700 grid grid-cols-3 gap-4 p-4">
+    <LayoutNoSearch className="h-screen bg-blue-700 grid grid-cols-3 gap-4 p-4">
       <div className="col-span-2 bg-white rounded p-4">
         <Cart setCartTotal={setCartTotal} api={api} />
       </div>
@@ -35,7 +36,7 @@ const Index = () => {
           onApplyPromotion={handleApplyPromotion}
         />
       </div>
-    </div>
+    </LayoutNoSearch>
   );
 };
 

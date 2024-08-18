@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import Layout from "@/components/LayoutComponent/Layout";
+import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
 import UserProfile from "@/components/UserComponent/UserProfile";
 
 const Index = () => {
   return (
-    <div className="login-home bg-white">
+    <LayoutNoSearch className="login-home bg-white">
       <UserProfile />
-    </div>
+    </LayoutNoSearch>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Layout from "@/components/LayoutComponent/Layout";
+import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
 import Register from "@/components/RegisterComponent/Register";
 import Login from "@/components/RegisterComponent/Login";
 
@@ -11,13 +11,13 @@ const Index = () => {
   };
 
   return (
-    <div className="login-home bg-white">
+    <LayoutNoSearch className="login-home bg-white">
       {isRegister ? (
         <Register onToggleForm={toggleForm} />
       ) : (
         <Login onToggleForm={toggleForm} />
       )}
-    </div>
+    </LayoutNoSearch>
   );
 };
 
