@@ -9,7 +9,6 @@ from connection.connector import session
 
 category_routes = Blueprint("category_routes", __name__)
 
-
 # Routes
 
 
@@ -17,70 +16,11 @@ category_routes = Blueprint("category_routes", __name__)
 @jwt_required()
 @role_required("seller")
 def create_category():
-
     if not request.is_json:
         return jsonify({"message": "Request must be JSON"}), 415
 
     try:
         data = request.get_json()
-        response, status = create_new_category(data)
-        return jsonify(response), status
-    except Exception as e:
-        return jsonify({"message": "An error occurred", "error": str(e)}), 500
-
-
-@category_routes.route("/", methods=["GET"])
-@jwt_required()
-def get_categories():
-    try:
-        response, status = get_all_categories()
-        return jsonify(response), status
-    except Exception as e:
-        return jsonify({"message": "An error occurred", "error": str(e)}), 500
-
-
-@category_routes.route("/<int:category_id>", methods=["GET"])
-@jwt_required()
-def get_category(category_id):
-    try:
-        response, status = get_category_by_id(category_id)
-        return jsonify(response), status
-    except Exception as e:
-        return jsonify({"message": "An error occurred", "error": str(e)}), 500
-
-
-@category_routes.route("/<int:category_id>", methods=["PUT"])
-@jwt_required()
-@role_required("seller")
-def update_category(category_id):
-
-    if not request.is_json:
-        return jsonify({"message": "Request must be JSON"}), 415
-
-    try:
-        data = request.get_json()
-        response, status = update_existing_category(category_id, data)
-        return jsonify(response), status
-    except Exception as e:
-        return jsonify({"message": "An error occurred", "error": str(e)}), 500
-
-
-@category_routes.route("/<int:category_id>", methods=["DELETE"])
-@jwt_required()
-@role_required("seller")
-def delete_category(category_id):
-    try:
-        response, status = delete_existing_category(category_id)
-        return jsonify(response), status
-    except Exception as e:
-        return jsonify({"message": "An error occurred", "error": str(e)}), 500
-
-
-# Utility Functions
-
-
-def create_new_category(data):
-    try:
         new_category = Categories(name=data["name"])
         session.add(new_category)
         session.commit()
@@ -95,7 +35,9 @@ def create_new_category(data):
         session.close()
 
 
-def get_all_categories():
+@category_routes.route("/", methods=["GET"])
+@jwt_required()
+def get_categories():
     try:
         categories = session.query(Categories).all()
         category_list = [
@@ -114,7 +56,9 @@ def get_all_categories():
         session.close()
 
 
-def get_category_by_id(category_id):
+@category_routes.route("/<int:category_id>", methods=["GET"])
+@jwt_required()
+def get_category(category_id):
     try:
         category = session.query(Categories).filter_by(id=category_id).first()
         if category is None:
@@ -133,8 +77,15 @@ def get_category_by_id(category_id):
         session.close()
 
 
-def update_existing_category(category_id, data):
+@category_routes.route("/<int:category_id>", methods=["PUT"])
+@jwt_required()
+@role_required("seller")
+def update_category(category_id):
+    if not request.is_json:
+        return jsonify({"message": "Request must be JSON"}), 415
+
     try:
+        data = request.get_json()
         category = session.query(Categories).filter_by(id=category_id).first()
         if category is None:
             return {"message": "Category not found"}, 404
@@ -151,7 +102,10 @@ def update_existing_category(category_id, data):
         session.close()
 
 
-def delete_existing_category(category_id):
+@category_routes.route("/<int:category_id>", methods=["DELETE"])
+@jwt_required()
+@role_required("seller")
+def delete_category(category_id):
     try:
         category = session.query(Categories).filter_by(id=category_id).first()
         if category is None:

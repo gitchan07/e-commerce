@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, current_app, send_from_directory
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.Products import Products
+from models.Categories import Categories
 from connection.connector import session
 from decorator import role_required
 import os
@@ -238,15 +239,12 @@ def get_seller_product_by_id(id):
 @product_routes.route("/image/<path:filename>", methods=["GET"])
 def get_image(filename):
     try:
-        # Split the file_name to get the directory and file separately
         directory, image_name = os.path.split(filename)
         image_dir = os.path.join(current_app.root_path, directory)
 
-        # Check if the file exists
         if not os.path.exists(os.path.join(image_dir, image_name)):
             raise FileNotFoundError("Image not found")
 
-        # Serve the image file
         return send_from_directory(image_dir, image_name)
     except Exception as e:
         return jsonify({"message": "Failed to retrieve image", "error": str(e)}), 404

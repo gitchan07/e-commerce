@@ -9,11 +9,14 @@ from connection.connector import session
 
 promotion_routes = Blueprint("promotion_routes", __name__)
 
+# Routes
 
-# Utility Functions
 
-
-def create_new_promotion(data):
+@promotion_routes.route("", methods=["POST"])
+@jwt_required()
+@role_required("seller")
+def create_promotion():
+    data = request.get_json()
     try:
         new_promotion = Promotions(
             voucher_code=data["voucher_code"],
@@ -30,7 +33,10 @@ def create_new_promotion(data):
         session.close()
 
 
-def get_promotions_by_query(filters):
+@promotion_routes.route("", methods=["GET"])
+@jwt_required()
+def get_promotions():
+    filters = {"voucher_code": request.args.get("voucher_code")}
     try:
         query = session.query(Promotions)
         if filters.get("voucher_code"):
@@ -39,18 +45,21 @@ def get_promotions_by_query(filters):
             )
 
         promotions = query.all()
-        return [promotion.to_dict() for promotion in promotions], 200
+        promotion_list = [promotion.to_dict() for promotion in promotions]
+        return jsonify(promotion_list), 200
     except SQLAlchemyError as e:
         return {"message": "Failed to retrieve promotions", "error": str(e)}, 500
     finally:
         session.close()
 
 
-def get_promotion_by_id(promotion_id):
+@promotion_routes.route("/<int:promotion_id>", methods=["GET"])
+@jwt_required()
+def get_promotion(promotion_id):
     try:
         promotion = session.query(Promotions).get(promotion_id)
         if promotion:
-            return promotion.to_dict(), 200
+            return jsonify(promotion.to_dict()), 200
         else:
             return {"message": "Promotion not found"}, 404
     except SQLAlchemyError as e:
@@ -59,7 +68,10 @@ def get_promotion_by_id(promotion_id):
         session.close()
 
 
-def update_promotion_by_id(promotion_id, data):
+@promotion_routes.route("/<int:promotion_id>", methods=["PUT"])
+@jwt_required()
+def update_promotion(promotion_id):
+    data = request.get_json()
     try:
         promotion = session.query(Promotions).get(promotion_id)
         if not promotion:
@@ -78,7 +90,9 @@ def update_promotion_by_id(promotion_id, data):
         session.close()
 
 
-def delete_promotion_by_id(promotion_id):
+@promotion_routes.route("/<int:promotion_id>", methods=["DELETE"])
+@jwt_required()
+def delete_promotion(promotion_id):
     try:
         promotion = session.query(Promotions).get(promotion_id)
         if not promotion:
@@ -92,45 +106,3 @@ def delete_promotion_by_id(promotion_id):
         return {"message": "Failed to delete promotion", "error": str(e)}, 500
     finally:
         session.close()
-
-
-# Routes
-
-
-@promotion_routes.route("", methods=["POST"])
-@jwt_required()
-@role_required("seller")
-def create_promotion():
-    data = request.get_json()
-    response, status = create_new_promotion(data)
-    return jsonify(response), status
-
-
-@promotion_routes.route("", methods=["GET"])
-@jwt_required()
-def get_promotions():
-    filters = {"voucher_code": request.args.get("voucher_code")}
-    response, status = get_promotions_by_query(filters)
-    return jsonify(response), status
-
-
-@promotion_routes.route("/<int:promotion_id>", methods=["GET"])
-@jwt_required()
-def get_promotion(promotion_id):
-    response, status = get_promotion_by_id(promotion_id)
-    return jsonify(response), status
-
-
-@promotion_routes.route("/<int:promotion_id>", methods=["PUT"])
-@jwt_required()
-def update_promotion(promotion_id):
-    data = request.get_json()
-    response, status = update_promotion_by_id(promotion_id, data)
-    return jsonify(response), status
-
-
-@promotion_routes.route("/<int:promotion_id>", methods=["DELETE"])
-@jwt_required()
-def delete_promotion(promotion_id):
-    response, status = delete_promotion_by_id(promotion_id)
-    return jsonify(response), status
