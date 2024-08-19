@@ -3,7 +3,7 @@ import axios from "axios";
 import ListCardItem from "./ListCardItem";
 import { SearchContext } from "@/context/SearchProvider";
 const ProductsPage = () => {
-  const { searchTerm, selectedProductId } = useContext(SearchContext);
+  const { setse, selectedProductId } = useContext(SearchContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

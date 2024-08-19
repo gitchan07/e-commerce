@@ -7,7 +7,6 @@ const getHeaders = () => ({
   Authorization: `Bearer ${Cookies.get('access_token')}`,
 });
 
-// Fetch cart items
 export const fetchCartItems = async (userId) => {
   const response = await axios.get(`${API_BASE_URL}/user/${userId}/details`, {
     headers: getHeaders(),
@@ -15,7 +14,6 @@ export const fetchCartItems = async (userId) => {
   return response.data;
 };
 
-// Update quantity of a product in the cart
 export const updateQuantity = async (userId, productId, quantity) => {
   try {
     const response = await axios.put(
