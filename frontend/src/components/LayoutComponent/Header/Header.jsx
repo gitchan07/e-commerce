@@ -47,7 +47,7 @@ const Header = () => {
       {isLoggedIn ? (
         <>
           {isSeller ? (
-            <Link href="/Seller" className="p-2 bg-indigo-600 text-white rounded">
+            <Link href="/Profile" className="p-2 bg-indigo-600 text-white rounded">
               Seller Dashboard
             </Link>
           ) : (
