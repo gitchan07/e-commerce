@@ -1,12 +1,12 @@
 import Cookies from "js-cookie";
 import axios from "axios";
 
-const host = `${process.env.NEXT_PUBLIC_HOST}/products`;
+const host = `${process.env.NEXT_PUBLIC_HOST}`;
 const api = `${host}/transactions/`;
 
 const HandleBuy = async (product_id) => {
   try {
-    const id = Number(product_id); // Convert product_id to a number
+    const id = Number(product_id); 
     await axios.post(
       api,
       {

@@ -10,7 +10,18 @@ const Cart = ({ setCartTotal, userId }) => {
   const loadCartItems = async () => {
     try {
       const data = await fetchCartItems(userId);
-      setItems(data.transaction_details || []);
+
+      if (
+        !data.transaction ||
+        data.transaction.transaction_status !== "pending"
+      ) {
+        setItems([]);
+        setCartTotal(0);
+      } else {
+        setItems(data.transaction_details || []);
+        setCartTotal(parseFloat(data.transaction.total_price_all)); // Use the total_price_all from transaction data
+      }
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -20,18 +31,13 @@ const Cart = ({ setCartTotal, userId }) => {
   };
 
   const handleCheckoutUpdate = () => {
-    setItems([]); // Clear cart items
-    setCartTotal(0); // Reset the cart total
+    setItems([]);
+    setCartTotal(0);
   };
 
   useEffect(() => {
     loadCartItems();
   }, []);
-
-  useEffect(() => {
-    const total = items.reduce((sum, item) => sum + item.total_price_item, 0);
-    setCartTotal(total);
-  }, [items, setCartTotal]);
 
   if (loading) return <p className="text-center">Loading...</p>;
   if (error) return <p className="text-center">Error: {error.message}</p>;

@@ -8,7 +8,6 @@ const ProductDetails = () => {
   const router = useRouter();
   const { id } = router.query;
   const [product, setProduct] = useState(null);
-
   useEffect(() => {
     const fetchProductDetails = async () => {
       if (id) {
@@ -35,7 +34,6 @@ const ProductDetails = () => {
   if (!product) {
     return <div>Loading...</div>;
   }
-
   return (
     <LayoutNoSearch className="bg-white text-black py-8 px-4 md:px-16 lg:px-32">
       <div className="flex flex-col md:flex-row items-center md:items-start">
@@ -64,7 +62,7 @@ const ProductDetails = () => {
           <p className="text-gray-600 mb-8">{product.description}</p>
           <div>
             <button
-              onClick={() => HandleBuy(product.id)}
+              onClick={() => HandleBuy(Number(product.id))}
               className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
             >
               add to cart
