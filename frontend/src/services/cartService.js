@@ -14,6 +14,18 @@ export const fetchCartItems = async (userId) => {
   return response.data;
 };
 
+export const fetchTotalPrice = async (userId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/user/${userId}/total`, {
+      headers: getHeaders(),
+    });
+    return response.data; 
+  } catch (error) {
+    console.error("Error fetching total price:", error);
+    throw error; 
+  }
+};
+
 export const updateQuantity = async (userId, productId, quantity) => {
   try {
     const response = await axios.put(
@@ -28,11 +40,10 @@ export const updateQuantity = async (userId, productId, quantity) => {
     } else {
       console.error('Error updating quantity:', error);
     }
-    throw error; // Re-throw the error so it can be handled by the caller if needed
+    throw error; 
   }
 };
 
-// Delete an item from the cart
 export const deleteItem = async (userId, productId) => {
   const response = await axios.delete(
     `${API_BASE_URL}/user/${userId}/details/${productId}`,
@@ -41,7 +52,6 @@ export const deleteItem = async (userId, productId) => {
   return response.data;
 };
 
-// Apply a promotion to the cart
 export const applyPromotion = async (userId, voucherCode) => {
   const response = await axios.put(
     `${API_BASE_URL}/user/${userId}/apply-promotion`,
@@ -51,7 +61,6 @@ export const applyPromotion = async (userId, voucherCode) => {
   return response.data;
 };
 
-// Checkout the cart
 export const checkout = async (userId) => {
   try {
     const response = await axios.put(
