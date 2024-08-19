@@ -5,7 +5,6 @@ const host = `${process.env.NEXT_PUBLIC_HOST}`;
 const api = `${host}/transactions/`;
 
 
-import axios from 'axios';
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_HOST}/products`;
 
