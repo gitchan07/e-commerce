@@ -214,7 +214,6 @@ def apply_promotion_to_transaction(user_id):
         if current_user_id != user_id:
             return jsonify({"message": "Unauthorized access"}), 403
 
-        # Find the pending transaction for the user
         transaction = (
             session.query(Transactions)
             .filter_by(user_id=user_id, transaction_status="pending")
@@ -231,7 +230,6 @@ def apply_promotion_to_transaction(user_id):
         if not promotion:
             return jsonify({"message": "Promotion not found"}), 404
 
-        # Apply promotion to the transaction
         transaction.promotion_id = promotion.id
         transaction.apply_promotions(promotion)
 
