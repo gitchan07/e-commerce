@@ -12,9 +12,15 @@ const CategoryFilter = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const data = await getCategories();
-        console.log(data);
-        setCategories(data);
+        const data = await getCategories(); // Fetching the categories
+        console.log("Fetched data:", data); // Ensure data is logged and check its structure
+
+        if (Array.isArray(data)) {
+          setCategories(data); // Set categories only if it's an array
+        } else {
+          console.error("Data is not an array:", data);
+        }
+
         setLoading(false);
       } catch (err) {
         setError(err);

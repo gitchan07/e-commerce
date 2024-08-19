@@ -5,16 +5,16 @@ const API_BASE_URL = `${process.env.NEXT_PUBLIC_HOST}/categories/`;
 
 export const getCategories = async () => {
   try {
-    const headers = getHeaders();
-    const response = await axios.get(API_BASE_URL, {
-      headers: headers,
+    const response = await axios.get(`${API_BASE_URL}`, {
+      headers: getHeaders(),
     });
-    return response.categories; // Corrected response data path
+    return response.data.categories; 
   } catch (error) {
     console.error('Error retrieving categories:', error.response ? error.response.data : error.message);
     throw error;
   }
 };
+
 
 export const createCategory = async (name) => {
   try {
@@ -23,7 +23,7 @@ export const createCategory = async (name) => {
       { name },
       { headers: getHeaders() }
     );
-    return response.category; 
+    return response.data.categories; 
   } catch (error) {
     console.error('Error creating category:', error.response ? error.response.data : error.message);
     throw error;
@@ -35,7 +35,7 @@ export const getCategory = async (categoryId) => {
     const response = await axios.get(`${API_BASE_URL}${categoryId}`, {
       headers: getHeaders(),
     });
-    return response.category; 
+    return response.data.categories; 
   } catch (error) {
     console.error(`Error retrieving category with ID ${categoryId}:`, error.response ? error.response.data : error.message);
     throw error;
@@ -51,7 +51,7 @@ export const updateCategory = async (categoryId, name) => {
         headers: getHeaders(),
       }
     );
-    return response.category; 
+    return response.data.categories; 
   } catch (error) {
     console.error(`Error updating category with ID ${categoryId}:`, error.response ? error.response.data : error.message);
     throw error;

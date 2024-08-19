@@ -103,7 +103,6 @@ def get_products():
             200,
         )
     except Exception as e:
-        session.rollback()
         return jsonify({"message": "Failed to retrieve products", "error": str(e)}), 500
 
 

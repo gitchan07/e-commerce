@@ -50,8 +50,6 @@ def get_categories():
         return {"categories": category_list}, 200
     except SQLAlchemyError as e:
         return {"message": "Fail to retrieve categories", "error": str(e)}, 500
-    finally:
-        session.close()
 
 
 @category_routes.route("/<int:category_id>", methods=["GET"])
