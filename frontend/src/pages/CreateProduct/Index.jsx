@@ -1,11 +1,11 @@
 import React from "react";
 import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
-import SellerPromotionInput from "@/components/PromotionComponent/SellerPromotionInput"; 
+import CreateProduct from "@/components/ProductComponent/CreateProduct"; 
 
 const Index = () => {
   return (
-    <LayoutNoSearch className="promotion-page bg-white">
-      <SellerPromotionInput />
+    <LayoutNoSearch className="create-product-page bg-white">
+      <CreateProduct />
     </LayoutNoSearch>
   );
 };

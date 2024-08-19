@@ -7,6 +7,8 @@ const LogoutButton = () => {
 
   const handleLogout = () => {
     Cookies.remove('role');
+    Cookies.remove('access_token');
+    Cookies.remove('user_id');
     router.push('/Login');
   };
 
