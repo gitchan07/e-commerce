@@ -3,7 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 
-const ItemCardComponent = ({ id, title, img_path, description, price }) => {
+const ItemCardComponent = ({ id, title, img_path, price }) => {
   const router = useRouter();
 
   const host = process.env.NEXT_PUBLIC_HOST;
@@ -55,7 +55,6 @@ const ItemCardComponent = ({ id, title, img_path, description, price }) => {
       </div>
       <div className="p-6">
         <h2 className="font-bold text-2xl mb-3 text-gray-900">{title}</h2>
-        <p className="text-gray-700 text-lg mb-4">{description}</p>
         <div className="text-gray-900 font-bold text-xl mb-4">Rp.{price}</div>
         <div className="flex justify-between">
           <button

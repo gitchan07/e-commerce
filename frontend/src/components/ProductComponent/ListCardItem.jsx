@@ -10,7 +10,6 @@ const ListCardItem = ({ products }) => {
           id={product.id}
           title={product.title}
           img_path={product.img_path}
-          description={product.description}
           price={product.price}
         />
       ))}
