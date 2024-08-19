@@ -6,9 +6,7 @@ const LogoutButton = () => {
   const router = useRouter();
 
   const handleLogout = () => {
-    // Hapus cookie atau token yang digunakan untuk autentikasi
     Cookies.remove('role');
-    // Redirect ke halaman login atau halaman utama
     router.push('/Login');
   };
 

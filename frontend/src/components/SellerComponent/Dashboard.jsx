@@ -2,7 +2,6 @@ import { useState } from 'react';
 import ManageOrders from './ManageOrders';
 import ManageProduct from './ManageProduct';
 
-
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('products');
 
