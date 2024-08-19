@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { useRouter } from "next/router"; // Import Next.js useRouter hook
+import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 
 const ItemCardComponent = ({ id, title, img_path, description, price }) => {
