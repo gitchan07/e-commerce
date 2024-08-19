@@ -1,7 +1,19 @@
 import React from "react";
 
-const categoryButton = () => {
-  return <div></div>;
+const CategoryButton = ({ data, setId }) => {
+  return (
+    <div>
+      {data.map((category) => (
+        <button
+          key={category.id}
+          onClick={() => setId(category.id)}
+          className="category-button"
+        >
+          {category.name}
+        </button>
+      ))}
+    </div>
+  );
 };
 
-export default categoryButton;
+export default CategoryButton;

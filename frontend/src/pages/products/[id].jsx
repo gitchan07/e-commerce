@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
-import { HandleBuy } from "@/services/productService";
+import { HandleBuy } from "@/services/cartService";
 import { useRouter } from "next/router";
 const ProductDetails = () => {
   const router = useRouter();

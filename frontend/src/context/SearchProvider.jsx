@@ -5,6 +5,7 @@ export const SearchContext = createContext();
 export const SearchProvider = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
   return (
     <SearchContext.Provider
@@ -13,6 +14,8 @@ export const SearchProvider = ({ children }) => {
         setSearchTerm,
         selectedProductId,
         setSelectedProductId,
+        selectedCategoryId,
+        setSelectedCategoryId,
       }}
     >
       {children}

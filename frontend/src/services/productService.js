@@ -9,8 +9,6 @@ const api = `${host}/transactions/`;
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_HOST}/products`;
 
 
-
-// Add a new product
 export const addProduct = async (productData, imageFile) => {
   try {
     const formData = new FormData();

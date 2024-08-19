@@ -2,8 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import ListCardItem from "./ListCardItem";
 import { SearchContext } from "@/context/SearchProvider";
+
 const ProductsPage = () => {
-  const { searchTerm, selectedProductId } = useContext(SearchContext);
+  const { searchTerm, selectedProductId, selectedCategoryId } =
+    useContext(SearchContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,6 +27,8 @@ const ProductsPage = () => {
           params.title = searchTerm;
         } else if (selectedProductId) {
           params.id = selectedProductId;
+        } else if (selectedCategoryId) {
+          params.category_id = selectedCategoryId;
         }
 
         const response = await axios.get(api, {
@@ -44,7 +48,7 @@ const ProductsPage = () => {
     };
 
     fetchProducts();
-  }, [page, searchTerm, selectedProductId]);
+  }, [page, searchTerm, selectedProductId, selectedCategoryId]);
 
   useEffect(() => {
     const prefetchNextPage = async () => {

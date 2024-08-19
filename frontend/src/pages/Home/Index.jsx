@@ -1,9 +1,8 @@
 // pages/index.jsx
 import Head from "next/head";
 import Layout from "@/components/LayoutComponent/Layout";
-import ProductGrid from "@/components/CategoryComponent/ProductGrid";
-import ProductCard from "@/components/CategoryComponent/ProductCard";
 import ProductsPage from "@/components/ProductComponent/ProductPage";
+import CategoryFilter from "@/components/CategoryComponent/CategoryFilter";
 export default function Home() {
   return (
     <Layout>
@@ -17,8 +16,8 @@ export default function Home() {
         <h1 className="text-4xl font-bold mb-8 text-center">
           Welcome to Our Vape Shop
         </h1>
+        {/* <CategoryFilter /> */}
         <ProductsPage />
-        <ProductGrid />
       </div>
     </Layout>
   );

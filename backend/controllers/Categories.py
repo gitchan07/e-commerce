@@ -9,8 +9,6 @@ from connection.connector import session
 
 category_routes = Blueprint("category_routes", __name__)
 
-# Routes
-
 
 @category_routes.route("/", methods=["POST"])
 @jwt_required()

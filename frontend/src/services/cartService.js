@@ -58,7 +58,6 @@ export const checkout = async (userId) => {
       throw new Error("Checkout response did not contain a valid transaction.");
     }
   } catch (error) {
-    // Handle specific known errors
     if (error.response && error.response.data && error.response.data.message) {
       alert(error.response.data.message);  // Show specific error message if available
     } else {
@@ -70,13 +69,14 @@ export const checkout = async (userId) => {
 
 const HandleBuy = async (product_id) => {
   try {
-    const id = Number(product_id); 
     await axios.post(
-      api,
+      `${API_BASE_URL}/`,
       {
-        product_id: id,
+        product_id: product_id,
       },
-      getHeaders()
+      {
+        headers: getHeaders(),
+      }
     );
     alert("Added to cart!");
   } catch (error) {
@@ -84,12 +84,12 @@ const HandleBuy = async (product_id) => {
     if (error.response) {
       if (error.response.status === 401) {
         alert("Session expired or sign in needed. Redirecting to login.");
-        window.location.href = "/Login"; 
+        router.push("/Login");
       } else {
         alert(`Failed to add to cart! (${error.response.status})`);
       }
     } else {
-      alert("Failed to add to cart! Please try again.", error);
+      alert("Failed to add to cart! Please try again.");
     }
   }
 };
