@@ -1,11 +1,6 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
-
+import getHeaders from '@/utils/authUtils';
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_HOST}/transactions`;
-
-const getHeaders = () => ({
-  Authorization: `Bearer ${Cookies.get('access_token')}`,
-});
 
 export const fetchCartItems = async (userId) => {
   const response = await axios.get(`${API_BASE_URL}/user/${userId}/details`, {
@@ -57,7 +52,6 @@ export const checkout = async (userId) => {
       { headers: getHeaders() }
     );
 
-    // Check if the response contains a valid transaction object
     if (response.data && response.data.transaction) {
       return response.data;
     } else {
@@ -73,3 +67,31 @@ export const checkout = async (userId) => {
     throw error;
   }
 };
+
+const HandleBuy = async (product_id) => {
+  try {
+    const id = Number(product_id); 
+    await axios.post(
+      api,
+      {
+        product_id: id,
+      },
+      getHeaders()
+    );
+    alert("Added to cart!");
+  } catch (error) {
+    console.error("Error making the purchase", error);
+    if (error.response) {
+      if (error.response.status === 401) {
+        alert("Session expired or sign in needed. Redirecting to login.");
+        window.location.href = "/Login"; 
+      } else {
+        alert(`Failed to add to cart! (${error.response.status})`);
+      }
+    } else {
+      alert("Failed to add to cart! Please try again.", error);
+    }
+  }
+};
+
+export { HandleBuy };
