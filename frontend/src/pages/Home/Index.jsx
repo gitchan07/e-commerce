@@ -13,11 +13,8 @@ export default function Home() {
       </Head>
 
       <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
-        <h1 className="text-4xl font-bold mb-8 text-center">
-          Welcome to Our Vape Shop
-        </h1>
         <CategoryFilter />
-        {/* <ProductsPage /> */}
+        <ProductsPage />
       </div>
     </Layout>
   );

@@ -20,10 +20,10 @@ print(f"Connecting to {database} database at {host}")
 try:
     engine = create_engine(
         f"mysql+mysqlconnector://{username}:{password}@{host}/{database}",
-        pool_size=10,
-        max_overflow=20,
+        pool_size=200,
+        max_overflow=10000,
         pool_timeout=30,
-        pool_recycle=3600,
+        pool_recycle=3000,
         pool_pre_ping=True,
     )
     connection = engine.connect()
