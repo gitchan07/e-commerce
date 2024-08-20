@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
-
+import { HandleBuy } from "@/services/cartService";
 const ItemCardComponent = ({ id, title, img_path, price }) => {
   const router = useRouter();
 

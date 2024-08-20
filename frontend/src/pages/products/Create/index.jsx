@@ -1,6 +1,6 @@
 import React from "react";
 import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
-import CreateProduct from "@/components/Seller/CreateProduct"; 
+import CreateProduct from "@/components/ProductComponent/CreateProduct"; 
 import withAuth from "@/components/hoc/withAuth";
 
 const Index = () => {
@@ -11,4 +11,4 @@ const Index = () => {
   );
 };
 
-export default withAuth(Index, ['seller']);
+export default withAuth(Index, ["seller"]);

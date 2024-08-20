@@ -3,7 +3,7 @@ import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
 import Cart from "@/components/CartComponent/Cart";
 import CartSummary from "@/components/CartComponent/CartSummary";
 import Cookies from "js-cookie";
-
+import withAuth from "@/components/hoc/withAuth";
 const Index = () => {
   const [cartTotal, setCartTotal] = useState(0);
   const userId = Cookies.get("user_id");
@@ -20,4 +20,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withAuth(Index, ["buyer"]);

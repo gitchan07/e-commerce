@@ -9,11 +9,11 @@ const Index = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const role = Cookies.get('role');
-    const user_id = Cookies.get('user_id');
+    const role = Cookies.get("role");
+    const user_id = Cookies.get("user_id");
 
-    if (!role || role !== 'seller') {
-      router.push('/login');
+    if (!role || role !== "seller") {
+      router.push("/login");
     }
   }, []);
 
