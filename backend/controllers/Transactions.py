@@ -19,9 +19,7 @@ transaction_routes = Blueprint("transaction_routes", __name__)
 @role_required("buyer")
 def create_transactions_and_transaction_details():
     current_user_id = get_jwt_identity()
-
     try:
-        # Check if there's an existing pending transaction for the user
         existing_transaction = (
             session.query(Transactions)
             .filter_by(user_id=current_user_id, transaction_status="pending")
