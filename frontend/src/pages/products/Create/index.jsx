@@ -1,6 +1,6 @@
 import React from "react";
 import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
-import CreateProduct from "@/components/ProductComponent/CreateProduct"; 
+import CreateProduct from "@/components/Seller/CreateProduct"; 
 import withAuth from "@/components/hoc/withAuth";
 
 const Index = () => {

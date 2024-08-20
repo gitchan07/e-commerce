@@ -11,9 +11,6 @@ const CreateProduct = () => {
       .min(3, "Category name must be at least 3 characters")
       .max(50, "Category name must be at most 50 characters")
       .required("Category name is required"),
-    quantity: Yup.number()
-      .min(0, "Quantity must be a positive number")
-      .required("Quantity is required"),
     price: Yup.number()
       .min(0, "Price must be a positive number")
       .required("Price is required"),
@@ -29,7 +26,6 @@ const CreateProduct = () => {
 
   const initialValues = {
     categoryName: "",
-    quantity: "",
     price: "",
     stock: "",
     title: "",
@@ -97,25 +93,6 @@ const CreateProduct = () => {
                 />
                 <ErrorMessage
                   name="categoryName"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="quantity"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Quantity
-                </label>
-                <Field
-                  type="number"
-                  id="quantity"
-                  name="quantity"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
-                />
-                <ErrorMessage
-                  name="quantity"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
