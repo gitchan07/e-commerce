@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import ManageOrders from './ManageOrders';
-import ManageProduct from './ManageProduct';
+import ManageProduct from './SellerProduct/ManageProduct';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('products');

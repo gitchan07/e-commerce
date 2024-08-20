@@ -1,8 +1,8 @@
 import React from "react";
 import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
 import withAuth from "@/components/hoc/withAuth";
-import ListProducts from "@/components/Seller/ListProduct";
-import ManageProduct from "@/components/Seller/ManageProduct";
+import ListProducts from "@/components/Seller/SellerProduct/ListProduct";
+import ManageProduct from "@/components/Seller/SellerProduct/ManageProduct";
 
 const Index = () => {
   return (
