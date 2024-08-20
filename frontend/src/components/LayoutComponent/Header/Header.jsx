@@ -48,7 +48,7 @@ const Header = () => {
         <>
           {isSeller ? (
             <Link
-              href="/Profile"
+              href="/products"
               className="p-2 bg-indigo-600 text-white rounded"
             >
               Seller Dashboard
