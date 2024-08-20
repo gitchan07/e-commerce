@@ -1,6 +1,19 @@
 import axios from 'axios';
 import getHeaders from '@/utils/authUtils';
+
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_HOST}/transactions`;
+
+export const fetchSellerTransactions = async (userId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/seller/${userId}`, {
+      headers: getHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
+};
 
 export const fetchCartItems = async (userId) => {
   const response = await axios.get(`${API_BASE_URL}/user/${userId}/details`, {

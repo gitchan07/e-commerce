@@ -5,7 +5,7 @@ import Head from "next/head";
 import Dashboard from "../../components/Seller/Dashboard";
 import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
 
-const Index = () => {
+const index = () => {
   const router = useRouter();
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default index;
 
 //   return (
 //     <div>
