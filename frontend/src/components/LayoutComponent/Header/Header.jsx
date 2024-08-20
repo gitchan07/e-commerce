@@ -21,10 +21,10 @@ const Header = () => {
   const Route = useRouter();
 
   useEffect(() => {
-    const role = Cookies.get('role');
+    const role = Cookies.get("role");
     if (role) {
       setIsLoggedIn(true);
-      if (role === 'seller') {
+      if (role === "seller") {
         setIsSeller(true);
       } else {
         setIsSeller(false);
@@ -47,11 +47,17 @@ const Header = () => {
       {isLoggedIn ? (
         <>
           {isSeller ? (
-            <Link href="/Profile" className="p-2 bg-indigo-600 text-white rounded">
+            <Link
+              href="/Profile"
+              className="p-2 bg-indigo-600 text-white rounded"
+            >
               Seller Dashboard
             </Link>
           ) : (
-            <Link href="/Profile" className="p-2 bg-indigo-600 text-white rounded">
+            <Link
+              href="/Profile"
+              className="p-2 bg-indigo-600 text-white rounded"
+            >
               User Profile
             </Link>
           )}
