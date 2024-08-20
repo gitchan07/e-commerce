@@ -73,7 +73,7 @@ const ProductEditForm = ({ productId }) => {
 
       if (response.status === 200) {
         alert('Product updated successfully!');
-        router.push('/products');
+        router.push(`/products/my-products/${productId}`);
       } else {
         alert(data.message);
       }
