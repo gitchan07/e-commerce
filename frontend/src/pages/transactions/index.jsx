@@ -26,8 +26,10 @@ const Index = () => {
   }, [userId]);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Transactions on your table</h1>
+    <div className="p-6 bg-white">
+      <h1 className="text-2xl font-bold mb-4 text-black">
+        Transactions on your Products
+      </h1>
       {transactions.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-300">
