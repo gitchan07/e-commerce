@@ -7,6 +7,7 @@ import Image from "next/image";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import LogoutButton from "./LogoutButton";
+import PromotionButton from "./PromotionButton";
 
 const Jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -45,15 +46,18 @@ const HeaderNoSearch = () => {
       {isLoggedIn ? (
         <>
           {isSeller ? (
-            <Link href="/Seller" className="p-2 bg-indigo-600 text-white rounded">
+            <>
+              <Link href="/products" className="p-2 bg-indigo-600 text-white rounded">
               Seller Dashboard
-            </Link>
+              </Link>
+              <PromotionButton />
+            </>
           ) : (
             <Link href="/Profile" className="p-2 bg-indigo-600 text-white rounded">
               User Profile
             </Link>
           )}
-          <LogoutButton /> {/* Tambahkan LogoutButton */}
+          <LogoutButton />
         </>
       ) : (
         <RegisterButton />
