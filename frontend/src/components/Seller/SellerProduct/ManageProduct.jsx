@@ -37,7 +37,7 @@ const CreateProduct = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const host = process.env.NEXT_PUBLIC_HOST;
-      const api = `${host}/products/create`;
+      const api = `${host}/products`;
 
       const formData = new FormData();
       for (const key in values) {

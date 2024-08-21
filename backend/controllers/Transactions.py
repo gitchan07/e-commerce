@@ -357,7 +357,7 @@ def delete_transaction_detail_by_user(user_id, product_id):
         session.close()
 
 
-@transaction_routes.route("/seller/<int:seller_id>/transactions", methods=["GET"])
+@transaction_routes.route("/seller/<int:seller_id>", methods=["GET"])
 @jwt_required()
 @role_required("seller")
 def get_seller_transactions(seller_id):
@@ -405,5 +405,3 @@ def get_seller_transactions(seller_id):
     except SQLAlchemyError as e:
         session.rollback()
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
-    finally:
-        session.close()
