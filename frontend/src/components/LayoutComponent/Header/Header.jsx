@@ -1,19 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
+import Link from "next/link";
 import SearchComponent from "./SearchComponent/SearchComponent";
 import CartComponents from "./CartComponent/CartComponents";
-import { Cookie, Plus_Jakarta_Sans } from "next/font/google";
 import RegisterButton from "./RegisterButton";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
-import Link from "next/link";
 import LogoutButton from "./LogoutButton";
+import { Plus_Jakarta_Sans } from "next/font/google";
 
 const Jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: "600",
 });
+
+const PromotionButton = () => (
+  <Link href="/promotions" className="p-2 bg-green-600 text-white rounded">
+    Promotion
+  </Link>
+);
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -33,6 +37,7 @@ const Header = () => {
   }, []);
 
   const handleHome = () => Route.push("/");
+
   return (
     <header className="flex flex-row justify-around items-center space-x-8 text-black bg-white w-full py-4">
       <button onClick={handleHome} className={`${Jakarta.className}`}>
@@ -47,12 +52,15 @@ const Header = () => {
       {isLoggedIn ? (
         <>
           {isSeller ? (
-            <Link
-              href="/products"
-              className="p-2 bg-indigo-600 text-white rounded"
-            >
-              Seller Dashboard
-            </Link>
+            <>
+              <Link
+                href="/products"
+                className="p-2 bg-indigo-600 text-white rounded"
+              >
+                Seller Dashboard
+              </Link>
+              <PromotionButton />
+            </>
           ) : (
             <Link
               href="/Profile"
@@ -61,7 +69,7 @@ const Header = () => {
               User Profile
             </Link>
           )}
-          <LogoutButton /> {/* Tambahkan LogoutButton */}
+          <LogoutButton />
         </>
       ) : (
         <RegisterButton />
