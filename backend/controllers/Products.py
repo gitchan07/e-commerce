@@ -209,6 +209,7 @@ def get_seller_products():
                     "page": page,
                     "per_page": per_page,
                     "products": [product.to_dict() for product in products],
+                    # category
                 }
             ),
             200,

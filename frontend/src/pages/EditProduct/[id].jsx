@@ -19,5 +19,13 @@ const EditProductPage = () => {
   );
 };
 
+export default withAuth(EditProductPage, ["seller"]);
+// const updateProduct = async (id,formikdata, imagefile )=>{
+//   try{
+//     const result = await updateProduct(id,productData,abc.jpg)
+//   }
+//     catch (err) {
+//     console.err(err)
+//   }
 
-export default withAuth (EditProductPage, ["seller"]);
+// }
