@@ -13,7 +13,7 @@ const ProductEditForm = ({ productId }) => {
     price: 0.0,
     stock: 0,
     title: '',
-    imgPath: '',
+    imgPath: null,
   });
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const ProductEditForm = ({ productId }) => {
             price: data.price,
             stock: data.stock,
             title: data.title,
-            imgPath: data.imgPath,
+            imgPath: data.img_path,
           });
         } else {
           alert(data.message);
@@ -51,17 +51,27 @@ const ProductEditForm = ({ productId }) => {
     price: Yup.number().required('Price is required').min(0, 'Price must be a positive number'),
     stock: Yup.number().required('Stock is required').min(0, 'Stock must be a positive number'),
     title: Yup.string().required('Title is required'),
-    imgPath: Yup.string().required('Image path is required').url('Invalid URL format'),
+    imgPath: Yup.mixed()
+      .required('An image file is required')
+      .test("fileSize", "File too large", (value) => !value || (value && value.size <= 2000000)) // 2MB limit
+      .test("fileType", "Unsupported file format", (value) =>
+        !value || (value && ["image/jpeg", "image/png", "image/gif"].includes(value.type))
+      ),
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const host = process.env.NEXT_PUBLIC_HOST;
-      const api = `${host}/products/${productId}/update`;
+      const api = `${host}/products/${productId}`;
 
       const formData = new FormData();
-      for (const key in values) {
-        formData.append(key, values[key]);
+      formData.append("categoryName", values.categoryName);
+      formData.append("quantity", values.quantity);
+      formData.append("price", values.price);
+      formData.append("stock", values.stock);
+      formData.append("title", values.title);
+      if (values.imgPath) {
+        formData.append("image", values.imgPath);
       }
 
       const response = await fetch(api, {
@@ -73,7 +83,7 @@ const ProductEditForm = ({ productId }) => {
 
       if (response.status === 200) {
         alert('Product updated successfully!');
-        router.push('/products');
+        router.push(`/products/${productId}`);
       } else {
         alert(data.message);
       }
@@ -86,7 +96,7 @@ const ProductEditForm = ({ productId }) => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row justify-center items-center md:space-x-14 space-y-6 md:space-y-0 p-4 min-h-screen">
+    <div className="flex flex-col md:flex-row justify-center items-center md:space-x-14 space-y-6 md:space-y-0 p-4 min-h-screen bg-white">
       <div className="w-full md:w-2/3 max-w-md mx-auto p-6 bg-white shadow shadow-slate-400 rounded-lg">
         <h1 className="text-3xl font-bold mb-4 text-gray-800 text-center">
           Edit Product
@@ -97,7 +107,7 @@ const ProductEditForm = ({ productId }) => {
           onSubmit={handleSubmit}
           enableReinitialize={true}
         >
-          {({ isSubmitting }) => (
+          {({ isSubmitting, setFieldValue }) => (
             <Form>
               <div className="mb-4">
                 <label
@@ -118,6 +128,7 @@ const ProductEditForm = ({ productId }) => {
                   className="text-red-600 text-sm mt-1"
                 />
               </div>
+
               <div className="mb-4">
                 <label
                   htmlFor="quantity"
@@ -137,6 +148,7 @@ const ProductEditForm = ({ productId }) => {
                   className="text-red-600 text-sm mt-1"
                 />
               </div>
+
               <div className="mb-4">
                 <label
                   htmlFor="price"
@@ -156,6 +168,7 @@ const ProductEditForm = ({ productId }) => {
                   className="text-red-600 text-sm mt-1"
                 />
               </div>
+
               <div className="mb-4">
                 <label
                   htmlFor="stock"
@@ -175,6 +188,7 @@ const ProductEditForm = ({ productId }) => {
                   className="text-red-600 text-sm mt-1"
                 />
               </div>
+
               <div className="mb-4">
                 <label
                   htmlFor="title"
@@ -194,18 +208,23 @@ const ProductEditForm = ({ productId }) => {
                   className="text-red-600 text-sm mt-1"
                 />
               </div>
+
               <div className="mb-4">
                 <label
                   htmlFor="imgPath"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Image Path
+                  Upload Image
                 </label>
-                <Field
-                  type="text"
+                <input
                   id="imgPath"
                   name="imgPath"
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                  onChange={(event) => {
+                    setFieldValue("imgPath", event.currentTarget.files[0]);
+                  }}
                 />
                 <ErrorMessage
                   name="imgPath"
@@ -213,6 +232,7 @@ const ProductEditForm = ({ productId }) => {
                   className="text-red-600 text-sm mt-1"
                 />
               </div>
+
               <div className="flex justify-center">
                 <button
                   type="submit"
