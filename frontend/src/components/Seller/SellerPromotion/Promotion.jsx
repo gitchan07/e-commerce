@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 const SellerPromotionInput = () => {
+  const [promotions, setPromotions] = useState([]);
+
   const validationSchema = Yup.object({
     voucherCode: Yup.string().required("Voucher code is required"),
     valueDiscount: Yup.number()

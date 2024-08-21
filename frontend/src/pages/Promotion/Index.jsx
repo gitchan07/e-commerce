@@ -1,6 +1,6 @@
 import React from "react";
 import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
-import SellerPromotionInput from "@/components/PromotionComponent/SellerPromotionInput"; 
+import SellerPromotionInput from "@/components/Seller/SellerPromotion/Promotion";
 
 const Index = () => {
   return (

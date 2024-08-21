@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/router";
+import { getCategories } from "@/services/categoryService";
+import Cookies from "js-cookie";
 
 const CreateProduct = () => {
+  const [categories, setCategories] = useState([]);
+  const [error, setError] = useState(null);
+
   const validationSchema = Yup.object({
-    categoryName: Yup.string()
-      .min(3, "Category name must be at least 3 characters")
-      .max(50, "Category name must be at most 50 characters")
-      .required("Category name is required"),
+    category_id: Yup.string().required("Category name is required"),
     price: Yup.number()
       .min(0, "Price must be a positive number")
       .required("Price is required"),
@@ -21,23 +23,42 @@ const CreateProduct = () => {
       .min(3, "Title must be at least 3 characters")
       .max(100, "Title must be at most 100 characters")
       .required("Title is required"),
-    imgFile: Yup.mixed().required("Image file is required"),
+    image: Yup.mixed().required("Image file is required"),
   });
 
   const initialValues = {
-    categoryName: "",
+    category_id: "",
     price: "",
     stock: "",
     title: "",
-    imgFile: null,
+    image: null,
   };
 
   const router = useRouter();
 
+  useEffect(() => {
+    
+    fetchCategories();
+  }, []);
+  
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories();
+
+      if (Array.isArray(data)) {
+        setCategories(data);
+      } else {
+        console.error("Data is not an array:", data);
+      }
+    } catch (err) {
+      setError(err);
+    }
+  };
+  
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const host = process.env.NEXT_PUBLIC_HOST;
-      const api = `${host}/products`;
+      const api = `${host}/products/`;
 
       const formData = new FormData();
       for (const key in values) {
@@ -47,6 +68,9 @@ const CreateProduct = () => {
       const response = await fetch(api, {
         method: 'POST',
         body: formData,
+        headers: {
+          "Authorization": `Bearer ${Cookies.get("access_token")}`
+        }
       });
 
       const data = await response.json();
@@ -80,19 +104,26 @@ const CreateProduct = () => {
             <Form>
               <div className="mb-4">
                 <label
-                  htmlFor="categoryName"
+                  htmlFor="category_id"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Category Name
                 </label>
                 <Field
-                  type="text"
-                  id="categoryName"
-                  name="categoryName"
+                  as="select"
+                  id="category_id"
+                  name="category_id"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
-                />
+                >
+                  <option ></option>
+                  {categories.length > 0 && (
+                    categories.map((category, index) => (
+                      <option key={index} value={category.id}>{category.name}</option>
+                    ))
+                  )}
+                </Field>
                 <ErrorMessage
-                  name="categoryName"
+                  name="category_id"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -156,22 +187,22 @@ const CreateProduct = () => {
               </div>
               <div className="mb-4">
                 <label
-                  htmlFor="imgFile"
+                  htmlFor="image"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Image File
                 </label>
                 <input
                   type="file"
-                  id="imgFile"
-                  name="imgFile"
+                  id="image"
+                  name="image"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
                   onChange={(event) => {
-                    setFieldValue("imgFile", event.currentTarget.files[0]);
+                    setFieldValue("image", event.currentTarget.files[0]);
                   }}
                 />
                 <ErrorMessage
-                  name="imgFile"
+                  name="image"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
