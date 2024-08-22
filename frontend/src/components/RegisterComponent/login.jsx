@@ -58,10 +58,10 @@ const Login = ({ onToggleForm }) => {
         Cookies.set("access_token", data.access_token, { expires: 1 });
         Cookies.set("user_id", data.user_id, { expires: 1 });
         Cookies.set("role", data.role, { expires: 1 });
-        if (data.role === "products") {
+        if (data.role === "seller") {
           router.push("/products");
         } else{
-        router.push("/");
+          router.push("/");
         }
       } else {
         alert(data.message);
