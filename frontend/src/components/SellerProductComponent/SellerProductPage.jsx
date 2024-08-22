@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import SellerProductList from "./SellerProductList";
+import Cookies from "js-cookie";
 
 const SellerProductPage = () => {
   const [products, setProducts] = useState([]);
