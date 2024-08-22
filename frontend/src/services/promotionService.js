@@ -8,7 +8,7 @@ import getHeaders from '@/utils/authUtils';
 export const createPromotion = async (promotionData) => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}`,
+      `${API_BASE_URL}/`,
       promotionData,
       {
         headers: getHeaders(),
