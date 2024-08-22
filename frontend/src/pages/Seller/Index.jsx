@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import Head from "next/head";
-import Dashboard from "../../components/Seller/Dashboard";
+import Dashboard from "@/components/SellerLayoutComponent/Dashboard";
 import LayoutNoSearch from "@/components/LayoutComponent/LayoutNoSearch";
 
 const index = () => {
