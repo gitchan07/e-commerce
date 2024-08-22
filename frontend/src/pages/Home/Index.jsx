@@ -18,8 +18,8 @@ export default function Home() {
   return (
     <Layout>
       <Head>
-        <title>Vape Shop</title>
-        <meta name="description" content="Welcome to our Vape Shop" />
+        <title>QuickBuy</title>
+        <meta name="description" content="Welcome to our Store" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
