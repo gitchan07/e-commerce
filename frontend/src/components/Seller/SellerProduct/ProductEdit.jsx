@@ -12,7 +12,6 @@ const ProductEditForm = ({ productId }) => {
   const [categories, setCategories] = useState([]);
   const [initialValues, setInitialValues] = useState({
     category_id: "",
-    quantity: 0,
     price: 0.0,
     stock: 0,
     title: "",
@@ -31,7 +30,6 @@ const ProductEditForm = ({ productId }) => {
         if (response.status === 200) {
           setInitialValues({
             category_id: data.category_id,
-            quantity: data.quantity,
             price: data.price,
             stock: data.stock,
             title: data.title,
@@ -67,9 +65,6 @@ const ProductEditForm = ({ productId }) => {
 
   const validationSchema = Yup.object({
     category_id: Yup.string().required("Category is required"),
-    quantity: Yup.number()
-      .required("Quantity is required")
-      .min(0, "Quantity must be a positive number"),
     price: Yup.number()
       .required("Price is required")
       .min(0, "Price must be a positive number"),
@@ -103,7 +98,6 @@ const ProductEditForm = ({ productId }) => {
         productId,
         {
           category_id: values.category_id,
-          quantity: values.quantity,
           price: values.price,
           stock: values.stock,
           title: values.title,
@@ -170,26 +164,6 @@ const ProductEditForm = ({ productId }) => {
                 </Field>
                 <ErrorMessage
                   name="category_id"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-
-              <div className="mb-5">
-                <label
-                  htmlFor="quantity"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Quantity
-                </label>
-                <Field
-                  type="number"
-                  id="quantity"
-                  name="quantity"
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
-                />
-                <ErrorMessage
-                  name="quantity"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
