@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -27,9 +27,6 @@ const UserProfile = () => {
       .min(10, "Address must be at least 10 characters")
       .max(100, "Address must be at most 100 characters")
       .required("Address is required"),
-    role: Yup.string()
-      .oneOf(["seller", "buyer"], "Invalid role")
-      .required("Role is required"),
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")
       .matches(/[a-z]/, "Password must contain at least one lowercase letter")
@@ -47,35 +44,56 @@ const UserProfile = () => {
     email: "",
     full_name: "",
     address: "",
-    role: "",
     password: "",
   });
 
   const router = useRouter();
   const user_id = Cookie.get('user_id');
-  console.log(user_id);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const host = process.env.NEXT_PUBLIC_HOST;
+        const api = `${host}/users/${user_id}`;
+        const response = await fetch(api);
+        const data = await response.json();
+
+        if (response.status === 200) {
+          setinitialValues({
+            username: data.username,
+            email: data.email,
+            full_name: data.full_name,
+            address: data.address,
+            password: data.password,
+          });
+        } else {
+          alert(data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        alert("An error occurred while fetching the user data.");
+      }
+    };
+
+    fetchUserData();
+  }, [user_id]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await fetch(`/api/users/${user_id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
-
-      const data = await response.json();
-
-      if (response.status === 200) {
-        console.log('User profile saved:', data);
-        alert('Profile updated successfully');
-      } else {
-        alert(data.message);
-      }
+      await updateProfile(
+        user_id,
+        {
+          username: values.username,
+          email: values.email,
+          full_name: values.full_name,
+          address: values.address,
+          password: values.password,}
+      );
+      alert("Profile updated successfully!");
+      router.push("/");
     } catch (error) {
-      console.error('Save error:', error);
-      alert('An error occurred while saving the profile.');
+      console.error("Error updating user data:", error);
+      alert("An error occurred while updating the user data.");
     } finally {
       setSubmitting(false);
     }

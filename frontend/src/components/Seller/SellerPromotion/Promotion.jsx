@@ -68,79 +68,98 @@ const SellerPromotionInput = () => {
   };
 
   return (
-    <div>
-      <h3 className="text-xl font-semibold mb-4 text-black">Add Promotion</h3>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting }) => (
-          <Form className="text-black">
-            <div className="mb-4">
-              <label className="block mb-2">Voucher Code</label>
-              <Field
-                type="text"
-                name="voucherCode"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
-              />
-              <ErrorMessage
-                name="voucherCode"
-                component="div"
-                className="text-red-500"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-2">Value Discount (%)</label>
-              <Field
-                type="number"
-                name="valueDiscount"
-                className="border p-2 rounded w-full"
-                min="1"
-                max="100"
-              />
-              <ErrorMessage
-                name="valueDiscount"
-                component="div"
-                className="text-red-500"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-2">Description</label>
-              <Field
-                type="text"
-                name="description"
-                className="border p-2 rounded w-full"
-              />
-              <ErrorMessage
-                name="description"
-                component="div"
-                className="text-red-500"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-blue-500 text-white p-2 rounded"
-            >
-              {isSubmitting ? (
-                <FontAwesomeIcon icon={faSpinner} spin />
-              ) : (
-                "Add Promotion"
-              )}
-            </button>
-          </Form>
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="w-full max-w-md">
+        <h3 className="text-xl font-semibold mb-4 text-black text-center">Add Promotion</h3>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form className="text-black">
+              <div className="mb-4">
+                <label className="block mb-2">Voucher Code</label>
+                <Field
+                  type="text"
+                  name="voucherCode"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm text-gray-700"
+                />
+                <ErrorMessage
+                  name="voucherCode"
+                  component="div"
+                  className="text-red-500"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2">Value Discount (%)</label>
+                <Field
+                  type="number"
+                  name="valueDiscount"
+                  className="border p-2 rounded w-full"
+                  min="1"
+                  max="100"
+                />
+                <ErrorMessage
+                  name="valueDiscount"
+                  component="div"
+                  className="text-red-500"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2">Description</label>
+                <Field
+                  type="text"
+                  name="description"
+                  className="border p-2 rounded w-full"
+                />
+                <ErrorMessage
+                  name="description"
+                  component="div"
+                  className="text-red-500"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-blue-500 text-white p-2 rounded w-full"
+              >
+                {isSubmitting ? (
+                  <FontAwesomeIcon icon={faSpinner} spin />
+                ) : (
+                  "Add Promotion"
+                )}
+              </button>
+            </Form>
         )}
       </Formik>
 
       <h3 className="text-xl font-semibold mt-6 mb-4 text-black">Promotions</h3>
-      <ul>
-        {promotions.map((promo, index) => (
-          <li key={index} className="border p-4 rounded mb-4 text-black">
-            <pre>{JSON.stringify(promo, null, 2)}</pre>
-          </li>
-        ))}
-      </ul>
+      <table className="min-w-full bg-white">
+        <thead>
+            <tr>
+              <th className="py-2">ID</th>
+              <th className="py-2">Voucher Code</th>
+              <th className="py-2">Value Discount</th>
+              <th className="py-2">Description</th>
+              <th className="py-2">Created At</th>
+              <th className="py-2">Updated At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {promotions.map((promotion) => (
+              <tr key={promotion.id}>
+                <td className="border px-4 py-2">{promotion.id}</td>
+                <td className="border px-4 py-2">{promotion.voucher_code}</td>
+                <td className="border px-4 py-2">{promotion.value_discount}%</td>
+                <td className="border px-4 py-2">{promotion.description}</td>
+                <td className="border px-4 py-2">{promotion.created_at}</td>
+                <td className="border px-4 py-2">{promotion.updated_at}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
