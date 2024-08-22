@@ -59,7 +59,7 @@ const Login = ({ onToggleForm }) => {
         Cookies.set("user_id", data.user_id, { expires: 1 });
         Cookies.set("role", data.role, { expires: 1 });
         if (data.role === "seller") {
-          router.push("/products");
+          router.push("/Seller");
         } else{
           router.push("/");
         }
@@ -90,7 +90,7 @@ const Login = ({ onToggleForm }) => {
           Login to Your Account
         </h1>
         <h3 className="text-center text-gray-800 mb-6">
-          Don't have a Vapor Vault account? 
+          Don't have a QuickBuy account? 
           <a
             className="text-emerald-600 hover:underline underline-offset-2 cursor-pointer"
             onClick={onToggleForm}

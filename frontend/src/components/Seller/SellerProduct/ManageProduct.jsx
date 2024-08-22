@@ -75,9 +75,8 @@ const CreateProduct = () => {
 
       const data = await response.json();
 
-      if (response.status === 200) {
-        alert('Product created successfully!');
-        router.push('/products');
+      if (response.status === 201) {
+        router.push('/');
       } else {
         alert(data.message);
       }

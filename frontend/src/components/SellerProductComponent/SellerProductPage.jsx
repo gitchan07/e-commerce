@@ -73,7 +73,7 @@ const SellerProductPage = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold my-6 text-center">My Products</h1>
+      <h1 className="text-3xl font-bold my-6 text-center text-black">My Products</h1>
 
       <SellerProductList products={products} />
       <div className="flex justify-center items-center mt-6 space-x-2">

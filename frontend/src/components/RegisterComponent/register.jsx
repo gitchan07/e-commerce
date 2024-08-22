@@ -104,7 +104,7 @@ const Register = ({ onToggleForm }) => {
           Sign Up Now
         </h1>
         <h3 className="text-center text-gray-800 mb-6">
-          Already have a Vapor Vault account? 
+          Already have a QuickBuy account?
           <a
             className="text-emerald-600 hover:underline underline-offset-2 cursor-pointer"
             onClick={onToggleForm}
