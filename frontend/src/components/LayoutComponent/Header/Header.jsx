@@ -14,7 +14,7 @@ const Jakarta = Plus_Jakarta_Sans({
 });
 
 const PromotionButton = () => (
-  <Link href="/promotions" className="p-2 bg-green-600 text-white rounded">
+  <Link href="/Promotion" className="p-2 bg-green-600 text-white rounded">
     Promotion
   </Link>
 );
