@@ -97,7 +97,7 @@ const ProductsPage = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold my-6 text-center">Products</h1>
+      <h1 className="text-3xl font-bold my-6 text-center text-black">Products</h1>
 
       <ListCardItem products={products} />
       <div className="flex justify-center items-center mt-6 space-x-2">
