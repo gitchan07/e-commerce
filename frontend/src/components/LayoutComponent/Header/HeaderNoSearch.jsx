@@ -42,13 +42,13 @@ const HeaderNoSearch = () => {
           className="rounded-lg w-16 h-16 object-contain"
         />
       </button>
-      <CartComponents />
+      {isLoggedIn && !isSeller && <CartComponents />}
       {isLoggedIn ? (
         <>
           {isSeller ? (
             <>
               <Link href="/products" className="p-2 bg-indigo-600 text-white rounded">
-              Seller Dashboard
+                Seller Dashboard
               </Link>
               <PromotionButton />
             </>
