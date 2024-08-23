@@ -47,17 +47,17 @@ const HeaderNoSearch = () => {
         <>
           {isSeller ? (
             <>
-              <Link href="/Seller" className="p-2 bg-indigo-600 text-white rounded">
+              <Link href="/Seller" className="px-4 py-2 bg-gradient-to-r from-sky-600 to-sky-400 text-white rounded-xl hover:bg-gradient-to-r hover:from-sky-700 hover:to-sky-500 shadow-lg transition-transform transform hover:scale-105">
                 Seller Dashboard
               </Link>
               <PromotionButton />
             </>
           ) : (
-            <Link href="/Profile" className="p-2 bg-indigo-600 text-white rounded">
+            <Link href="/Profile" className="px-4 py-2 bg-gradient-to-r from-sky-600 to-sky-400 text-white rounded-xl hover:bg-gradient-to-r hover:from-sky-700 hover:to-sky-500 shadow-lg transition-transform transform hover:scale-105">
               User Profile
             </Link>
           )}
-          <LogoutButton />
+      <LogoutButton/>
         </>
       ) : (
         <RegisterButton />
