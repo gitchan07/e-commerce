@@ -92,8 +92,8 @@ const Register = ({ onToggleForm }) => {
     <div className="flex flex-col md:flex-row justify-center items-center md:space-x-14 space-y-6 md:space-y-0 p-4 min-h-screen">
       <div className="w-full md:w-1/3 flex items-center max-w-md justify-center">
         <Image
-          src="/images/vapor-vault-logo.png"
-          alt="Vapor Vault Logo"
+          src="/images/logo.jpeg"
+          alt="QuickBuy Logo"
           width={350}
           height={350}
           className="rounded-lg"
@@ -104,7 +104,7 @@ const Register = ({ onToggleForm }) => {
           Sign Up Now
         </h1>
         <h3 className="text-center text-gray-800 mb-6">
-          Already have a Vapor Vault account? 
+          Already have a QuickBuy account?
           <a
             className="text-emerald-600 hover:underline underline-offset-2 cursor-pointer"
             onClick={onToggleForm}

@@ -63,16 +63,17 @@ export const getProductById = async (productId) => {
 };
 
 // Update a product by ID
+
+
+
 export const updateProduct = async (productId, productData, imageFile) => {
   try {
     const formData = new FormData();
 
-    // Append product data to the form
     for (const key in productData) {
       formData.append(key, productData[key]);
     }
 
-    // Append image file to the form if it exists
     if (imageFile) {
       formData.append('image', imageFile);
     }

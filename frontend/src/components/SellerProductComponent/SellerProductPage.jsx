@@ -1,41 +1,30 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import ListCardItem from "./ListCardItem";
-import { SearchContext } from "@/context/SearchProvider";
+import SellerProductList from "./SellerProductList";
+import Cookies from "js-cookie";
 
-const ProductsPage = () => {
-  const { searchTerm, selectedProductId, selectedCategoryId } =
-    useContext(SearchContext);
+const SellerProductPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const host = process.env.NEXT_PUBLIC_HOST;
-  const api = `${host}/products`;
+  const api = `${host}/products/my-products`;
   const perPage = 10;
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const params = {
-          page: page,
-          per_page: perPage,
-        };
-
-        if (searchTerm) {
-          params.title = searchTerm;
-        } else if (selectedProductId) {
-          params.id = selectedProductId;
-        } else if (selectedCategoryId) {
-          params.category_id = selectedCategoryId;
-        }
-
         const response = await axios.get(api, {
+          params: {
+            page: page,
+            per_page: perPage,
+          },
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("access_token")}`,
           },
-          params,
         });
 
         setProducts(response.data.products);
@@ -48,20 +37,7 @@ const ProductsPage = () => {
     };
 
     fetchProducts();
-  }, [page, searchTerm, selectedProductId, selectedCategoryId]);
-
-  useEffect(() => {
-    const prefetchNextPage = async () => {
-      if (page < totalPages) {
-        await axios.get(api, {
-          params: { page: page + 1, per_page: perPage },
-        });
-      }
-    };
-    if (!loading && page < totalPages && page > 1) {
-      prefetchNextPage();
-    }
-  }, [page, totalPages]);
+  }, [page]);
 
   const handleNextPage = () => {
     if (page < totalPages) {
@@ -97,9 +73,9 @@ const ProductsPage = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold my-6 text-center text-black">Products</h1>
+      <h1 className="text-3xl font-bold my-6 text-center text-black">My Products</h1>
 
-      <ListCardItem products={products} />
+      <SellerProductList products={products} />
       <div className="flex justify-center items-center mt-6 space-x-2">
         <button
           onClick={handlePreviousPage}
@@ -135,4 +111,4 @@ const ProductsPage = () => {
   );
 };
 
-export default ProductsPage;
+export default SellerProductPage;

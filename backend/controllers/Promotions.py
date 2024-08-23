@@ -12,7 +12,7 @@ promotion_routes = Blueprint("promotion_routes", __name__)
 # Routes
 
 
-@promotion_routes.route("", methods=["POST"])
+@promotion_routes.route("/", methods=["POST"])
 @jwt_required()
 @role_required("seller")
 def create_promotion():
@@ -33,7 +33,7 @@ def create_promotion():
         session.close()
 
 
-@promotion_routes.route("", methods=["GET"])
+@promotion_routes.route("/", methods=["GET"])
 @jwt_required()
 def get_promotions():
     filters = {"voucher_code": request.args.get("voucher_code")}

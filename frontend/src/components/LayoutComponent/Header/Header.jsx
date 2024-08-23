@@ -14,7 +14,10 @@ const Jakarta = Plus_Jakarta_Sans({
 });
 
 const PromotionButton = () => (
-  <Link href="/Promotion" className="p-2 bg-green-600 text-white rounded">
+  <Link
+    href="/Promotion"
+    className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-400 text-white rounded-xl hover:bg-gradient-to-r hover:from-green-700 hover:to-green-500 shadow-lg transition-transform transform hover:scale-105"
+  >
     Promotion
   </Link>
 );
@@ -42,8 +45,8 @@ const Header = () => {
     <header className="flex flex-row justify-around items-center space-x-8 text-black bg-white w-full py-4">
       <button onClick={handleHome} className={`${Jakarta.className}`}>
         <img
-          src="/images/vapor-vault-logo.png"
-          alt="Vapor Vault Logo"
+          src="/images/logo.jpeg"
+          alt="QuickBuy Logo"
           className="rounded-lg w-16 h-16 object-contain"
         />
       </button>
@@ -54,8 +57,8 @@ const Header = () => {
           {isSeller ? (
             <>
               <Link
-                href="/products"
-                className="p-2 bg-indigo-600 text-white rounded"
+                href="/Seller"
+                className="px-4 py-2 bg-gradient-to-r from-sky-600 to-sky-400 text-white rounded-xl hover:bg-gradient-to-r hover:from-sky-700 hover:to-sky-500 shadow-lg transition-transform transform hover:scale-105"
               >
                 Seller Dashboard
               </Link>
@@ -64,7 +67,7 @@ const Header = () => {
           ) : (
             <Link
               href="/Profile"
-              className="p-2 bg-indigo-600 text-white rounded"
+              className="px-4 py-2 bg-gradient-to-r from-sky-600 to-sky-400 text-white rounded-xl hover:bg-gradient-to-r hover:from-sky-700 hover:to-sky-500 shadow-lg transition-transform transform hover:scale-105"
             >
               User Profile
             </Link>

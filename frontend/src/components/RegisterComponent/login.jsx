@@ -59,7 +59,7 @@ const Login = ({ onToggleForm }) => {
         Cookies.set("user_id", data.user_id, { expires: 1 });
         Cookies.set("role", data.role, { expires: 1 });
         if (data.role === "seller") {
-          router.push("/products");
+          router.push("/Seller");
         } else{
           router.push("/");
         }
@@ -78,8 +78,8 @@ const Login = ({ onToggleForm }) => {
     <div className="flex flex-col md:flex-row justify-center items-center md:space-x-14 space-y-6 md:space-y-0 p-4 min-h-screen">
       <div className="w-full md:w-1/3 flex items-center max-w-md justify-center">
         <Image
-          src="/images/vapor-vault-logo.png"
-          alt="Vapor Vault Logo"
+          src="/images/logo.jpeg"
+          alt="QuickBuy Logo"
           width={350}
           height={350}
           className="rounded-lg"
@@ -90,7 +90,7 @@ const Login = ({ onToggleForm }) => {
           Login to Your Account
         </h1>
         <h3 className="text-center text-gray-800 mb-6">
-          Don't have a Vapor Vault account? 
+          Don't have a QuickBuy account? 
           <a
             className="text-emerald-600 hover:underline underline-offset-2 cursor-pointer"
             onClick={onToggleForm}

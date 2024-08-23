@@ -11,7 +11,7 @@ const Footer = () => {
         <div className="flex flex-wrap justify-between">
           <div className="w-full md:w-1/3 flex flex-col space-y-6 mb-6 md:mb-0">
             <div>
-              <h3 className="text-lg font-bold">Vapor Vault</h3>
+              <h3 className="text-lg font-bold">QuickBuy</h3>
             </div>
             <div>
               <h3 className="text-lg font-semibold">About Us</h3>
@@ -54,7 +54,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="mt-8 border-t border-gray-700 pt-4 text-center">
-        <p>&copy; {currentYear} Vapor Vault. All rights reserved.</p>
+        <p>&copy; {currentYear} QuickBuy. All rights reserved.</p>
       </div>
     </footer>
   );

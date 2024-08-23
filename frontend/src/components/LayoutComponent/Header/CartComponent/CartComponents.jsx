@@ -9,7 +9,7 @@ const CartComponents = () => {
   };
 
   return (
-    <button onClick={handleCartClick}>
+    <button onClick={handleCartClick} className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-400 text-white rounded-xl hover:bg-gradient-to-r hover:from-yellow-700 hover:to-yellow-500 shadow-lg transition-transform transform hover:scale-105">
       Cart
     </button>
   );

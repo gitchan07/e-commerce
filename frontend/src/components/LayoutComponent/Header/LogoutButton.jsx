@@ -35,7 +35,7 @@ const LogoutButton = () => {
   };
 
   return (
-    <button onClick={handleLogout}>
+    <button onClick={handleLogout} className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-400 text-white rounded-xl hover:bg-gradient-to-r hover:from-red-700 hover:to-red-500 shadow-lg transition-transform transform hover:scale-105" >
       Logout
     </button>
   );

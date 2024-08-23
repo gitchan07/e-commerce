@@ -142,7 +142,7 @@ def update_product(id):
             product.description = data.get("description", product.description)
             product.stock = data.get("stock", product.stock)
             product.price = data.get("price", product.price)
-            product.is_active = data.get("is_active", product.is_active)
+            product.is_active = True if data.get("is_active", product.is_active) == "true" else False 
             product.img_path = data.get("img_path", product.img_path)
 
             session.commit()
@@ -209,6 +209,7 @@ def get_seller_products():
                     "page": page,
                     "per_page": per_page,
                     "products": [product.to_dict() for product in products],
+                    # category
                 }
             ),
             200,
@@ -261,5 +262,5 @@ def save_image(image):
         image_path = os.path.join(upload_folder, image_filename)
         image.save(image_path)
 
-        return f"{upload_folder}/{image_filename}"
+        return f"{image_filename}"
     return None
