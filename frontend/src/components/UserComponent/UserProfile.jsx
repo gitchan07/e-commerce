@@ -49,22 +49,26 @@ const UserProfile = () => {
 
   const router = useRouter();
   const user_id = Cookie.get('user_id');
+  const host = process.env.NEXT_PUBLIC_HOST;
+  const api = `${host}/users/${user_id}`;
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const host = process.env.NEXT_PUBLIC_HOST;
-        const api = `${host}/users/${user_id}`;
-        const response = await fetch(api);
+        const response = await fetch(api, {
+          headers: {
+            "Authorization": `Bearer ${Cookie.get('access_token')}`
+          }
+        });
         const data = await response.json();
 
         if (response.status === 200) {
           setinitialValues({
-            username: data.username,
-            email: data.email,
-            full_name: data.full_name,
-            address: data.address,
-            password: data.password,
+            username: data.data.username,
+            email: data.data.email,
+            full_name: data.data.full_name,
+            address: data.data.address,
+            password: data.data.password,
           });
         } else {
           alert(data.message);
@@ -80,17 +84,29 @@ const UserProfile = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      await updateProfile(
-        user_id,
+      const response = await fetch(api,
         {
-          username: values.username,
-          email: values.email,
-          full_name: values.full_name,
-          address: values.address,
-          password: values.password,}
+          method: 'PUT',
+          body: JSON.stringify({
+            username: values.username,
+            email: values.email,
+            full_name: values.full_name,
+            address: values.address,
+            password: values.password
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${Cookie.get('access_token')}`
+          }
+        }
       );
-      alert("Profile updated successfully!");
-      router.push("/");
+      const data = await response.json();
+      if (response.status === 200) {
+        alert("Profile updated successfully!");
+        router.push("/");
+      } else {
+        alert(data.message);
+      }
     } catch (error) {
       console.error("Error updating user data:", error);
       alert("An error occurred while updating the user data.");
@@ -109,6 +125,7 @@ const UserProfile = () => {
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
+          enableReinitialize={true}
         >
           {({ isSubmitting }) => (
             <Form>
