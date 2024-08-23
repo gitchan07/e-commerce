@@ -78,8 +78,8 @@ const Login = ({ onToggleForm }) => {
     <div className="flex flex-col md:flex-row justify-center items-center md:space-x-14 space-y-6 md:space-y-0 p-4 min-h-screen">
       <div className="w-full md:w-1/3 flex items-center max-w-md justify-center">
         <Image
-          src="/images/vapor-vault-logo.png"
-          alt="Vapor Vault Logo"
+          src="/images/logo.jpeg"
+          alt="QuickBuy Logo"
           width={350}
           height={350}
           className="rounded-lg"

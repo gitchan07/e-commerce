@@ -42,8 +42,8 @@ const Header = () => {
     <header className="flex flex-row justify-around items-center space-x-8 text-black bg-white w-full py-4">
       <button onClick={handleHome} className={`${Jakarta.className}`}>
         <img
-          src="/images/vapor-vault-logo.png"
-          alt="Vapor Vault Logo"
+          src="/images/logo.jpeg"
+          alt="QuickBuy Logo"
           className="rounded-lg w-16 h-16 object-contain"
         />
       </button>
