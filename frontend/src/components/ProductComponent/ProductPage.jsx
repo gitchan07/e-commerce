@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import ListCardItem from "./ListCardItem";
 import { SearchContext } from "@/context/SearchProvider";
+import CategoryFilter from "../CategoryComponent/CategoryFilter";
 
 const ProductsPage = () => {
   const { searchTerm, selectedProductId, selectedCategoryId } =
@@ -97,6 +98,7 @@ const ProductsPage = () => {
 
   return (
     <div className="container mx-auto py-8">
+            <CategoryFilter />
       <h1 className="text-3xl font-bold my-6 text-center text-black">Products</h1>
 
       <ListCardItem products={products} />

@@ -135,7 +135,7 @@ const SellerPromotionInput = () => {
       </Formik>
 
       <h3 className="text-xl font-semibold mt-6 mb-4 text-black">Promotions</h3>
-      <table className="min-w-full bg-white">
+      <table className="min-w-full bg-white text-black">
         <thead>
             <tr>
               <th className="py-2">ID</th>

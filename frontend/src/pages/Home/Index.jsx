@@ -1,6 +1,5 @@
 import Head from "next/head";
 import Layout from "@/components/LayoutComponent/Layout";
-import CategoryFilter from "@/components/CategoryComponent/CategoryFilter";
 import React, { Suspense } from "react";
 import Cookies from "js-cookie";
 
@@ -24,7 +23,6 @@ export default function Home() {
       </Head>
 
       <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
-        <CategoryFilter />
 
         <Suspense fallback={<div>Loading...</div>}>
           {role && role === 'seller' ? (
