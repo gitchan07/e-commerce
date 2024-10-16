@@ -5,8 +5,11 @@ import { SearchContext } from "@/context/SearchProvider";
 import CategoryFilter from "../CategoryComponent/CategoryFilter";
 
 const ProductsPage = () => {
-  const { searchTerm, selectedProductId, selectedCategoryId } =
-    useContext(SearchContext);
+  const des = useContext(SearchContext)
+  const searchTerm = des?.searchTerm
+  const selectedProductId = des?.selectedProductId
+  const selectedCategoryId = des?.selectedCategoryId
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
