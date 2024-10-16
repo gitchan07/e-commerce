@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import CheckoutComponent from '../../components/CheckoutComponent';
+// import CheckoutComponent from '../../components/CheckoutComponent';
 
 export default function Checkout() {
   return (
@@ -11,7 +11,7 @@ export default function Checkout() {
       </Head>
 
       <main className="flex justify-center items-center min-h-screen bg-gray-100">
-        <CheckoutComponent />
+        {/* <CheckoutComponent /> */}
       </main>
     </div>
   );

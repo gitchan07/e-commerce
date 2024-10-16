@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Layout from '@/components/LayoutComponent/Layout';
 import Register from '@/components/RegisterComponent/Register';
 import Login from '@/components/RegisterComponent/Login';
-import UserDashboard from '@/components/UserDashboardComponent/UserDashboard';
 import Cookies from 'js-cookie';
+import UserDashboard from '@/components/UserComponent/UserDashboard';
 
 const Index = () => {
   const [isRegister, setIsRegister] = useState(true);

@@ -13,9 +13,9 @@ const SellerProductPage = React.lazy(() =>
 
 export default function Home() {
   const role = Cookies.get('role') ?? ''
-
   return (
-    <Layout>
+
+    <Layout >
       <Head>
         <title>QuickBuy</title>
         <meta name="description" content="Welcome to our Store" />
@@ -25,7 +25,7 @@ export default function Home() {
       <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
 
         <Suspense fallback={<div>Loading...</div>}>
-          {role && role === 'seller' ? (
+          {role !== "" && role === 'seller' ? (
             <SellerProductPage />
           ):(
             <ProductsPage />

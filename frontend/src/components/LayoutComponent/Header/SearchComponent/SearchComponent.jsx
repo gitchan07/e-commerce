@@ -8,7 +8,11 @@ import DropdownList from "./DropdownList";
 const host = process.env.NEXT_PUBLIC_HOST;
 
 const SearchComponent = () => {
-  const { setSearchTerm, setSelectedProductId } = useContext(SearchContext);
+  // console.log(useContext(SearchContext))
+  const dev = useContext(SearchContext);
+  const setSearchTerm = dev?.setSearchTerm
+  const setSelectedProductId = dev?.setSelectedProductId
+  // const { setSearchTerm, setSelectedProductId } = useContext(SearchContext);
   const [localSearchTerm, setLocalSearchTerm] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const debouncedSearchTerm = useDebounce(localSearchTerm, 500);

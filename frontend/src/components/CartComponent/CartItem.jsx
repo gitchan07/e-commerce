@@ -1,5 +1,5 @@
 import React from "react";
-import AddReduceQuantityButton from "./AddReduceQuantityButton";
+import AddReduceQuantityButton from "./addReduceQuantityButton";
 import { deleteItem } from "@/services/cartService";
 
 const CartItem = ({ item, userId, onUpdate }) => {
