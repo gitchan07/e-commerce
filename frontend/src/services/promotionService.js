@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_HOST}/promotions`;
+const API_BASE_URL = `localhost:3000/promotions`;
 import getHeaders from '@/utils/authUtils';
 
 

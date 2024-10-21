@@ -19,7 +19,7 @@ print(f"Connecting to {database} database at {host}")
 
 try:
     engine = create_engine(
-        f"mysql+mysqlconnector://{username}:{password}@{host}/{database}",
+        f"mysql+mysqlconnector://{username}:lia123@db/{database}",
         pool_size=200,
         max_overflow=10000,
         pool_timeout=30,

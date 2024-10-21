@@ -14,7 +14,7 @@ const ProductDetails = () => {
         try {
           const token = Cookies.get("access_token");
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_HOST}/products/${id}`,
+            `localhost:3000/products/${id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

@@ -1,0 +1,12 @@
+services:
+  ecommerce-frontend:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_HOST=localhost:3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm start

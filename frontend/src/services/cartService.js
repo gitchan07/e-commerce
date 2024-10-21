@@ -1,7 +1,7 @@
 import axios from 'axios';
 import getHeaders from '@/utils/authUtils';
 
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_HOST}/transactions`;
+const API_BASE_URL = `localhost:3000/transactions`;
 
 export const fetchSellerTransactions = async (userId) => {
   try {
@@ -36,7 +36,7 @@ export const updateQuantity = async (userId, productId, quantity) => {
     } else {
       console.error('Error updating quantity:', error);
     }
-    throw error; 
+    throw error;
   }
 };
 

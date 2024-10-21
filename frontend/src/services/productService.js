@@ -1,12 +1,12 @@
 import Cookies from "js-cookie";
 import axios from "axios";
 import getHeaders from "@/utils/authUtils";
-const host = `${process.env.NEXT_PUBLIC_HOST}`;
+const host = `localhost:3000`;
 const api = `${host}/transactions/`;
 
 
 
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_HOST}/products`;
+const API_BASE_URL = `localhost:3000/products`;
 
 
 export const addProduct = async (productData, imageFile) => {
